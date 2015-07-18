@@ -1,0 +1,22 @@
+{
+  "name": "xokei_client",
+  "version": "0.0.0",
+  "homepage": "https://github.com/elliotbonneville/xokei-client",
+  "authors": [
+    "Elliot Bonneville <elliot.bonneville@gmail.com>"
+  ],
+  "description": "Client for the turn-based hockey board game Xokei.",
+  "license": "apache 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bootstrap-sass": "~3.3.5",
+    "jquery": "~2.1.4"
+  }
+}
