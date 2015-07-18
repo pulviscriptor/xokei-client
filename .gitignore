@@ -29,5 +29,7 @@ node_modules
 # Bower components
 src/components
 
+# Test log
+test-results.txt
 # SASS cache
 .sass-cache

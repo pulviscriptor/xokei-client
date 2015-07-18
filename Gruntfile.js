@@ -53,6 +53,17 @@ module.exports = function(grunt) {
 		jshint: {
 			myFiles: ["src/js/*.js"]
 		},
+		mochaTest: {
+			test: {
+				options: {
+					report: "spec",
+					captureFile: "test-results.txt",
+					quiet: false,
+					clearRequireCache: false
+				},
+				src: ["test/*.js"]
+			}
+		},
 		sass: {
 			dist: {
 				files: {
@@ -107,10 +118,34 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
+	grunt.loadNpmTasks("grunt-mocha-test");
 	grunt.loadNpmTasks('grunt-webpack');
 	
-	grunt.registerTask("stylesheets", ["sass", "autoprefixer", "cssmin", "clean:stylesheets"]);
-	grunt.registerTask("scripts", ["jshint", "webpack", "uglify", "clean:scripts"]);
-	grunt.registerTask("build", ["clean:build", "copy", "stylesheets", "scripts"]);
-	grunt.registerTask("default", ["build", "connect", "watch"]);
+	grunt.registerTask(
+		"stylesheets", 
+		["sass",
+		 "autoprefixer",
+		 "cssmin",
+		 "clean:stylesheets"]);
+	
+	grunt.registerTask(
+		"scripts", 
+		["jshint",
+		 "mochaTest",
+		 "webpack",
+		 "uglify",
+		 "clean:scripts"]);
+	
+	grunt.registerTask(
+		"build", 
+		["clean:build",
+		 "copy",
+		 "stylesheets",
+		 "scripts"]);
+	
+	grunt.registerTask(
+		"default", 
+		["build",
+		 "connect",
+		 "watch"]);
 }
