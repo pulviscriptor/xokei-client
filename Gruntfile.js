@@ -14,10 +14,10 @@ module.exports = function(grunt) {
 				src: ["build"]
 			},
 			stylesheets: {
-				src: ["build/**/*.css", "!build/application.css"]
+				src: ["build/**/*.css", "!build/application.css", "build/css"]
 			},
 			scripts: {
-				src: ["build/**/*.js", "!build/application.js"]
+				src: ["build/**/*.js", "!build/application.js", "build/js"]
 			}
 		},
 		connect: {
@@ -32,7 +32,13 @@ module.exports = function(grunt) {
 		copy: {
 			build: {
 				cwd: "src",
-				src: ["**", "!**/*.scss", "!**/*.js"],
+				src: ["**", 
+					  "!**/*.scss", 
+					  "!**/*.js", 
+					  "!sass", 
+					  "!js", 
+					  "!css", 
+					  "!**/components/**"],
 				dest: "build",
 				expand: true
 			}
@@ -43,6 +49,9 @@ module.exports = function(grunt) {
 					"build/application.css": ["build/**/*.css"]
 				}
 			}
+		},
+		jshint: {
+			myFiles: ["src/js/*.js"]
 		},
 		sass: {
 			dist: {
@@ -74,7 +83,7 @@ module.exports = function(grunt) {
 				tasks: ["scripts"]
 			},
 			copy: {
-				files: ["source/**", "!source/**/*.scss", "!source/**/*.js", "!source/**/*"],
+				files: ["src/**", "!src/**/*.scss", "!src/**/*.js", "!src/**/*"],
 				tasks: ["copy"]
 			}
 		},
@@ -94,13 +103,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-connect");
 	grunt.loadNpmTasks("grunt-contrib-copy");
 	grunt.loadNpmTasks("grunt-contrib-cssmin");
+	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks('grunt-webpack');
 	
 	grunt.registerTask("stylesheets", ["sass", "autoprefixer", "cssmin", "clean:stylesheets"]);
-	grunt.registerTask("scripts", ["webpack", "uglify", "clean:scripts"]);
+	grunt.registerTask("scripts", ["jshint", "webpack", "uglify", "clean:scripts"]);
 	grunt.registerTask("build", ["clean:build", "copy", "stylesheets", "scripts"]);
 	grunt.registerTask("default", ["build", "connect", "watch"]);
 }

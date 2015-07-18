@@ -29,8 +29,5 @@ node_modules
 # Bower components
 src/components
 
-# Build dir
-build
-
 # SASS cache
 .sass-cache
