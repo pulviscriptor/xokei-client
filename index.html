@@ -10,21 +10,42 @@
     <title>Xokei</title>
     
     <link href="application.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   </head>
 
   <body>
     <div class="container">
-        <div class="row">
-            <div class="col-md-9">
-                <div class="board-container"></div>
+        <div class="board-container"></div>
+        <div class="menu-container">
+            <h1 class="logo">Xokei</h1>
+            <div class="settings-and-help">
+                <i class="glyphicon glyphicon-question-sign"></i>
+                <i class="glyphicon glyphicon-cog"></i>
             </div>
-            <div class="col-md-3">
-                
+            <div class="score-container">
+                <div class="score">
+                    <div class="player-name player-1-name">Player 1</div>
+                    <div class="player-score player-1-score">0</div>
+                    <div class="divider-vertical"></div>
+                    <div class="player-score player-2-score">0</div>
+                    <div class="player-name player-2-name">Player 2</div>
+                </div>
+            </div>
+            <div class="move-container">
+                <p class="title-bar">Moves</p>
+                <i class="copy-move-list fa fa-clipboard"></i>
+            </div>
+            <div class="social-media-container">
+                <div class="social-media">
+                    <i class="fa fa-twitter"></i>
+                    <i class="fa fa-google"></i>
+                    <i class="fa fa-facebook"></i>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Include JavaScript at the bottom for faster loading time !-->
-    <script type="text/javascript" src="application.js"></script>
+    <script src="application.js"></script>
   </body>
 </html>
