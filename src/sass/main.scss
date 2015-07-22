@@ -1,9 +1,139 @@
+// imports
+
+
+// variables
+$space: 3vw;
+$scoreboard-size: 4.2em;
+$move-container-padding: 15px;
+
 body, html {
 	width: 100%;
 	height: 100%;
 }
 
-// .container {
-// 	width: 90%;
-// 	height: 100%;
-// }
+.container {
+	position: fixed;
+	top: $space;
+	left: $space;
+	bottom: $space;
+	width: 100vw - ($space * 2);
+	padding: 0;
+}
+
+.board-container {
+	width: 70vw;
+	height: 100%;
+	float: left;
+	border: 1px solid gray;
+}
+
+.menu-container {
+	position: fixed;
+	
+	top: $space;
+	bottom: $space;
+	right: $space;
+	
+	width: 24vw - $space;
+	
+	.logo {
+		margin: 0;
+		font-size: 4.5em;
+		float: left;
+		height: 10%;
+	}
+	
+	.settings-and-help {
+		float: right;
+		padding-left: 30px;
+		height: 10%;
+		
+		.glyphicon {
+			font-size: 1.6em;
+			padding: 5px;
+			float: left;
+			clear: left;			
+		}
+	}
+	
+	.score-container {
+		clear: left;
+		height: 20%;
+		position: relative;
+		
+		.score {
+			line-height: $scoreboard-size;
+			text-align: center;
+			
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 50%;
+			margin: auto;
+			
+			.player-name {
+				font-size: 1.3em;
+				display: inline-block;
+				vertical-align: middle;
+			}
+			
+			.player-score {
+				font-size: $scoreboard-size;
+				margin: 0 10px;
+				display: inline-block;
+				vertical-align: middle;
+			}
+		}
+	}
+	
+	.move-container {
+		width: 100%;
+		height: 63%;
+		border: 1px solid gray;
+		overflow-y: scroll;
+		position: relative;
+		padding: $move-container-padding;
+		
+		.copy-move-list {
+			position: absolute;
+			bottom: $move-container-padding;
+			right: $move-container-padding;
+			font-size: 2em;
+		}
+		
+		.title-bar {
+			position: absolute;
+			top: $move-container-padding;
+			right: $move-container-padding;
+			font-size: 1.1em;
+		}
+	}
+	
+	.social-media-container {
+		height: 7%;
+		width: 100%;
+		position: relative;
+		
+		.social-media {
+			position: absolute;
+			
+			bottom: 0;
+			right: 0;
+					
+			i {
+				font-size: 2em;
+				padding-left: 10px;
+			}
+		}
+	}
+}
+
+.divider-vertical {
+	height: $scoreboard-size;
+	width: 0px;
+	border: 1px solid black;
+	display: inline-block;
+	vertical-align: middle;
+}

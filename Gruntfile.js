@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 		cssmin: {
 			build: {
 				files: {
-					"build/application.css": ["build/**/*.css"]
+					"build/application.css": ["build/application.css"]
 				}
 			}
 		},
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 		sass: {
 			dist: {
 				files: {
-					"build/css/style.css" : "src/sass/application.scss"
+					"build/application.css" : "src/sass/application.scss"
 				}
 			}
 		},
@@ -102,6 +102,10 @@ module.exports = function(grunt) {
 						"!src/**/*.scss",
 						"!src/**/*.js",
 						"!src/**/*"],
+				tasks: ["copy"]
+			},
+			html: {
+				files: ["src/index.html"],
 				tasks: ["copy"]
 			}
 		},
@@ -143,8 +147,8 @@ module.exports = function(grunt) {
 		"stylesheets", 
 		["sass",
 		 "autoprefixer",
-		 "cssmin",
-		 "clean:stylesheets"]);
+		 "cssmin"
+		 ]);
 	
 	grunt.registerTask(
 		"scripts", 
