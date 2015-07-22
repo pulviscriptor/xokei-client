@@ -15,6 +15,7 @@
     "grunt-contrib-uglify": "^0.9.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-test": "^0.12.7",
+    "grunt-sass": "^1.0.0",
     "grunt-webpack": "^1.0.11",
     "jsdom": "^5.6.1",
     "mocha": "^2.2.5",

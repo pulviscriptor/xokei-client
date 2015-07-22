@@ -98,6 +98,7 @@ module.exports = function(grunt) {
 			},
 			copy: {
 				files: ["src/**",
+						"src/*",
 						"!src/**/*.scss",
 						"!src/**/*.js",
 						"!src/**/*"],
@@ -131,11 +132,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-connect");
 	grunt.loadNpmTasks("grunt-contrib-copy");
 	grunt.loadNpmTasks("grunt-contrib-cssmin");
-	grunt.loadNpmTasks("grunt-contrib-jshint");
-	grunt.loadNpmTasks("grunt-contrib-sass");
+	grunt.loadNpmTasks("grunt-contrib-jshint");	
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-mocha-test");
+	grunt.loadNpmTasks("grunt-sass");
 	grunt.loadNpmTasks('grunt-webpack');
 	
 	grunt.registerTask(
