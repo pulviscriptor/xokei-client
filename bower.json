@@ -17,6 +17,6 @@
   ],
   "dependencies": {
     "bootstrap-sass": "~3.3.5",
-    "raphael": "~2.1.4"
+    "svg.js": "~2.0.5"
   }
 }

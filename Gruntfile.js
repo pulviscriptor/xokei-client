@@ -1,3 +1,6 @@
+var path = require("path"),
+	webpack = require("webpack");
+	
 module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
@@ -67,7 +70,7 @@ module.exports = function(grunt) {
 		sass: {
 			dist: {
 				files: {
-					"build/css/style.css" : "src/sass/style.scss"
+					"build/css/style.css" : "src/sass/application.scss"
 				}
 			}
 		},
@@ -94,7 +97,10 @@ module.exports = function(grunt) {
 				tasks: ["scripts"]
 			},
 			copy: {
-				files: ["src/**", "!src/**/*.scss", "!src/**/*.js", "!src/**/*"],
+				files: ["src/**",
+						"!src/**/*.scss",
+						"!src/**/*.js",
+						"!src/**/*"],
 				tasks: ["copy"]
 			}
 		},
@@ -104,6 +110,17 @@ module.exports = function(grunt) {
 				output: {
 					path: "build/",
 					filename: "application.js"
+				},
+				plugins: [
+					new webpack.ResolverPlugin(
+						new webpack.ResolverPlugin
+							.DirectoryDescriptionFilePlugin("bower.json", 
+								["main"]
+							)	
+					)
+				],
+				resolve: {
+					root: [path.join(__dirname, "src", "components")]
 				}
 			}
 		}
