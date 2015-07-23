@@ -16,7 +16,6 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap-sass": "~3.3.5",
-    "svg.js": "~2.0.5"
+    "bootstrap-sass": "~3.3.5"
   }
 }

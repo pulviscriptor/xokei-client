@@ -62,7 +62,8 @@ module.exports = function(grunt) {
 					report: "spec",
 					captureFile: "test-results.txt",
 					quiet: false,
-					clearRequireCache: false
+					clearRequireCache: false,
+					require: "test/setup"
 				},
 				src: ["test/*.js"]
 			}
@@ -107,6 +108,10 @@ module.exports = function(grunt) {
 			html: {
 				files: ["src/index.html"],
 				tasks: ["copy"]
+			},
+			test: {
+				files: ["test/*.js"],
+				tasks: ["build"]
 			}
 		},
 		webpack: {

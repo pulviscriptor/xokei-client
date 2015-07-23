@@ -1,5 +1,6 @@
 {
 	"globals": {
-		"jQuery": true
+		"jQuery": true,
+		"strict": false
 	}
 }
