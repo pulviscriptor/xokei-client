@@ -4,19 +4,16 @@
  */
  
 /// requires
+var settings = require("./settings");
 
 /// private variables
-var types = {
-	"[": "player1Goal",
-	"]": "player2Goal",
-	"-": "wall",
-	".": "fieldLight",
-	"#": "fieldDark"
-};
 
 /// object
 function Tile(x, y, tile) {
 	/// public variables
+	// the owner of this tile (in most cases will be null, except for goals)
+	this.owner = null;
+	
 	// if there is a player on top of this tile, this is the variable that will
 	// contain a reference to it
 	this.player = null;
@@ -33,10 +30,16 @@ function Tile(x, y, tile) {
 	
 	/// functions
 	this.init = function () {
-		this.type = types[tile];
+		this.type = settings.characterTypes[tile];
 		
 		this.x = x;
 		this.y = y;
+	};
+	
+	// set a variable on this tile
+	this.set = function (property, value) {
+		this[property] = value;
+		return this;
 	};
 	
 	/// initialization

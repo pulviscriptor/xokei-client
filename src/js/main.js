@@ -9,8 +9,7 @@ require("bootstrap-sass");
 /// module requires
 var Board = require("./board"),
 	display = require("./display"),
-	settings = require("./settings"),
-	Tile = require("./tile");
+	settings = require("./settings");
 
 /// variables
 var board;
@@ -18,7 +17,12 @@ var board;
 /// functions
 function init() {
 	// create and initialize the game board in memory
-	board = new Board(settings.boardLayout);
+	board = new Board({
+		goals: settings.goals,
+		layout: settings.boardLayout.map(function (row) {
+			return row.split("");
+		})
+	});
 	
 	// initialize the display of the game and pass in the board so it can render
 	// the board
