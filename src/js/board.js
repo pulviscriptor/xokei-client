@@ -2,9 +2,11 @@
  * does not handle rendering them in any way. It also enforces rules, making 
  * that moves are legal.
  */
+"use strict";
  
 /// requires
-var Tile = require("./tile");
+var Actor = require("./actor"),
+	Tile = require("./tile");
 
 /// private variables
 
@@ -23,17 +25,20 @@ function translateLayout(layout) {
 function Board(settings) {
 	/// public variables
 	this.settings = {
+		actors: null,
 		layout: null,
 		goals: null
 	};
+	
+	// all the actors on the board
+	this.actors = [];
 	
 	// all the tiles on the board
 	this.tiles = [];
 	
 	/// functions
 	this.generate = function () {
-		var goal,
-			goals,
+		var goals,
 			i,
 			player,
 			x,
@@ -47,16 +52,19 @@ function Board(settings) {
 			}
 		}
 		
-		// initialize goals
+		// initialize the goal for each player
 		for (player in this.settings.goals) {
 			goals = this.settings.goals[player];
 			
 			for (i = 0; i < goals.length; i++) {
-				this.tiles[goals[i].x][goals[i].y]
-					.set("goal", true)
-					.set("owner", player);
+				this.tiles[goals[i].x][goals[i].y].set("goal", true);
 			}
 		}
+		
+		// initialize actors, if they have been passed in at board creation
+		if (settings.actors) {
+			this.placeActors();
+		}		
 	};
 	
 	this.init = function () {
@@ -75,6 +83,18 @@ function Board(settings) {
 		this.height = this.settings.layout[0].length;
 		
 		this.generate();
+	};
+	
+	// this function places the actors on the board from the array passed in, or
+	// from the settings passed to the board the first time it is created
+	this.placeActors = function(actors) {
+		var i;
+		
+		for (i = 0; i < actors.length; i++) {
+			this.actors.push(new Actor(actors[i]));
+		}
+		
+		return this;
 	};
 	
 	this.init();

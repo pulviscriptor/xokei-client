@@ -54,7 +54,20 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
-			myFiles: ["src/js/*.js"]
+			myFiles: ["src/js/*.js"],
+			options: {
+				globals: {
+					require: false,
+					module: true,
+					console: false,
+					window: true, 
+					$: false
+				},
+				node: true,
+				strict: false,
+				undef: true,
+				unused: true
+			}
 		},
 		mochaTest: {
 			test: {

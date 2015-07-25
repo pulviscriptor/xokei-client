@@ -1,4 +1,7 @@
 module.exports = {
+	// what percent of the size of a tile the actors should be
+	actorSize: 0.7,
+	
 	// the layout of the field
 	boardLayout: [
 		"|.#.#.#.#.#.#|",
@@ -60,13 +63,23 @@ module.exports = {
 	],
 	
 	// the width of borders on and surrounding the field
-	borderWidth: 4,
+	borderWidth: 3,
 	
 	// what tile types the characters passed into the board layout indicate
 	characterTypes: {
 		"|": "wall",
-		".": "fieldLight",
-		"#": "fieldDark"
+		".": "light",
+		"#": "dark"
+	},
+	
+	// a function that should determine and return the owner of a tile at the 
+	// specified coordinates
+	determineTileOwner: function (x) {
+		if (x < 7) {
+			return "player1";
+		} else {
+			return "player2";
+		}
 	},
 	
 	// tiles representing goals
@@ -91,25 +104,38 @@ module.exports = {
 	// each line in the symbol; each line in turn consists of an array of points
 	// which make up that line; units are in tenths of a tile
 	symbols: {
-		goal: {
+		actor: {
 			paths: [
-				[[4, 4], [6, 6]],
-				[[6, 4], [4, 6]]
+				[[3.9, 3.9], [6.1, 6.1]],
+				[[6.1, 3.9], [3.9, 6.1]]
 			],
 			stroke: {
-				width: 2,
-				dasharray: [6]
+				opacity: 0.6,
+				width: 1.5
+			}
+		},
+		goal: {
+			paths: [
+				[[3.9, 3.9], [6.1, 6.1]],
+				[[6.1, 3.9], [3.9, 6.1]]
+			],
+			stroke: {
+				dasharray: [4],
+				width: 1.5
 			}
 		}
 	},
 	
-	// how large a symbol should be in relation to the tile it is on
-	symbolSize: 1,
-	
-	// the colors of the tiles on the field
-	tileColors: {
-		fieldDark: "#DDD",
-		fieldLight: "white",
-		wall: "#FFF"
+	// the colors used to render the game
+	colors: {
+		actors: {
+			player1: "#f6f676",
+			player2: "#b67676"
+		},
+		field: {
+			dark: "#ececec",
+			light: "white",
+			wall: "white"
+		}
 	}
 };

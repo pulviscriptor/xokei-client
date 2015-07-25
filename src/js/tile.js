@@ -2,6 +2,7 @@
  * own neighbors, and knows what is on top of it, as well as what kind of tile
  * it is
  */
+"use strict";
  
 /// requires
 var settings = require("./settings");
@@ -14,9 +15,9 @@ function Tile(x, y, tile) {
 	// the owner of this tile (in most cases will be null, except for goals)
 	this.owner = null;
 	
-	// if there is a player on top of this tile, this is the variable that will
+	// if there is a actor on top of this tile, this is the variable that will
 	// contain a reference to it
-	this.player = null;
+	this.actor = null;
 	
 	// the type of tile this is, as determined by the character from the board
 	// layout that is passed to it at creation
@@ -30,6 +31,7 @@ function Tile(x, y, tile) {
 	
 	/// functions
 	this.init = function () {
+		this.owner = settings.determineTileOwner(x, y);
 		this.type = settings.characterTypes[tile];
 		
 		this.x = x;
