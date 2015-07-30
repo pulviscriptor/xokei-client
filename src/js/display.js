@@ -13,8 +13,12 @@ var $board,
 	$boardContainer,
 	actors = [],
 	board,
+	borders = [],
 	draw,
+	puck,
+	resizeTimeout,
 	symbols = {},
+	tiles = [],
 	tileSize;
 
 /// functions
@@ -32,14 +36,15 @@ function createActors() {
 	for (i = 0; i < board.actors.length; i++) {
 		actor = board.actors[i];
 		
-		actors[i] = draw.nested()
-			.move(actor.x * tileSize, actor.y * tileSize);
+		actors[i] = {
+			draw: draw.nested().move(actor.x * tileSize, actor.y * tileSize)
+		};
 		
-		actors[i].circle(diameter)
+		actors[i].element = actors[i].draw.circle(diameter)
 			.fill(settings.colors.actors[actor.owner])
 			.move(offset, offset);
 		
-		actors[i].use(symbols.actor);
+		actors[i].symbol = actors[i].draw.use(symbols.actor);
 	}
 }
 
@@ -50,28 +55,32 @@ function createBoard() {
 		x,
 		y;
 	
-	// determine the current tileSize based on the sizes of the DOM elements 
-	// that the board will be drawn in
-	tileSize = Math.floor(Math.min($boardContainer.height() / board.height, 
-		$boardContainer.width() / board.width) + 0.5);
+	// make sure the board is the appropriate size, and the tileSize variable is
+	// determined as well
+	sizeBoard();
 	
-	// resize the board DOM element 
-	$board.height(tileSize * board.height).width(tileSize * board.width);
-	
-	// render the symbols for later use
+	// render symbols passed in in the settings file for later use
 	renderSymbols();
 	
 	// draw tiles
 	for (x = 0; x < board.width; x++) {
+		tiles[x] = [];
+		
 		for (y = 0; y < board.height; y++) {
 			// draw the tile
-			draw.rect(tileSize, tileSize)
+			tiles[x][y] = {
+				element: draw.rect(tileSize, tileSize),
+			};
+			
+			tiles[x][y].element
 				.move(x * tileSize, y * tileSize)
 				.attr("fill", settings.colors.field[board.tiles[x][y].type]);
 				
 			// draw the goal symbol if the tile is a goal
 			if (board.tiles[x][y].goal) {
-				draw.use(symbols.goal).move(x * tileSize, y * tileSize);
+				tiles[x][y].symbol = draw
+					.use(symbols.goal)
+					.move(x * tileSize, y * tileSize);
 			}
 		}
 	}
@@ -79,7 +88,8 @@ function createBoard() {
 	// draw borders
 	for (i = 0; i < settings.borders.length; i++) {
 		border = settings.borders[i];
-		draw.rect(border.width * tileSize, border.height * tileSize)
+		borders[i] = draw.rect(border.width * tileSize, 
+				border.height * tileSize)
 			.move(border.x * tileSize, border.y * tileSize)
 			.fill({
 				opacity: 0
@@ -89,6 +99,21 @@ function createBoard() {
 				width: settings.borderWidth
 			});
 	}
+}
+
+// draw the puck
+function createPuck() {
+	var puckDiameter = Math.round(settings.puckSize * tileSize),
+		puckOffset = Math.round((tileSize - puckDiameter) / 2);
+	
+	puck = {
+		group: draw.nested()
+			.move(board.puck.x * tileSize, board.puck.y * tileSize)
+	};
+	
+	puck.element = puck.group.circle(puckDiameter)
+		.fill(settings.colors.puck)
+		.move(puckOffset, puckOffset);
 }
 
 // prerender symbols at a certain tileSize
@@ -114,6 +139,87 @@ function renderSymbols() {
 	}
 }
 
+// resize board
+function resizeBoard() {
+	var actorDiameter,
+		actorOffset,
+		border,
+		i,
+		puckDiameter,
+		puckOffset,
+		x,
+		y;
+	
+	// update tile and board size
+	sizeBoard();
+	
+	// re-render symbols
+	renderSymbols();
+	
+	// resize tiles
+	for(x = 0; x < board.width; x++) {
+		for (y = 0; y < board.height; y++) {
+			updateTile(x, y);
+		}
+	}
+	
+	// resize borders
+	for (i = 0; i < borders.length; i++) {
+		border = settings.borders[i];
+		borders[i].size(border.width * tileSize, border.height * tileSize)
+			.move(border.x * tileSize, border.y * tileSize);
+	}
+	
+	// resize actors
+	actorDiameter = Math.round(tileSize * settings.actorSize);
+	actorOffset = Math.round((tileSize - actorDiameter) / 2);
+	
+	for (i = 0; i < actors.length; i++) {
+		updateActor(i, actorDiameter, actorOffset);
+	}
+	
+	// resize puck
+	puckDiameter = Math.round(settings.puckSize * tileSize);
+	puckOffset = Math.round((tileSize - puckDiameter) / 2);
+	
+	puck.group.move(board.puck.x * tileSize, board.puck.y * tileSize);
+	puck.element.size(puckDiameter).move(puckOffset, puckOffset);
+}
+
+// size the board based on the container size, and update the tileSize variable
+function sizeBoard() {
+	// determine the current tileSize based on the sizes of the DOM elements 
+	// that the board will be drawn in
+	tileSize = Math.floor(Math.min($boardContainer.height() / board.height, 
+		$boardContainer.width() / board.width) + 0.5);
+	
+	// resize the DOM element the SVG elements representing board reside in
+	$board.height(tileSize * board.height).width(tileSize * board.width);
+}
+
+// update the size and position of a single actor
+function updateActor(index, diameter, offset) {
+	var actor = board.actors[index];
+	console.log(offset);
+	actors[index].draw.move(actor.x * tileSize, actor.y * tileSize);
+	actors[index].element.size(diameter).move(offset, offset);
+	actors[index].symbol.remove();
+	actors[index].symbol = actors[index].draw.use(symbols.actor);
+}
+
+// update the size of a single tile (and its possible element)
+function updateTile(x, y) {
+	tiles[x][y].element
+		.size(tileSize, tileSize)
+		.move(x * tileSize, y * tileSize);
+		
+	if (board.tiles[x][y].goal) {
+		tiles[x][y].symbol.remove();
+		tiles[x][y].symbol = draw.use(symbols.goal)
+			.move(x * tileSize, y * tileSize);
+	}
+}
+
 // initialize the canvas and create the board
 function init(_board) {
 	// keep a reference to the board
@@ -123,9 +229,20 @@ function init(_board) {
 	$board = $("#board");
 	$boardContainer = $("#board-container");
 	
-	draw = SVG("board").spof();
+	// generate an SVG element to render the game to
+	draw = SVG("board");
 	
+	// render the game
 	createBoard();
+	
+	// listen for resize events to redraw the board
+	$(window).resize(function () {
+		if (resizeTimeout) {
+			clearTimeout(resizeTimeout);
+		}
+		
+		resizeTimeout = setTimeout(resizeBoard, settings.resizeDelay);
+	});
 }
 
 // size a symbol appropriately
@@ -137,5 +254,6 @@ function resizeSymbol(point) {
 /// exports
 module.exports = window.display = {
 	createActors: createActors,
+	createPuck: createPuck,
 	init: init
 };

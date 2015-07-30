@@ -69,16 +69,19 @@ module.exports = function(grunt) {
 				unused: true
 			}
 		},
-		mochaTest: {
+		mochacov: {
 			test: {
 				options: {
-					report: "spec",
-					captureFile: "test-results.txt",
-					quiet: false,
-					clearRequireCache: false,
-					require: "test/setup"
-				},
-				src: ["test/*.js"]
+					"check-leaks": true,
+					"clearRequireCache": false,
+					"quiet": false,
+					"reporter": "html-cov",
+					"require": ["test/setup"]
+				}
+			},
+			options: {
+				files: "test/*.js",
+				output: "test/results.html"
 			}
 		},
 		sass: {
@@ -157,9 +160,13 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-jshint");	
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-watch");
-	grunt.loadNpmTasks("grunt-mocha-test");
+	grunt.loadNpmTasks("grunt-mocha-cov");
 	grunt.loadNpmTasks("grunt-sass");
 	grunt.loadNpmTasks('grunt-webpack');
+	
+	grunt.registerTask(
+		"test",
+		["mochacov:test"])
 	
 	grunt.registerTask(
 		"stylesheets", 
@@ -171,7 +178,7 @@ module.exports = function(grunt) {
 	grunt.registerTask(
 		"scripts", 
 		["jshint",
-		 "mochaTest",
+		 "test",
 		 "webpack",
 		 "uglify",
 		 "clean:scripts"]);

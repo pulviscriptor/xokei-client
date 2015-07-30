@@ -72,6 +72,20 @@ module.exports = {
 		"#": "dark"
 	},
 	
+	// the colors used to render the game
+	colors: {
+		actors: {
+			player1: "#f6f676",
+			player2: "#b67676"
+		},
+		field: {
+			dark: "#ececec",
+			light: "white",
+			wall: "white"
+		},
+		puck: "#7f7fff"
+	},
+	
 	// a function that should determine and return the owner of a tile at the 
 	// specified coordinates
 	determineTileOwner: function (x) {
@@ -100,6 +114,12 @@ module.exports = {
 		}]
 	},
 	
+	puckSize: 0.7,
+	
+	// the amount of time to wait before redrawing the board after the window is
+	// resized in milliseconds
+	resizeDelay: 100,
+	
 	// settings to use when rendering a symbol on a tile; topmost array contains
 	// each line in the symbol; each line in turn consists of an array of points
 	// which make up that line; units are in tenths of a tile
@@ -123,19 +143,6 @@ module.exports = {
 				dasharray: [4],
 				width: 1.5
 			}
-		}
-	},
-	
-	// the colors used to render the game
-	colors: {
-		actors: {
-			player1: "#f6f676",
-			player2: "#b67676"
-		},
-		field: {
-			dark: "#ececec",
-			light: "white",
-			wall: "white"
 		}
 	}
 };

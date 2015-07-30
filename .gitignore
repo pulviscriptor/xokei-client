@@ -30,6 +30,10 @@ node_modules
 src/components
 
 # Test log
-test-results.txt
+test/results.html
+
 # SASS cache
 .sass-cache
+
+# build dir
+build

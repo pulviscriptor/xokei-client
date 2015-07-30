@@ -15,4 +15,9 @@ describe("tile", function () {
 	it("should not have an actor initially", function () {
 		expect(tile).to.have.property("actor").that.is.null;
 	});
+	
+	it("should allow properties to be set", function () {
+		tile.set("x", 10);
+		expect(tile.x).to.equal(10);
+	});
 });

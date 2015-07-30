@@ -1,10 +1,8 @@
-// imports
-
-
 // variables
 $space: 3vw;
 $scoreboard-size: 4.2em;
 $move-container-padding: 15px;
+$menu-width: 255px;
 
 body, html {
 	width: 100%;
@@ -21,9 +19,13 @@ body, html {
 }
 
 .board-container {
-	width: 70vw;
+	width: calc(91vw - #{$menu-width});
 	height: 100%;
 	float: left;
+	
+	@media screen and (max-width: 1062.5px) {
+		overflow-x: scroll;
+	}
 }
 
 .menu-container {
@@ -33,7 +35,7 @@ body, html {
 	bottom: $space;
 	right: $space;
 	
-	width: 24vw - $space;
+	width: $menu-width;
 	
 	.logo {
 		margin: 0;

@@ -7,8 +7,6 @@
 /// requires
 var settings = require("./settings");
 
-/// private variables
-
 /// object
 function Tile(x, y, tile) {
 	/// public variables

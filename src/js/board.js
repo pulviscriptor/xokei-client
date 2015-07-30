@@ -6,6 +6,7 @@
  
 /// requires
 var Actor = require("./actor"),
+	Puck = require("./puck"),
 	Tile = require("./tile");
 
 /// private variables
@@ -64,7 +65,12 @@ function Board(settings) {
 		// initialize actors, if they have been passed in at board creation
 		if (settings.actors) {
 			this.placeActors();
-		}		
+		}
+		
+		// initialize puck, if it has been passed in at board creation
+		if (settings.puck) {
+			this.placePuck();
+		}
 	};
 	
 	this.init = function () {
@@ -95,6 +101,15 @@ function Board(settings) {
 		}
 		
 		return this;
+	};
+	
+	// this function places the puck on the board from the puck data passed in,
+	// or from the settings passed in to the board the first time it is created
+	this.placePuck = function (puck) {
+		this.puck = new Puck(puck || {
+			x: -1,
+			y: -1
+		});
 	};
 	
 	this.init();

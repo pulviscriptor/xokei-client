@@ -33,7 +33,9 @@ function init() {
 // begin a game
 function beginGame(state) {
 	board.placeActors(state.actors);
+	board.placePuck(state.puck);
 	display.createActors();
+	display.createPuck();
 }
 
 /// initialization
@@ -81,5 +83,9 @@ beginGame({
 		x: 7,
 		y: 7,
 		owner: "player2"
-	}]
+	}],
+	puck: {
+		x: 4,
+		y: 5
+	}
 });
