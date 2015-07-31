@@ -1,8 +1,9 @@
 // variables
-$space: 3vw;
-$scoreboard-size: 4.2em;
-$move-container-padding: 15px;
 $menu-width: 255px;
+$move-container-padding: 15px;
+$scoreboard-size: 4.2em;
+$social-media-padding: 10px;
+$space: 3vw;
 
 body, html {
 	width: 100%;
@@ -19,13 +20,9 @@ body, html {
 }
 
 .board-container {
-	width: calc(91vw - #{$menu-width});
+	width: calc((91vw - #{$menu-width});
 	height: 100%;
 	float: left;
-	
-	@media screen and (max-width: 1062.5px) {
-		overflow-x: scroll;
-	}
 }
 
 .menu-container {
@@ -37,16 +34,19 @@ body, html {
 	
 	width: $menu-width;
 	
+	min-height: 460px;
+	
 	.logo {
-		margin: 0;
+		width: 156px;
+		margin: 0 auto;
 		font-size: 4.5em;
-		float: left;
 		height: 10%;
 	}
 	
 	.settings-and-help-container {
-		float: right;
-		padding-left: 30px;
+		position: absolute;
+		top: 0;
+		right: 0;
 		height: 10%;
 		
 		.fa {
@@ -97,23 +97,28 @@ body, html {
 		position: relative;
 		padding: $move-container-padding;
 		
-		.copy-move-list {
-			position: absolute;
-			bottom: $move-container-padding;
-			right: $move-container-padding;
-			font-size: 2em;
+		.move-label {
+			float: left;
+			margin: 0;
 		}
 		
-		.title-bar {
-			position: absolute;
-			top: $move-container-padding;
-			right: $move-container-padding;
-			font-size: 1.1em;
+		#copy-moves {
+			float: right;
+		}
+		
+		#moves {
+			float: left;
+			clear: both;
+			margin-top: $move-container-padding;
+			height: calc(100% - #{25px + $move-container-padding});
+			resize: none;
+			width: 100%;
+			overflow-y: scroll;
 		}
 	}
 	
 	.social-media-container {
-		height: 7%;
+		height: 29px + $social-media-padding;
 		width: 100%;
 		position: relative;
 		
@@ -121,7 +126,7 @@ body, html {
 			position: absolute;
 			
 			bottom: 0;
-			right: 0;
+			right: $social-media-padding;
 					
 			i {
 				font-size: 2em;

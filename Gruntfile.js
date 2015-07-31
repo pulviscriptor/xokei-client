@@ -103,7 +103,8 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			options: {
-				livereload: true
+				livereload: true,
+				spawn: false
 			},
 			stylesheets: {
 				files: "src/**/*.scss",
