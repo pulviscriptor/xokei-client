@@ -40,14 +40,14 @@ body, html {
 		width: 156px;
 		margin: 0 auto;
 		font-size: 4.5em;
-		height: 10%;
+		height: 60px;
 	}
 	
 	.settings-and-help-container {
 		position: absolute;
 		top: 0;
 		right: 0;
-		height: 10%;
+		height: 60px;
 		
 		.fa {
 			font-size: 1.6em;
@@ -59,7 +59,7 @@ body, html {
 	
 	.score-container {
 		clear: left;
-		height: 20%;
+		height: 120px;
 		position: relative;
 		
 		.score {
@@ -91,9 +91,7 @@ body, html {
 	
 	.move-container {
 		width: 100%;
-		height: 63%;
 		border: 1px solid gray;
-		overflow-y: scroll;
 		position: relative;
 		padding: $move-container-padding;
 		

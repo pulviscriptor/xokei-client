@@ -11,10 +11,15 @@ var settings = require("./settings");
 /// private variables
 var $board,
 	$boardContainer,
+	$moveContainer,
 	actors = [],
 	board,
 	borders = [],
 	draw,
+	legend = {
+		horizontal: [],
+		vertical: []
+	},
 	puck,
 	resizeTimeout,
 	symbols = {},
@@ -98,6 +103,46 @@ function createBoard() {
 				color: "black",
 				width: settings.borderWidth
 			});
+	}
+	
+	// create the legend--that is, the elements that contain the characters that
+	// represent the coordinate system for the board
+	createLegend();
+}
+
+// create the HTML elements that will contain the coordinates for the board
+function createLegend() {
+	var boardHeight = $board.height(),
+		boardPos = $board.position(),
+		x,
+		y;
+	
+	function $createMarker() {
+		return $("<div>").css({
+			position: "absolute",
+			textAlign: "center",
+			fontSize: "28px",
+			paddingRight: "10px"
+		}).appendTo($boardContainer);
+	}
+		
+	// create horizontal legend
+	for (x = 0; x < board.width; x++) {
+		legend.horizontal.push($createMarker().css({
+			top: (boardPos.top + boardHeight + settings.legendPadding) + "px",
+			left: (x * tileSize + boardPos.left) + "px",
+			width: tileSize + "px"
+		}).text(settings.coordinates.horizontal[x]));
+	}
+	
+	// create vertical legend
+	for (y = 0; y < board.height; y++) {
+		legend.vertical.push($createMarker().css({
+			top: (y * tileSize + boardPos.top) + "px",
+			left: 0,
+			height: tileSize + "px",
+			lineHeight: tileSize + "px"
+		}).text(settings.coordinates.vertical[y]));
 	}
 }
 
@@ -184,14 +229,24 @@ function resizeBoard() {
 	
 	puck.group.move(board.puck.x * tileSize, board.puck.y * tileSize);
 	puck.element.size(puckDiameter).move(puckOffset, puckOffset);
+	
+	// move and resize the legend appropriately
+	updateLegend();
+	
+	// resize moves container appropriately
+	$moveContainer.height($board.height() - $moveContainer.position().top - 30 +
+		Math.floor(settings.borderWidth / 2));
 }
 
 // size the board based on the container size, and update the tileSize variable
 function sizeBoard() {
 	// determine the current tileSize based on the sizes of the DOM elements 
 	// that the board will be drawn in
-	tileSize = Math.floor(Math.min($boardContainer.height() / board.height, 
-		$boardContainer.width() / board.width) + 0.5);
+	tileSize = Math.floor(Math.min($boardContainer.height() / 
+		(board.height + 1), $boardContainer.width() / (board.width + 1)) + 0.5);
+	
+	// make sure tileSize doesn't get too small
+	tileSize = Math.max(tileSize, settings.minimumTileSize);
 	
 	// resize the DOM element the SVG elements representing board reside in
 	$board.height(tileSize * board.height).width(tileSize * board.width);
@@ -200,11 +255,34 @@ function sizeBoard() {
 // update the size and position of a single actor
 function updateActor(index, diameter, offset) {
 	var actor = board.actors[index];
-	console.log(offset);
 	actors[index].draw.move(actor.x * tileSize, actor.y * tileSize);
 	actors[index].element.size(diameter).move(offset, offset);
 	actors[index].symbol.remove();
 	actors[index].symbol = actors[index].draw.use(symbols.actor);
+}
+
+// reposition the elements in the legend
+function updateLegend() {
+	var boardHeight = $board.height(),
+		boardPos = $board.position();
+		
+	// create horizontal legend
+	legend.horizontal.forEach(function ($elem, x) {
+		$elem.css({
+			top: (boardPos.top + boardHeight + settings.legendPadding) + "px",
+			left: (x * tileSize + boardPos.left) + "px",
+			width: tileSize + "px"
+		});
+	});
+	
+	legend.vertical.forEach(function ($elem, y) {
+		$elem.css({
+			top: (y * tileSize + boardPos.top) + "px",
+			left: 0,
+			height: tileSize + "px",
+			lineHeight: tileSize + "px"
+		});
+	});
 }
 
 // update the size of a single tile (and its possible element)
@@ -228,12 +306,18 @@ function init(_board) {
 	// get references to the DOM elements that contain the board
 	$board = $("#board");
 	$boardContainer = $("#board-container");
+	$moveContainer = $(".move-container");
 	
 	// generate an SVG element to render the game to
 	draw = SVG("board");
 	
 	// render the game
 	createBoard();
+	
+	// properly size the move box based on the JavaScript determined height of
+	// the game board
+	$moveContainer.height($board.height() - $moveContainer.position().top - 30 +
+		Math.floor(settings.borderWidth / 2));
 	
 	// listen for resize events to redraw the board
 	$(window).resize(function () {

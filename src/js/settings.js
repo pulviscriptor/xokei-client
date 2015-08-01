@@ -86,6 +86,12 @@ module.exports = {
 		puck: "#7f7fff"
 	},
 	
+	coordinates: {
+		horizontal: ["[", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+			"l", "]"],
+		vertical: ["1", "2", "3", "4", "5", "6", "7", "8"]
+	},
+	
 	// a function that should determine and return the owner of a tile at the 
 	// specified coordinates
 	determineTileOwner: function (x) {
@@ -114,6 +120,13 @@ module.exports = {
 		}]
 	},
 	
+	// padding between the legend and the board, in pixels
+	legendPadding: 10,
+	
+	// minimum tile size
+	minimumTileSize: 60,
+	
+	// the size of the puck, relative to the normalized size of a tile
 	puckSize: 0.7,
 	
 	// the amount of time to wait before redrawing the board after the window is

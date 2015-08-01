@@ -28,12 +28,25 @@ function Tile(x, y, tile) {
 	this.y = null;
 	
 	/// functions
+	this.addActor = function (actor) {
+		this.actor = actor;
+	};
+	
+	// determine Chebyshev distance from tile at another point
+	this.distance = function (other) {
+		return Math.max(Math.abs(this.x - other.x), Math.abs(this.y - other.y));
+	};
+	
 	this.init = function () {
 		this.owner = settings.determineTileOwner(x, y);
 		this.type = settings.characterTypes[tile];
 		
 		this.x = x;
 		this.y = y;
+	};
+	
+	this.removeActor = function () {
+		this.actor = null;
 	};
 	
 	// set a variable on this tile

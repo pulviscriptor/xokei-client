@@ -49,7 +49,8 @@ function Board(settings) {
 		for (x = 0; x < this.width; x++) {
 			this.tiles[x] = [];
 			for (y = 0; y < this.height; y++) {
-				this.tiles[x][y] = new Tile(x, y, this.settings.layout[x][y]);
+				this.tiles[x][y] = new Tile(x, y, 
+					this.settings.layout[x][y], this);
 			}
 		}
 		
@@ -97,7 +98,7 @@ function Board(settings) {
 		var i;
 		
 		for (i = 0; i < actors.length; i++) {
-			this.actors.push(new Actor(actors[i]));
+			this.actors.push(new Actor(actors[i], this));
 		}
 		
 		return this;
