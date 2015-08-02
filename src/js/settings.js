@@ -124,7 +124,7 @@ module.exports = {
 	legendPadding: 10,
 	
 	// minimum tile size
-	minimumTileSize: 60,
+	minimumTileSize: 50,
 	
 	// the size of the puck, relative to the normalized size of a tile
 	puckSize: 0.7,

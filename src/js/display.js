@@ -250,6 +250,8 @@ function sizeBoard() {
 	
 	// resize the DOM element the SVG elements representing board reside in
 	$board.height(tileSize * board.height).width(tileSize * board.width);
+	
+	$(".container").css("min-width", settings.minimumTileSize * 22 + "px");
 }
 
 // update the size and position of a single actor

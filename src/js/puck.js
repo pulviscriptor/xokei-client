@@ -13,8 +13,6 @@ function Puck(settings) {
 	
 	/// public functions
 	this.init = function () {
-		console.log(settings);
-		
 		this.x = settings.x;
 		this.y = settings.y;
 	};

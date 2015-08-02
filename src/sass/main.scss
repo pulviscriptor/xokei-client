@@ -11,7 +11,7 @@ body, html {
 }
 
 .container {
-	position: fixed;
+	position: absolute;
 	top: $space;
 	left: $space;
 	bottom: $space;
@@ -26,11 +26,11 @@ body, html {
 }
 
 .menu-container {
-	position: fixed;
+	position: absolute;
 	
-	top: $space;
+	top: 0;
 	bottom: $space;
-	right: $space;
+	right: 0;
 	
 	width: $menu-width;
 	
