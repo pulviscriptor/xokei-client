@@ -22,7 +22,7 @@ var $board,
 	},
 	puck,
 	resizeTimeout,
-	symbols = {},
+	// symbols = {},
 	tiles = [],
 	tileSize;
 
@@ -48,12 +48,10 @@ function createActors() {
 		actors[i].element = actors[i].draw.circle(diameter)
 			.fill(settings.colors.actors[actor.owner])
 			.move(offset, offset);
-		
-		actors[i].symbol = actors[i].draw.use(symbols.actor);
 	}
 }
 
-// draw the board (tiles, borders, and tile symbols) to the DOM
+// draw the board (tiles and borders) to the DOM
 function createBoard() {
 	var border,
 		i,
@@ -65,7 +63,7 @@ function createBoard() {
 	sizeBoard();
 	
 	// render symbols passed in in the settings file for later use
-	renderSymbols();
+	// renderSymbols();
 	
 	// draw tiles
 	for (x = 0; x < board.width; x++) {
@@ -80,13 +78,6 @@ function createBoard() {
 			tiles[x][y].element
 				.move(x * tileSize, y * tileSize)
 				.attr("fill", settings.colors.field[board.tiles[x][y].type]);
-				
-			// draw the goal symbol if the tile is a goal
-			if (board.tiles[x][y].goal) {
-				tiles[x][y].symbol = draw
-					.use(symbols.goal)
-					.move(x * tileSize, y * tileSize);
-			}
 		}
 	}
 	
@@ -122,7 +113,8 @@ function createLegend() {
 			position: "absolute",
 			textAlign: "center",
 			fontSize: "28px",
-			paddingRight: "10px"
+			paddingRight: "10px",
+			fontFamily: "\"Lucido Console\", monospace"
 		}).appendTo($boardContainer);
 	}
 		
@@ -162,27 +154,27 @@ function createPuck() {
 }
 
 // prerender symbols at a certain tileSize
-function renderSymbols() {
-	var i,
-		paths,
-		symbolName;
+// function renderSymbols() {
+// 	var i,
+// 		paths,
+// 		symbolName;
 	
-	// prerender symbols based on tileSize
-	for (symbolName in settings.symbols) {
-		paths = settings.symbols[symbolName].paths;
+// 	// prerender symbols based on tileSize
+// 	for (symbolName in settings.symbols) {
+// 		paths = settings.symbols[symbolName].paths;
 		
-		// store a reference to this symbol
-		symbols[symbolName] = draw.symbol();
+// 		// store a reference to this symbol
+// 		symbols[symbolName] = draw.symbol();
 		
-		// actually add the lines to this symbol
-		for (i = 0; i < paths.length; i++) {
-			symbols[symbolName]
-				.polyline(paths[i].map(resizeSymbol))
-				.fill("none")
-				.stroke(settings.symbols[symbolName].stroke);
-		}
-	}
-}
+// 		// actually add the lines to this symbol
+// 		for (i = 0; i < paths.length; i++) {
+// 			symbols[symbolName]
+// 				.polyline(paths[i].map(resizeSymbol))
+// 				.fill("none")
+// 				.stroke(settings.symbols[symbolName].stroke);
+// 		}
+// 	}
+// }
 
 // resize board
 function resizeBoard() {
@@ -199,7 +191,7 @@ function resizeBoard() {
 	sizeBoard();
 	
 	// re-render symbols
-	renderSymbols();
+	// renderSymbols();
 	
 	// resize tiles
 	for(x = 0; x < board.width; x++) {
@@ -259,8 +251,6 @@ function updateActor(index, diameter, offset) {
 	var actor = board.actors[index];
 	actors[index].draw.move(actor.x * tileSize, actor.y * tileSize);
 	actors[index].element.size(diameter).move(offset, offset);
-	actors[index].symbol.remove();
-	actors[index].symbol = actors[index].draw.use(symbols.actor);
 }
 
 // reposition the elements in the legend
@@ -292,12 +282,6 @@ function updateTile(x, y) {
 	tiles[x][y].element
 		.size(tileSize, tileSize)
 		.move(x * tileSize, y * tileSize);
-		
-	if (board.tiles[x][y].goal) {
-		tiles[x][y].symbol.remove();
-		tiles[x][y].symbol = draw.use(symbols.goal)
-			.move(x * tileSize, y * tileSize);
-	}
 }
 
 // initialize the canvas and create the board
@@ -332,10 +316,10 @@ function init(_board) {
 }
 
 // size a symbol appropriately
-function resizeSymbol(point) {
-	return [point[0] * tileSize * 0.1, 
-			point[1] * tileSize * 0.1];
-}
+// function resizeSymbol(point) {
+// 	return [point[0] * tileSize * 0.1, 
+// 			point[1] * tileSize * 0.1];
+// }
 
 /// exports
 module.exports = window.display = {

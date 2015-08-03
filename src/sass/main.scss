@@ -1,7 +1,7 @@
 // variables
 $menu-width: 255px;
 $move-container-padding: 15px;
-$scoreboard-size: 4.2em;
+$scoreboard-size: 3.6em;
 $social-media-padding: 10px;
 $space: 3vw;
 
@@ -82,7 +82,15 @@ body, html {
 			
 			.player-score {
 				font-size: $scoreboard-size;
-				margin: 0 10px;
+				margin: 0 5px;
+				display: inline-block;
+				vertical-align: middle;
+			}
+			
+			.divider-vertical {
+				height: $scoreboard-size;
+				width: 0px;
+				border: 1px solid black;
 				display: inline-block;
 				vertical-align: middle;
 			}
@@ -98,10 +106,13 @@ body, html {
 		.move-label {
 			float: left;
 			margin: 0;
+			padding: 0;
 		}
 		
 		#copy-moves {
 			float: right;
+			position: relative;
+			top: 2px;
 		}
 		
 		#moves {
@@ -112,6 +123,7 @@ body, html {
 			resize: none;
 			width: 100%;
 			overflow-y: scroll;
+			font-family: "Lucida Console", monospace;
 		}
 	}
 	
@@ -132,12 +144,4 @@ body, html {
 			}
 		}
 	}
-}
-
-.divider-vertical {
-	height: $scoreboard-size;
-	width: 0px;
-	border: 1px solid black;
-	display: inline-block;
-	vertical-align: middle;
 }

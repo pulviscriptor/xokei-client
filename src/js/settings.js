@@ -136,26 +136,5 @@ module.exports = {
 	// settings to use when rendering a symbol on a tile; topmost array contains
 	// each line in the symbol; each line in turn consists of an array of points
 	// which make up that line; units are in tenths of a tile
-	symbols: {
-		actor: {
-			paths: [
-				[[3.9, 3.9], [6.1, 6.1]],
-				[[6.1, 3.9], [3.9, 6.1]]
-			],
-			stroke: {
-				opacity: 0.6,
-				width: 1.5
-			}
-		},
-		goal: {
-			paths: [
-				[[3.9, 3.9], [6.1, 6.1]],
-				[[6.1, 3.9], [3.9, 6.1]]
-			],
-			stroke: {
-				dasharray: [4],
-				width: 1.5
-			}
-		}
-	}
+	symbols: {}
 };

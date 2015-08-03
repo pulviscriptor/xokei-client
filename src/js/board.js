@@ -1,6 +1,6 @@
 /* The Board object holds all the tiles and all the game pieces in memory, but
  * does not handle rendering them in any way. It also enforces rules, making 
- * that moves are legal.
+ * sure that moves are legal.
  */
 "use strict";
  

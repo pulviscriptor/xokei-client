@@ -8,7 +8,9 @@
 var settings = require("./settings");
 
 /// object
-function Tile(x, y, tile) {
+function Tile(x, y, tile, board) {
+	var _this = this;
+	
 	/// public variables
 	// the owner of this tile (in most cases will be null, except for goals)
 	this.owner = null;
@@ -43,6 +45,16 @@ function Tile(x, y, tile) {
 		
 		this.x = x;
 		this.y = y;
+	};
+	
+	// return tiles in this tile's Moore neighborhood
+	this.neighborhood = function () {
+		var dx = [0, -1, -1, -1, 0, 1, 1, 1],
+			dy = [1, 1, 0, -1, -1, -1, 0, 1];
+			
+		return dx.map(function (x, i) {
+			return board.tiles[_this.x + x][_this.y + dy[i]];
+		});
 	};
 	
 	this.removeActor = function () {
