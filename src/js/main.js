@@ -6,6 +6,7 @@
 /// requires
 var Board = require("./board"),
 	display = require("./display"),
+	events = require("./events"),
 	settings = require("./settings");
 
 window.$ = window.jQuery = require("jquery");
@@ -22,7 +23,8 @@ function init() {
 		goals: settings.goals,
 		layout: settings.boardLayout.map(function (row) {
 			return row.split("");
-		})
+		}),
+		owner: "player1"
 	});
 	
 	// initialize the display of the game and pass in the board so it can render
@@ -36,6 +38,9 @@ function beginGame(state) {
 	board.placePuck(state.puck);
 	display.createActors();
 	display.createPuck();
+	
+	// begin listening for and handling events
+	events.listen(board, display);
 }
 
 /// initialization

@@ -84,6 +84,7 @@ module.exports = {
 		field: {
 			dark: "#ececec",
 			light: "white",
+			valid: "green",
 			wall: "white"
 		},
 		puck: "#7f7fff"
@@ -150,5 +151,8 @@ module.exports = {
 				width: 1.5
 			}
 		}
-	}
+	},
+	
+	// size of the green circle indicating that a move is valid
+	validMoveIndicatorSize: 0.3
 };

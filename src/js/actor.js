@@ -6,6 +6,8 @@
 
 /// object
 function Actor(settings, board) {
+	var self = this;
+	
 	/// public functions
 	// determine whether a move is valid
 	this.evaluateMove = function (tile) {
@@ -27,7 +29,7 @@ function Actor(settings, board) {
 		}
 		
 		// the tile is greater than one move away from the actor's current tile
-		if (this.tile.distance(tile) !== 1) {
+		if (self.tile.distance(tile) !== 1) {
 			return false;
 		}
 		

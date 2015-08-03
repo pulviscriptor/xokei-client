@@ -34,6 +34,9 @@ function Board(settings) {
 	// all the actors on the board
 	this.actors = [];
 	
+	// the owner of this half of the game
+	this.owner = null;
+	
 	// all the tiles on the board
 	this.tiles = [];
 	

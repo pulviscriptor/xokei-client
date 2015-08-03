@@ -16,6 +16,7 @@ var $board,
 	board,
 	borders = [],
 	draw,
+	highlight,
 	legend = {
 		horizontal: [],
 		vertical: []
@@ -24,9 +25,25 @@ var $board,
 	resizeTimeout,
 	symbols = {},
 	tiles = [],
-	tileSize;
+	tileSize,
+	validMoveIndicators = [],
+	validMoves = [];
 
 /// functions
+// remove styling from any tiles which have been marked as valid moves
+function clearValidMoves() {
+	validMoveIndicators.forEach(function (indicator) {
+		indicator.remove();
+	});
+	
+	validMoves.forEach(function (move) {
+		tiles[move.x][move.y].validMove = false;
+	});
+	
+	validMoveIndicators.length = 0;
+	validMoves.length = 0;
+}
+
 // draw and store the actors
 function createActors() {
 	var actor,
@@ -47,10 +64,12 @@ function createActors() {
 		
 		actors[i].element = actors[i].draw.circle(diameter)
 			.fill(settings.colors.actors[actor.owner])
-			.move(offset, offset);
+			.move(offset, offset)
+			.data("actor", i);
 			
 		if (actor.owner === "player1") {
-			actors[i].symbol = actors[i].draw.use(symbols.player1Actor);
+			actors[i].symbol = actors[i].draw.use(symbols.player1Actor)
+				.style("pointer-events", "none");
 		} else if (actor.owner === "player2") {
 			actors[i].element.stroke({
 				width: settings.actorBorderWidth
@@ -81,11 +100,14 @@ function createBoard() {
 			// draw the tile
 			tiles[x][y] = {
 				element: draw.rect(tileSize, tileSize),
+				x: x,
+				y: y
 			};
 			
 			tiles[x][y].element
 				.move(x * tileSize, y * tileSize)
-				.attr("fill", settings.colors.field[board.tiles[x][y].type]);
+				.attr("fill", settings.colors.field[board.tiles[x][y].type])
+				.data("position", {x: x, y: y});
 		}
 	}
 	
@@ -101,7 +123,8 @@ function createBoard() {
 			.stroke({
 				color: "black",
 				width: settings.borderWidth
-			});
+			})
+			.style("pointer-events", "none");
 	}
 	
 	// create the legend--that is, the elements that contain the characters that
@@ -159,6 +182,27 @@ function createPuck() {
 	puck.element = puck.group.circle(puckDiameter)
 		.fill(settings.colors.puck)
 		.move(puckOffset, puckOffset);
+}
+
+// highlight a tile either valid or invalid
+function highlightTile(tile, valid) {
+	if (highlight) {
+		unhighlightTile();
+	}
+		
+	highlight = draw.rect(tileSize, tileSize)
+		.move(tileSize * tile.x, tileSize * tile.y)
+		.fill({
+			color: valid ? settings.colors.field.valid : "red",
+			opacity: 0
+		})
+		.style("pointer-events", "none");
+	
+	highlight
+		.animate(100)
+		.fill({
+			opacity: 0.3
+		});
 }
 
 // prerender symbols at a certain tileSize
@@ -238,6 +282,29 @@ function resizeBoard() {
 		Math.floor(settings.borderWidth / 2));
 }
 
+// display the moves that a particular player can make
+function showValidMoves(actor) {
+	// determine valid moves for this actor by getting the tiles around the tile
+	// it is sitting on, and then checking if the are valid places to move to
+	validMoves = actor.tile.neighborhood().filter(actor.evaluateMove);
+	
+	validMoves.forEach(function (move) {
+		var diameter = tileSize * settings.validMoveIndicatorSize,
+			offset = Math.round((tileSize - diameter) / 2),
+			indicator = draw.circle(diameter)
+				.move((tileSize * move.x) + offset, 
+					(tileSize * move.y) + offset)
+				.fill({
+					color: settings.colors.field.valid,
+					opacity: 0.3
+				})
+				.style("pointer-events", "none");
+		
+		tiles[move.x][move.y].validMove = true;
+		validMoveIndicators.push(indicator);
+	});
+}
+
 // size the board based on the container size, and update the tileSize variable
 function sizeBoard() {
 	// determine the current tileSize based on the sizes of the DOM elements 
@@ -252,6 +319,16 @@ function sizeBoard() {
 	$board.height(tileSize * board.height).width(tileSize * board.width);
 	
 	$(".container").css("min-width", settings.minimumTileSize * 22 + "px");
+}
+
+// unhighlight a previously highlighted tile
+function unhighlightTile() {
+	if (!highlight) {
+		return;
+	}
+	
+	highlight.remove();
+	highlight = null;
 }
 
 // update the size and position of a single actor
@@ -336,7 +413,14 @@ function resizeSymbol(point) {
 
 /// exports
 module.exports = window.display = {
+	actors: actors,
+	borders: borders,
+	clearValidMoves: clearValidMoves,
 	createActors: createActors,
 	createPuck: createPuck,
-	init: init
+	highlightTile: highlightTile,
+	init: init,
+	showValidMoves: showValidMoves,
+	tiles: tiles,
+	unhighlightTile: unhighlightTile
 };
