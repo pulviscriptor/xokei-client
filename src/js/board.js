@@ -90,6 +90,8 @@ function Board(settings) {
 		this.height = this.settings.layout[0].length;
 		
 		this.generate();
+		
+		window.board = this;
 	};
 	
 	// this function places the actors on the board from the array passed in, or

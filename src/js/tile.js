@@ -47,14 +47,22 @@ function Tile(x, y, tile, board) {
 		this.y = y;
 	};
 	
-	// return tiles in this tile's Moore neighborhood
+	// return this tile's Moore neighborhood
 	this.neighborhood = function () {
 		var dx = [0, -1, -1, -1, 0, 1, 1, 1],
 			dy = [1, 1, 0, -1, -1, -1, 0, 1];
 			
 		return dx.map(function (x, i) {
-			return board.tiles[_this.x + x][_this.y + dy[i]];
-		});
+			var tile;
+			
+			if (board.tiles[_this.x + x]) {
+				tile = board.tiles[_this.x + x][_this.y + dy[i]];
+			
+				if (tile && tile.type !== "wall") {
+					return tile;
+				}
+			}
+		}).filter(Boolean);
 	};
 	
 	this.removeActor = function () {

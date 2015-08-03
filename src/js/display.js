@@ -22,7 +22,7 @@ var $board,
 	},
 	puck,
 	resizeTimeout,
-	// symbols = {},
+	symbols = {},
 	tiles = [],
 	tileSize;
 
@@ -48,6 +48,14 @@ function createActors() {
 		actors[i].element = actors[i].draw.circle(diameter)
 			.fill(settings.colors.actors[actor.owner])
 			.move(offset, offset);
+			
+		if (actor.owner === "player1") {
+			actors[i].symbol = actors[i].draw.use(symbols.player1Actor);
+		} else if (actor.owner === "player2") {
+			actors[i].element.stroke({
+				width: settings.actorBorderWidth
+			});
+		}
 	}
 }
 
@@ -63,7 +71,7 @@ function createBoard() {
 	sizeBoard();
 	
 	// render symbols passed in in the settings file for later use
-	// renderSymbols();
+	renderSymbols();
 	
 	// draw tiles
 	for (x = 0; x < board.width; x++) {
@@ -154,27 +162,27 @@ function createPuck() {
 }
 
 // prerender symbols at a certain tileSize
-// function renderSymbols() {
-// 	var i,
-// 		paths,
-// 		symbolName;
+function renderSymbols() {
+	var i,
+		paths,
+		symbolName;
 	
-// 	// prerender symbols based on tileSize
-// 	for (symbolName in settings.symbols) {
-// 		paths = settings.symbols[symbolName].paths;
+	// prerender symbols based on tileSize
+	for (symbolName in settings.symbols) {
+		paths = settings.symbols[symbolName].paths;
 		
-// 		// store a reference to this symbol
-// 		symbols[symbolName] = draw.symbol();
+		// store a reference to this symbol
+		symbols[symbolName] = draw.symbol();
 		
-// 		// actually add the lines to this symbol
-// 		for (i = 0; i < paths.length; i++) {
-// 			symbols[symbolName]
-// 				.polyline(paths[i].map(resizeSymbol))
-// 				.fill("none")
-// 				.stroke(settings.symbols[symbolName].stroke);
-// 		}
-// 	}
-// }
+		// actually add the lines to this symbol
+		for (i = 0; i < paths.length; i++) {
+			symbols[symbolName]
+				.polyline(paths[i].map(resizeSymbol))
+				.fill("none")
+				.stroke(settings.symbols[symbolName].stroke);
+		}
+	}
+}
 
 // resize board
 function resizeBoard() {
@@ -191,7 +199,7 @@ function resizeBoard() {
 	sizeBoard();
 	
 	// re-render symbols
-	// renderSymbols();
+	renderSymbols();
 	
 	// resize tiles
 	for(x = 0; x < board.width; x++) {
@@ -251,6 +259,11 @@ function updateActor(index, diameter, offset) {
 	var actor = board.actors[index];
 	actors[index].draw.move(actor.x * tileSize, actor.y * tileSize);
 	actors[index].element.size(diameter).move(offset, offset);
+	
+	if (actors[index].symbol) {
+		actors[index].symbol.remove();
+		actors[index].symbol = actors[index].draw.use(symbols.player1Actor);
+	}
 }
 
 // reposition the elements in the legend
@@ -316,10 +329,10 @@ function init(_board) {
 }
 
 // size a symbol appropriately
-// function resizeSymbol(point) {
-// 	return [point[0] * tileSize * 0.1, 
-// 			point[1] * tileSize * 0.1];
-// }
+function resizeSymbol(point) {
+	return [point[0] * tileSize * 0.1, 
+			point[1] * tileSize * 0.1];
+}
 
 /// exports
 module.exports = window.display = {

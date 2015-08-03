@@ -1,4 +1,7 @@
 module.exports = {
+	// the border on actors belonging to the second player
+	actorBorderWidth: 1.5,
+	
 	// what percent of the size of a tile the actors should be
 	actorSize: 0.7,
 	
@@ -136,5 +139,16 @@ module.exports = {
 	// settings to use when rendering a symbol on a tile; topmost array contains
 	// each line in the symbol; each line in turn consists of an array of points
 	// which make up that line; units are in tenths of a tile
-	symbols: {}
+	symbols: {
+		player1Actor: {
+			paths: [
+				[[2.5, 2.5], [7.5, 7.5]],
+				[[7.5, 2.5], [2.5, 7.5]]
+			],
+			stroke: {
+				opacity: 0.6,
+				width: 1.5
+			}
+		}
+	}
 };
