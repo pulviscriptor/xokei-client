@@ -18,22 +18,27 @@ function actorClick(e) {
 	/* jshint validthis: true */
 	var actor = board.actors[this.data("actor")];
 	
+	// if the actor that has been clicked on is the currently selected actor,
+	// don't do anything
+	if (actor === display.selectedActor) {
+		return false;
+	}
+	
+	display.deselectActor();
+	
 	// if this actor belongs to the owner of the board
 	if (actor.owner !== board.settings.owner) {
 		return false;
 	}
-	
-	// if there are valid moves already showing, clear them
-	display.clearValidMoves();
-		
-	// cause the valid moves to be displayed on the board
-	display.showValidMoves(actor);
+
+	// display the clicked actor as selected
+	display.selectActor(actor);
 	
 	// and attach an event to the body such that whenever a click is performed, 
-	// hide all valid moves
-	$("body").one("click", function () {
-		display.clearValidMoves();
-		display.unhighlightTile();
+	// hide all valid moves and deselect the actor
+	$("*").not($(this).parent()[0]).one("click", function () {
+		console.log(this);
+		display.deselectActor();
 	});
 	
 	e.stopPropagation();
@@ -84,7 +89,13 @@ function mouseExitTile() {
 
 function tileClick() {
 	/* jshint validthis: true */
-	
+	var position = this.data("position"),
+		tile = display.tiles[position.x][position.y];
+		
+	if (tile.validMove) {
+		display.selectedActor.move(board.tiles[position.x][position.y]);
+		display.moveActor(board.actors.indexOf(display.selectedActor));
+	}
 }
 
 /// exports

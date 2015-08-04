@@ -12,6 +12,8 @@ var settings = require("./settings");
 var $board,
 	$boardContainer,
 	$moveContainer,
+	actorDiameter,
+	actorOffset,
 	actors = [],
 	board,
 	borders = [],
@@ -22,6 +24,8 @@ var $board,
 		vertical: []
 	},
 	puck,
+	puckDiameter,
+	puckOffset,
 	resizeTimeout,
 	symbols = {},
 	tiles = [],
@@ -47,12 +51,7 @@ function clearValidMoves() {
 // draw and store the actors
 function createActors() {
 	var actor,
-		i,
-		offset,
-		diameter;
-	
-	diameter = Math.round(tileSize * settings.actorSize);
-	offset = Math.round((tileSize - diameter) / 2);
+		i;
 	
 	// draw actors
 	for (i = 0; i < board.actors.length; i++) {
@@ -62,9 +61,9 @@ function createActors() {
 			draw: draw.nested().move(actor.x * tileSize, actor.y * tileSize)
 		};
 		
-		actors[i].element = actors[i].draw.circle(diameter)
+		actors[i].element = actors[i].draw.circle(actorDiameter)
 			.fill(settings.colors.actors[actor.owner])
-			.move(offset, offset)
+			.move(actorOffset, actorOffset)
 			.data("actor", i);
 			
 		if (actor.owner === "player1") {
@@ -171,9 +170,6 @@ function createLegend() {
 
 // draw the puck
 function createPuck() {
-	var puckDiameter = Math.round(settings.puckSize * tileSize),
-		puckOffset = Math.round((tileSize - puckDiameter) / 2);
-	
 	puck = {
 		group: draw.nested()
 			.move(board.puck.x * tileSize, board.puck.y * tileSize)
@@ -182,6 +178,22 @@ function createPuck() {
 	puck.element = puck.group.circle(puckDiameter)
 		.fill(settings.colors.puck)
 		.move(puckOffset, puckOffset);
+}
+
+// deselect an actor if it is selected
+function deselectActor() {
+	window.display.selectedActor = null;
+	
+	clearValidMoves();
+	unhighlightTile();
+}
+
+// move an actor from one tile to another, with animation
+function moveActor(index) {
+	actors[index].draw
+		.animate(settings.animationSpeed)
+		.move(board.actors[index].x * tileSize,
+			  board.actors[index].y * tileSize);
 }
 
 // highlight a tile either valid or invalid
@@ -230,12 +242,8 @@ function renderSymbols() {
 
 // resize board
 function resizeBoard() {
-	var actorDiameter,
-		actorOffset,
-		border,
+	var border,
 		i,
-		puckDiameter,
-		puckOffset,
 		x,
 		y;
 	
@@ -259,18 +267,12 @@ function resizeBoard() {
 			.move(border.x * tileSize, border.y * tileSize);
 	}
 	
-	// resize actors
-	actorDiameter = Math.round(tileSize * settings.actorSize);
-	actorOffset = Math.round((tileSize - actorDiameter) / 2);
-	
+	// resize actors	
 	for (i = 0; i < actors.length; i++) {
-		updateActor(i, actorDiameter, actorOffset);
+		updateActor(i);
 	}
 	
 	// resize puck
-	puckDiameter = Math.round(settings.puckSize * tileSize);
-	puckOffset = Math.round((tileSize - puckDiameter) / 2);
-	
 	puck.group.move(board.puck.x * tileSize, board.puck.y * tileSize);
 	puck.element.size(puckDiameter).move(puckOffset, puckOffset);
 	
@@ -282,13 +284,20 @@ function resizeBoard() {
 		Math.floor(settings.borderWidth / 2));
 }
 
+// select a specific actor
+function selectActor(actor) {
+	// cause the valid moves to be displayed on the board
+	showValidMoves(actor);
+	window.display.selectedActor = actor;
+}
+
 // display the moves that a particular player can make
 function showValidMoves(actor) {
 	// determine valid moves for this actor by getting the tiles around the tile
 	// it is sitting on, and then checking if the are valid places to move to
 	validMoves = actor.tile.neighborhood().filter(actor.evaluateMove);
 	
-	validMoves.forEach(function (move) {
+	validMoves.forEach(function (move, i) {
 		var diameter = tileSize * settings.validMoveIndicatorSize,
 			offset = Math.round((tileSize - diameter) / 2),
 			indicator = draw.circle(diameter)
@@ -296,16 +305,23 @@ function showValidMoves(actor) {
 					(tileSize * move.y) + offset)
 				.fill({
 					color: settings.colors.field.valid,
-					opacity: 0.3
+					opacity: 0
 				})
 				.style("pointer-events", "none");
+		
+		setTimeout(function () {
+			indicator.animate(settings.animationSpeed).fill({
+				opacity: 0.3
+			});
+		}, i * 10);
 		
 		tiles[move.x][move.y].validMove = true;
 		validMoveIndicators.push(indicator);
 	});
 }
 
-// size the board based on the container size, and update the tileSize variable
+// size the board based on the container size, and update the various size
+// variables so that they can be used for rendering later
 function sizeBoard() {
 	// determine the current tileSize based on the sizes of the DOM elements 
 	// that the board will be drawn in
@@ -314,6 +330,14 @@ function sizeBoard() {
 	
 	// make sure tileSize doesn't get too small
 	tileSize = Math.max(tileSize, settings.minimumTileSize);
+	
+	// size actors
+	actorDiameter = Math.round(tileSize * settings.actorSize);
+	actorOffset = Math.round((tileSize - actorDiameter) / 2);
+	
+	// size puck
+	puckDiameter = Math.round(settings.puckSize * tileSize);
+	puckOffset = Math.round((tileSize - puckDiameter) / 2);
 	
 	// resize the DOM element the SVG elements representing board reside in
 	$board.height(tileSize * board.height).width(tileSize * board.width);
@@ -332,10 +356,10 @@ function unhighlightTile() {
 }
 
 // update the size and position of a single actor
-function updateActor(index, diameter, offset) {
+function updateActor(index) {
 	var actor = board.actors[index];
 	actors[index].draw.move(actor.x * tileSize, actor.y * tileSize);
-	actors[index].element.size(diameter).move(offset, offset);
+	actors[index].element.size(actorDiameter).move(actorOffset, actorOffset);
 	
 	if (actors[index].symbol) {
 		actors[index].symbol.remove();
@@ -413,14 +437,22 @@ function resizeSymbol(point) {
 
 /// exports
 module.exports = window.display = {
+	// variables
 	actors: actors,
 	borders: borders,
+	selectedActor: null,
+	tiles: tiles,
+	
+	// functions
 	clearValidMoves: clearValidMoves,
 	createActors: createActors,
 	createPuck: createPuck,
+	deselectActor: deselectActor,
 	highlightTile: highlightTile,
 	init: init,
+	moveActor: moveActor,
+	selectActor: selectActor,
 	showValidMoves: showValidMoves,
-	tiles: tiles,
-	unhighlightTile: unhighlightTile
+	unhighlightTile: unhighlightTile,
+	updateActor: updateActor
 };

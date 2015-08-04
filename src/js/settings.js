@@ -5,6 +5,10 @@ module.exports = {
 	// what percent of the size of a tile the actors should be
 	actorSize: 0.7,
 	
+	// how long it should take an actor to animate from one tile to another, in
+	// milliseconds
+	animationSpeed: 150,
+	
 	// the layout of the field
 	boardLayout: [
 		"|.#.#.#.#.#.#|",
