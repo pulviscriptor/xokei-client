@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 		connect: {
 			server: {
 				options: {
-					port: 4000,
+					port: 8000,
 					base: "build",
 					hostname: "*"
 				}
@@ -94,7 +94,10 @@ module.exports = function(grunt) {
 		uglify: {
 			build: {
 				options: {
-					mangle: false
+					mangle: false,
+					sourceMap: true,
+					sourceMapIn: "build/application.js.map",
+					sourceMapName: "build/application.js.map"
 				},
 				files: {
 					"build/application.js": ["build/application.js"]
@@ -133,6 +136,7 @@ module.exports = function(grunt) {
 		},
 		webpack: {
 			build: {
+				devtool: "sourcemap",
 				entry: "./src/js/main.js",
 				output: {
 					path: "build/",

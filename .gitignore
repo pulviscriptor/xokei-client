@@ -34,3 +34,6 @@ test/results.html
 
 # SASS cache
 .sass-cache
+
+# Sourcemap for compiled JS
+build/*.map
