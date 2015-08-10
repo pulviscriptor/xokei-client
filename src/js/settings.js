@@ -110,26 +110,61 @@ module.exports = {
 		}
 	},
 	
-	// tiles representing goals
-	goals: {
-		player1: [{
-			x: 0,
-			y: 3
-		}, {
-			x: 0,
-			y: 4
-		}],
-		player2: [{
-			x: 13,
-			y: 3
-		}, {
-			x: 13,
-			y: 4
-		}]
+	// tiles representing specific zones on the board
+	zones: {
+		player1: {
+			goal: [
+				{
+					x: 0,
+					y: 3
+				},
+				{
+					x: 0,
+					y: 4
+				}
+			],
+			
+			endZone: [
+				{
+					x: 1,
+					y: 2
+				},
+				{
+					x: 2,
+					y: 5
+				}
+			]
+		},
+		player2: {
+			goal: [
+				{
+					x: 13,
+					y: 3
+				},
+				{
+					x: 13,
+					y: 4
+				}
+			],
+			
+			endZone: [
+				{
+					x: 11,
+					y: 2
+				},
+				{
+					x: 12,
+					y: 5
+				}
+			]
+		}
 	},
 	
 	// padding between the legend and the board, in pixels
 	legendPadding: 10,
+	
+	// maximum amount of actors belonging to any player in that player's endzone
+	maximumPlayersInEndZone: 2,
 	
 	// minimum tile size
 	minimumTileSize: 50,

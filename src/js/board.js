@@ -24,26 +24,44 @@ function translateLayout(layout) {
 
 /// object
 function Board(settings) {
-	/// public variables
-	this.settings = {
-		actors: null,
-		layout: null,
-		goals: null
-	};
+	var setting;
 	
+	/// public variables
 	// all the actors on the board
 	this.actors = [];
 	
 	// the owner of this half of the game
 	this.owner = null;
 	
+	this.settings = {
+		actors: null,
+		layout: null,
+		goals: null
+	};
+	
+	for (setting in settings) {
+		this.settings[setting] = settings[setting];
+	}
+	
+	// transpose board so that the user input in the settings file can be 
+	// used to generate a board of the same orientation after render
+	this.settings.layout = translateLayout(settings.layout);
+	
 	// all the tiles on the board
 	this.tiles = [];
 	
+	this.width = this.settings.layout.length;
+	this.height = this.settings.layout[0].length;
+	
+	this.generate();
+}
+
+Board.prototype = {
 	/// functions
-	this.generate = function () {
-		var goals,
-			i,
+	generate: function () {
+		var zone,
+			zones,
+			zoneTitle,
 			player,
 			x,
 			y;
@@ -57,49 +75,35 @@ function Board(settings) {
 			}
 		}
 		
-		// initialize the goal for each player
-		for (player in this.settings.goals) {
-			goals = this.settings.goals[player];
+		// initialize the zones for each player
+		for (player in this.settings.zones) {
+			zones = this.settings.zones[player];
 			
-			for (i = 0; i < goals.length; i++) {
-				this.tiles[goals[i].x][goals[i].y].set("goal", true);
+			for (zoneTitle in zones) {
+				zone = zones[zoneTitle];
+				
+				for (x = zone[0].x; x <= zone[1].x; x++) {
+					for (y = zone[0].y; y <= zone[1].y; y++) {
+						this.tiles[x][y].set("zone", zoneTitle);
+					}
+				}
 			}
 		}
 		
 		// initialize actors, if they have been passed in at board creation
-		if (settings.actors) {
+		if (this.settings.actors) {
 			this.placeActors();
 		}
 		
 		// initialize puck, if it has been passed in at board creation
-		if (settings.puck) {
+		if (this.settings.puck) {
 			this.placePuck();
 		}
-	};
-	
-	this.init = function () {
-		var setting;
-		
-		// apply settings
-		for (setting in settings) {
-			this.settings[setting] = settings[setting];
-		}
-		
-		// transpose board so that the user input in the settings file can be 
-		// used to generate a board of the same orientation after render
-		this.settings.layout = translateLayout(settings.layout);
-		
-		this.width = this.settings.layout.length;
-		this.height = this.settings.layout[0].length;
-		
-		this.generate();
-		
-		window.board = this;
-	};
+	},
 	
 	// this function places the actors on the board from the array passed in, or
 	// from the settings passed to the board the first time it is created
-	this.placeActors = function(actors) {
+	placeActors: function(actors) {
 		var i;
 		
 		for (i = 0; i < actors.length; i++) {
@@ -107,19 +111,35 @@ function Board(settings) {
 		}
 		
 		return this;
-	};
+	},
 	
 	// this function places the puck on the board from the puck data passed in,
 	// or from the settings passed in to the board the first time it is created
-	this.placePuck = function (puck) {
+	placePuck: function (puck) {
 		this.puck = new Puck(puck || {
 			x: -1,
 			y: -1
 		});
-	};
+	},
 	
-	this.init();
-}
+	// return an array of the actors in the endzone of the specified player
+	playersInEndZone: function (player) {
+		var actors = [],
+			x,
+			y,
+			zone = this.settings.zones[player].endZone;
+		
+		for (x = zone[0].x; x <= zone[1].x; x++) {
+			for (y = zone[0].y; y <= zone[1].y; y++) {
+				if (this.tiles[x][y].actor) {
+					actors.push(this.tiles[x][y].actor);
+				}
+			}
+		}
+		
+		return actors;
+	}
+};
 
 /// exports
 module.exports = Board;

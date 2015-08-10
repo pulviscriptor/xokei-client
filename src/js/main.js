@@ -5,42 +5,52 @@
 
 /// requires
 var Board = require("./board"),
-	display = require("./display"),
-	events = require("./events"),
+	Controller = require("./controller"),
+	View = require("./view"),
 	settings = require("./settings");
 
 window.$ = window.jQuery = require("jquery");
 require("bootstrap-sass");
 
 /// variables
-var board;
+var board,
+	controller,
+	view;
 
 /// functions
 // initialize the board and the display
 function init() {
-	// create and initialize the game board in memory
+	// initialize the controller, which talks to both the view and the model. 
+	// The view sends events to the controller, which in turn sends updates from
+	// the board to the view.
+	controller = new Controller();
+	
+	// create and initialize the game board in memory--the board is the model
 	board = new Board({
-		goals: settings.goals,
+		zones: settings.zones,
 		layout: settings.boardLayout.map(function (row) {
 			return row.split("");
 		}),
 		owner: "player1"
 	});
 	
+	window.board = board;
+	
 	// initialize the display of the game and pass in the board so it can render
-	// the board later without needing a new reference to it
-	display.init(board);
+	// the board later without needing a new reference to it. The display,
+	// combined with the events, make up the view
+	view = new View(board, controller);
+	
+	controller.registerBoard(board);
+	controller.registerView(view);
 }
 
 // begin a game
 function beginGame(state) {
 	board.placeActors(state.actors);
 	board.placePuck(state.puck);
-	display.createActors();
-	display.createPuck();
 	
-	// begin listening for and handling events
-	events.listen(board, display);
+	view.showGame();
 }
 
 /// initialization

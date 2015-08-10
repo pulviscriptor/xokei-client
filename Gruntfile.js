@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
-			myFiles: ["src/js/*.js"],
+			js: ["src/js/*.js"],
 			options: {
 				globals: {
 					require: false,

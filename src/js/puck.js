@@ -6,19 +6,10 @@
 function Puck(settings) {
 	/// public variables	
 	// the horizontal position of this Puck
-	this.x = -1;
+	this.x = settings.x;
 	
 	// the vertical position of this Puck
-	this.y = -1;
-	
-	/// public functions
-	this.init = function () {
-		this.x = settings.x;
-		this.y = settings.y;
-	};
-	
-	/// init
-	this.init();
+	this.y = settings.y;
 }
 
 /// exports

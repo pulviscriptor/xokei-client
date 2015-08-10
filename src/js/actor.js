@@ -1,16 +1,26 @@
 /// requires
-
+var gameSettings = require("./settings");
 
 /// private variables
 
 
 /// object
 function Actor(settings, board) {
-	var self = this;
+	// a reference to the board this actor is on
+	this.board = board;
+
+	// the player who owns this actor
+	this.owner = settings.owner;
 	
-	/// public functions
+	// move this actor to its initial position on the board
+	this.move(board.tiles[settings.x][settings.y]);
+}
+
+Actor.prototype = {
 	// determine whether a move is valid
-	this.evaluateMove = function (tile) {
+	evaluateMove: function (tile) {
+		var self = this;
+		
 		// the move is not valid if:
 		
 		// the tile is outside of the bounds of the playing field
@@ -24,7 +34,7 @@ function Actor(settings, board) {
 		}
 		
 		// the tile is occupied by the puck
-		if (board.puck.x === tile.x && board.puck.y === tile.y) {
+		if (this.board.puck.x === tile.x && this.board.puck.y === tile.y) {
 			return false;
 		}
 		
@@ -33,23 +43,22 @@ function Actor(settings, board) {
 			return false;
 		}
 		
+		// this move would mean there is more than the maximum amount of actors 
+		// belonging to the actor's owner in the actor's owner's endzone
+		if (self.tile.zone !== "endZone" &&
+			tile.zone === "endZone" &&
+			tile.owner === self.owner &&
+			this.board.playersInEndZone(self.owner).length >= 
+				gameSettings.maximumPlayersInEndZone) {
+			
+			return false;
+		}
+		
 		return true;
-	};
-	
-	// initialize the actor
-	this.init = function () {
-		// the player who owns this actor
-		this.owner = settings.owner;
-		
-		// the tile this actor occupies
-		this.move(board.tiles[settings.x][settings.y]);
-		
-		this.x = settings.x;
-		this.y = settings.y;
-	};
+	},
 	
 	// move to a particular tile
-	this.move = function (tile) {
+	move: function (tile) {
 		this.x = tile.x;
 		this.y = tile.y;
 		
@@ -59,12 +68,8 @@ function Actor(settings, board) {
 		
 		this.tile = tile;
 		this.tile.addActor(this);
-		
-	};
-	
-	/// init
-	this.init();
-}
+	}
+};
 
 /// exports
 module.exports = Actor;
