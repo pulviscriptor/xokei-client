@@ -70,18 +70,28 @@ module.exports = function(grunt) {
 			}
 		},
 		mochacov: {
-			test: {
+			coverage: {
 				options: {
 					"check-leaks": true,
 					"clearRequireCache": false,
+					"debug": true,
+					"output": "test/results.html",
 					"quiet": false,
 					"reporter": "html-cov",
 					"require": ["test/setup"]
 				}
 			},
 			options: {
-				files: "test/*.js",
-				output: "test/results.html"
+				"files": "test/*.js"
+			},
+			passing: {
+				options: {
+					"check-leaks": true,
+					"clearRequireCache": false,
+					"quiet": false,
+					"reporter": "spec",
+					"require": ["test/setup"]
+				}
 			}
 		},
 		sass: {
@@ -171,7 +181,9 @@ module.exports = function(grunt) {
 	
 	grunt.registerTask(
 		"test",
-		["mochacov:test"])
+		["mochacov:passing",
+		 "mochacov:coverage"
+		 ]);
 	
 	grunt.registerTask(
 		"stylesheets", 

@@ -1,8 +1,11 @@
+/* The Actor object represent an actor on the field, owned by either player. It
+ * validates its own movement and holds its own position, but that is the extent
+ * of its responsibilities.
+ */
+"use strict";
+
 /// requires
 var gameSettings = require("./settings");
-
-/// private variables
-
 
 /// object
 function Actor(settings, board) {
@@ -13,14 +16,12 @@ function Actor(settings, board) {
 	this.owner = settings.owner;
 	
 	// move this actor to its initial position on the board
-	this.move(board.tiles[settings.x][settings.y]);
+	this.move(board.tiles[settings.x][settings.y], true);
 }
 
 Actor.prototype = {
 	// determine whether a move is valid
 	evaluateMove: function (tile) {
-		var self = this;
-		
 		// the move is not valid if:
 		
 		// the tile is outside of the bounds of the playing field
@@ -39,16 +40,16 @@ Actor.prototype = {
 		}
 		
 		// the tile is greater than one move away from the actor's current tile
-		if (self.tile.distance(tile) !== 1) {
+		if (this.tile.distance(tile) !== 1) {
 			return false;
 		}
 		
 		// this move would mean there is more than the maximum amount of actors 
 		// belonging to the actor's owner in the actor's owner's endzone
-		if (self.tile.zone !== "endZone" &&
+		if (this.tile.zone !== "endZone" &&
 			tile.zone === "endZone" &&
-			tile.owner === self.owner &&
-			this.board.playersInEndZone(self.owner).length >= 
+			tile.owner === this.owner &&
+			this.board.actorsInEndZone(this.owner).length >= 
 				gameSettings.maximumPlayersInEndZone) {
 			
 			return false;
@@ -58,7 +59,11 @@ Actor.prototype = {
 	},
 	
 	// move to a particular tile
-	move: function (tile) {
+	move: function (tile, placing) {
+		if (!placing && !this.evaluateMove(tile)) {
+			return;
+		}
+		
 		this.x = tile.x;
 		this.y = tile.y;
 		

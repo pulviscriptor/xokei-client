@@ -89,16 +89,6 @@ Board.prototype = {
 				}
 			}
 		}
-		
-		// initialize actors, if they have been passed in at board creation
-		if (this.settings.actors) {
-			this.placeActors();
-		}
-		
-		// initialize puck, if it has been passed in at board creation
-		if (this.settings.puck) {
-			this.placePuck();
-		}
 	},
 	
 	// this function places the actors on the board from the array passed in, or
@@ -123,7 +113,7 @@ Board.prototype = {
 	},
 	
 	// return an array of the actors in the endzone of the specified player
-	playersInEndZone: function (player) {
+	actorsInEndZone: function (player) {
 		var actors = [],
 			x,
 			y,
@@ -131,7 +121,9 @@ Board.prototype = {
 		
 		for (x = zone[0].x; x <= zone[1].x; x++) {
 			for (y = zone[0].y; y <= zone[1].y; y++) {
-				if (this.tiles[x][y].actor) {
+				if (this.tiles[x][y].actor && 
+					this.tiles[x][y].actor.owner === player) {
+					
 					actors.push(this.tiles[x][y].actor);
 				}
 			}
