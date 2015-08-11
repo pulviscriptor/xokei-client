@@ -36,6 +36,10 @@ function Controller() {
 			self.selectActor(actor);
 		},
 		
+		"click puck": function () {
+			console.log("Clicked the puck.");
+		},
+		
 		"click tile": function (data) {
 			var pos = data.element.data("position"),
 				tile = self.view.display.tiles[pos.x][pos.y];
@@ -64,6 +68,10 @@ function Controller() {
 		
 		"mouse exit tile": function () {
 			self.view.display.unhighlightTile();
+		},
+		
+		"window resize": function () {
+			self.view.display.resizeBoard();
 		}
 	});
 }

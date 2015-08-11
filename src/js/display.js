@@ -19,10 +19,13 @@ function Display(board) {
 	this.actors = [];
 	this.board = board;
 	this.borders = [];
+	this.highlight = null;
+	this.highlightedTile = null;
 	this.legend = {
 		horizontal: [],
 		vertical: []
 	};
+	this.puck = null;
 	this.symbols = {};
 	this.tiles = [];
 	this.validMoveIndicators = [];
@@ -38,16 +41,6 @@ function Display(board) {
 	// the game board
 	this.$moveBox.height(this.$board.height() - this.$moveBox.position().top - 
 		30 + Math.floor(settings.borderWidth / 2));
-	
-	// listen for resize events to redraw the board
-	$(window).resize(function () {
-		if (this.resizeTimeout) {
-			clearTimeout(this.resizeTimeout);
-		}
-		
-		this.resizeTimeout = setTimeout(this.resizeBoard.bind(this), 
-			settings.resizeDelay);
-	}.bind(this));
 }
 
 /// public functions
@@ -96,6 +89,10 @@ Display.prototype = {
 				this.actors[i].element.stroke({
 					width: settings.actorBorderWidth
 				});
+			}
+			
+			if (actor.owner === this.board.settings.owner) {
+				this.actors[i].element.style("cursor", "pointer");
 			}
 		}
 	},
@@ -222,10 +219,6 @@ Display.prototype = {
 
 	// highlight a tile either valid or invalid
 	highlightTile: function (tile, valid) {
-		if (this.highlight) {
-			this.unhighlightTile();
-		}
-			
 		this.highlight = this.draw.rect(this.tileSize, this.tileSize)
 			.move(this.tileSize * tile.x, this.tileSize * tile.y)
 			.fill({
@@ -233,6 +226,9 @@ Display.prototype = {
 				opacity: 0
 			})
 			.style("pointer-events", "none");
+			
+		this.highlightedTile = this.tiles[tile.x][tile.y];
+		this.highlightedTile.element.style("cursor", "pointer");
 		
 		this.highlight
 			.animate(100)
@@ -393,6 +389,9 @@ Display.prototype = {
 		
 		this.highlight.remove();
 		this.highlight = null;
+		
+		this.highlightedTile.element.style("cursor", "default");
+		this.highlightedTile = null;
 	},
 
 	// update the size and position of a single actor

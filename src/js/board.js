@@ -30,9 +30,6 @@ function Board(settings) {
 	// all the actors on the board
 	this.actors = [];
 	
-	// the owner of this half of the game
-	this.owner = null;
-	
 	this.settings = {
 		actors: null,
 		layout: null,
