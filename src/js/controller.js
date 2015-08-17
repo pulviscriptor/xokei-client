@@ -12,6 +12,7 @@ function Controller() {
 	var self = this;
 	
 	/// public variables
+	this.kickCallback = null;
 	this.listeners = {};
 	this.selectedActor = null;
 	
@@ -25,19 +26,19 @@ function Controller() {
 				return false;
 			}
 			
-			self.deselectActor();
+			self.clearUIState();
 			
 			// if this actor belongs to the owner of the board
 			if (actor.owner !== self.board.settings.owner) {
 				return false;
 			}
 
-			// view.display the clicked actor as selected
+			// display the clicked actor as selected
 			self.selectActor(actor);
 		},
 		
 		"click puck": function () {
-			console.log("Clicked the puck.");
+			self.selectPuck();
 		},
 		
 		"click tile": function (data) {
@@ -52,16 +53,21 @@ function Controller() {
 				
 				// move the actor in the view
 				self.view.display.moveActor(self.selectedActorIndex);
+			} else if (tile.validKickDirection) {
+				self.getKickStrength(function (strength) {
+					self.board.puck.kick(strength);
+					self.view.display.showKick();
+				});
 			}
 			
-			self.deselectActor();
+			self.clearUIState();
 		},
 		
 		"mouse enter tile": function (data) {
 			var pos = data.element.data("position"),
 				tile = self.view.display.tiles[pos.x][pos.y];
 				
-			if (tile.validMove) {
+			if (tile.validMove || tile.validKickDirection) {
 				self.view.display.highlightTile(tile, true);
 			}
 		},
@@ -100,9 +106,17 @@ Controller.prototype = {
 		}
 	},
 	
-	deselectActor: function () {
+	clearUIState: function () {
 		this.view.display.deselectActor();
+		this.view.display.clearKickDirections();
+		
+		this.puckSelected = false;
 		this.selectedActor = null;
+	},
+	
+	getKickStrength: function (callback) {
+		this.kickCallback = callback;
+		this.view.display.openKickDialog(callback);
 	},
 
 	emit: function (eventName, data) {
@@ -121,7 +135,6 @@ Controller.prototype = {
 		this.board = board;
 	},
 
-	// add a view to this controller
 	registerView: function (view) {
 		this.view = view;
 	},
@@ -132,6 +145,18 @@ Controller.prototype = {
 		
 		this.selectedActor = actor;
 		this.selectedActorIndex = this.board.actors.indexOf(actor);
+	},
+	
+	selectPuck: function () {
+		if (this.puckSelected) {
+			return;
+		}
+		
+		this.clearUIState();
+		
+		this.puckSelected = true;
+		this.view.display.showKickDirections(this.board.puck
+			.kickDirections(this.board.settings.owner));
 	}
 };
 

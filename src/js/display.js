@@ -14,6 +14,7 @@ function Display(board) {
 	// get references to the DOM elements that contain the board
 	this.$board = $("#board");
 	this.$boardContainer = $("#board-container");
+	this.$kickDirections = [];
 	this.$moveBox = $(".move-container");
 	
 	this.actors = [];
@@ -28,6 +29,7 @@ function Display(board) {
 	this.puck = null;
 	this.symbols = {};
 	this.tiles = [];
+	this.validKickIndicators = [];
 	this.validMoveIndicators = [];
 	this.validMoves = [];
 	
@@ -46,6 +48,24 @@ function Display(board) {
 /// public functions
 // remove styling from any tiles which have been marked as valid moves
 Display.prototype = {
+	clearKickDirections: function () {
+		this.$kickDirections.forEach(function ($kickIndicator) {
+			$kickIndicator.animate({
+				opacity: 0
+			}, settings.animationSpeed / 2, function () {
+				$(this).remove();
+			});
+		});
+		
+		this.$kickDirections.length = 0;
+		
+		this.validKickIndicators.forEach(function (kickIndicator) {
+			kickIndicator.validKickDirection = false;
+		});
+		
+		this.validKickIndicators.length = 0;
+	},
+	
 	clearValidMoves: function () {
 		var self = this;
 		
@@ -173,19 +193,19 @@ Display.prototype = {
 		// create horizontal legend
 		for (x = 0; x < this.board.width; x++) {
 			this.legend.horizontal.push($createMarker().css({
-				top: (boardPos.top + boardHeight + settings.legendPadding) + "px",
-				left: (x * this.tileSize + boardPos.left) + "px",
-				width: this.tileSize + "px"
+				top: (boardPos.top + boardHeight + settings.legendPadding),
+				left: (x * this.tileSize + boardPos.left),
+				width: this.tileSize
 			}).text(settings.coordinates.horizontal[x]));
 		}
 		
 		// create vertical legend
 		for (y = 0; y < this.board.height; y++) {
 			this.legend.vertical.push($createMarker().css({
-				top: (y * this.tileSize + boardPos.top) + "px",
+				top: (y * this.tileSize + boardPos.top),
 				left: 0,
-				height: this.tileSize + "px",
-				lineHeight: this.tileSize + "px"
+				height: this.tileSize,
+				lineHeight: this.tileSize
 			}).text(settings.coordinates.vertical[y]));
 		}
 	},
@@ -304,8 +324,9 @@ Display.prototype = {
 		this.updateLegend();
 		
 		// resize moves container appropriately
-		this.$moveBox.height(this.$board.height() - this.$moveBox.position().top -
-			30 + Math.floor(settings.borderWidth / 2));
+		this.$moveBox.height(this.$board.height() - 
+			this.$moveBox.position().top - 30 + 
+			Math.floor(settings.borderWidth / 2));
 	},
 	
 	// size a symbol appropriately
@@ -319,13 +340,65 @@ Display.prototype = {
 		// cause the valid moves to be displayed on the board
 		this.showValidMoves(actor);
 	},
+	
+	showKick: function() {
+		
+	},
+	
+	// show the dialog for inputting the strength of a kick
+	showKickDialog: function () {
+		
+	},
+	
+	showKickDirections: function (tiles) {
+		var self = this;
+		
+		tiles.forEach(function (tile) {
+			var $arrow,
+				dx = tile.x - self.board.puck.x,
+				dy = tile.y - self.board.puck.y;
+			
+			self.tiles[tile.x][tile.y].validKickDirection = true;
+			self.validKickIndicators.push(self.tiles[tile.x][tile.y]);
+				
+			// show an arrow for each tile
+			$arrow = $("<i>")
+				.addClass("fa fa-arrow-right")
+				.css({
+					position: "absolute",
+					left: self.board.puck.x * self.tileSize,
+					top: self.board.puck.y * self.tileSize,
+					transform: "rotate(" + Math.atan2(dy, dx) + "rad)",
+					fontSize: "2.5em",
+					opacity: 0,
+					pointerEvents: "none",
+					color: settings.colors.field.valid
+				})
+				.appendTo(self.$board);
+				
+			$arrow.animate({
+				left: (self.tileSize * tile.x) + 
+					(self.tileSize - $arrow.width()) / 2,
+				top: (self.tileSize * tile.y) + 
+					(self.tileSize - $arrow.height()) / 2,
+				opacity: 0.3
+			}, settings.animationSpeed, "easeOutBack");
+		
+			self.$kickDirections.push($arrow);
+		});
+	},
+	
+	showKickProjection: function (projection) {
+		console.log(projection);
+	},
 
 	// display the moves that a particular player can make
 	showValidMoves: function (actor) {
 		var self = this;
 		
-		// determine valid moves for this actor by getting the tiles around the tile
-		// it is sitting on, and then checking if the are valid places to move to
+		// determine valid moves for this actor by getting the tiles around the 
+		// tile it is sitting on, and then checking if the are valid places to 
+		// move to
 		this.validMoves = actor.tile
 			.neighborhood()
 			.filter(actor.evaluateMove.bind(actor));

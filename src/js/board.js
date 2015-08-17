@@ -106,7 +106,7 @@ Board.prototype = {
 		this.puck = new Puck(puck || {
 			x: -1,
 			y: -1
-		});
+		}, this);
 	},
 	
 	// return an array of the actors in the endzone of the specified player
