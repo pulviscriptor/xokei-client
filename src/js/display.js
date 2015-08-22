@@ -5,8 +5,9 @@
 
 /// requires
 var SVG = require("svg.js"),
-	
 	settings = require("./settings");
+
+require("jquery-knob");
 
 /// object
 function Display(board) {
@@ -15,6 +16,7 @@ function Display(board) {
 	this.$board = $("#board");
 	this.$boardContainer = $("#board-container");
 	this.$kickDirections = [];
+	this.$knob = $("#kick-strength-knob");
 	this.$moveBox = $(".move-container");
 	
 	this.actors = [];
@@ -22,6 +24,7 @@ function Display(board) {
 	this.borders = [];
 	this.highlight = null;
 	this.highlightedTile = null;
+	this.kickProjectionLine = null;
 	this.legend = {
 		horizontal: [],
 		vertical: []
@@ -43,6 +46,19 @@ function Display(board) {
 	// the game board
 	this.$moveBox.height(this.$board.height() - this.$moveBox.position().top - 
 		30 + Math.floor(settings.borderWidth / 2));
+	
+	// create and hide the kick strength knob
+	this.$knob
+		.knob({
+			bgColor: "#333",
+			fgColor: settings.colors.field.valid,
+			width: this.tileSize * 2
+		})
+		.css({
+			position: "absolute",
+			opacity: 0.3
+		})
+		.hide();
 }
 
 /// public functions
@@ -64,6 +80,25 @@ Display.prototype = {
 		});
 		
 		this.validKickIndicators.length = 0;
+	},
+	
+	clearKickProjection: function () {
+		var self = this;
+		
+		if (!this.kickProjectionLine) {
+			return;
+		}
+		
+		this.kickProjectionLine
+			.animate(settings.animationSpeed)
+			.stroke({
+				opacity: 0
+			});
+			
+		setTimeout(function () {
+			self.kickProjectionLine.remove();
+			self.kickProjectionLine = null;
+		}, settings.animationSpeed + 10);
 	},
 	
 	clearValidMoves: function () {
@@ -124,8 +159,8 @@ Display.prototype = {
 			x,
 			y;
 		
-		// make sure the board is the appropriate size, and the tileSize variable is
-		// determined as well
+		// make sure the board is the appropriate size, and the tileSize 
+		// variable is determined as well
 		this.sizeBoard();
 		
 		// render symbols passed in in the settings file for later use
@@ -145,7 +180,8 @@ Display.prototype = {
 				
 				this.tiles[x][y].element
 					.move(x * this.tileSize, y * this.tileSize)
-					.attr("fill", settings.colors.field[this.board.tiles[x][y].type])
+					.attr("fill", settings.colors.field
+						[this.board.tiles[x][y].type])
 					.data("position", {x: x, y: y});
 			}
 		}
@@ -166,8 +202,8 @@ Display.prototype = {
 				.style("pointer-events", "none");
 		}
 		
-		// create the legend--that is, the elements that contain the characters that
-		// represent the coordinate system for the board
+		// create the legend--that is, the elements that contain the characters 
+		// that represent the coordinate system for the board
 		this.createLegend();
 	},
 
@@ -189,7 +225,7 @@ Display.prototype = {
 				userSelect: "none"
 			}).appendTo(self.$boardContainer);
 		}
-			
+		
 		// create horizontal legend
 		for (x = 0; x < this.board.width; x++) {
 			this.legend.horizontal.push($createMarker().css({
@@ -205,7 +241,7 @@ Display.prototype = {
 				top: (y * this.tileSize + boardPos.top),
 				left: 0,
 				height: this.tileSize,
-				lineHeight: this.tileSize
+				lineHeight: this.tileSize + "px"
 			}).text(settings.coordinates.vertical[y]));
 		}
 	},
@@ -236,6 +272,10 @@ Display.prototype = {
 			.move(this.board.actors[index].x * this.tileSize,
 				  this.board.actors[index].y * this.tileSize);
 	},
+	
+	hideKickStrengthInput: function () {
+		this.$knob.parent().hide(settings.animationSpeed);
+	},
 
 	// highlight a tile either valid or invalid
 	highlightTile: function (tile, valid) {
@@ -256,7 +296,7 @@ Display.prototype = {
 				opacity: 0.3
 			});
 	},
-
+	
 	// prerender symbols at a certain tileSize
 	renderSymbols: function () {
 		var i,
@@ -345,11 +385,6 @@ Display.prototype = {
 		
 	},
 	
-	// show the dialog for inputting the strength of a kick
-	showKickDialog: function () {
-		
-	},
-	
 	showKickDirections: function (tiles) {
 		var self = this;
 		
@@ -388,8 +423,42 @@ Display.prototype = {
 		});
 	},
 	
-	showKickProjection: function (projection) {
-		console.log(projection);
+	// display the UI that allows the player to select how hard to kick the puck
+	showKickStrengthInput: function () {
+		var boardPos = this.$board.offset();
+		
+		this.$knob
+			.parent()
+			.css({
+				left: (this.board.puck.x * this.tileSize + boardPos.left) -
+					this.tileSize / 2,
+				top: (this.board.puck.y * this.tileSize + boardPos.top) -
+					this.tileSize / 2
+			})
+			.show();
+	},
+	
+	showPuckTrajectory: function (projection) {
+		var self = this;
+		
+		projection = projection.map(function (tile) {
+			return [(tile.x * self.tileSize) + self.tileSize / 2,
+				(tile.y * self.tileSize) + self.tileSize / 2];
+		});
+		
+		this.kickProjectionLine = this.kickProjectionLine ||
+			this.draw.polyline([projection[0]])
+			.fill("none")
+			.stroke({
+				width: 8,
+				color: settings.colors.field.valid,
+				opacity: 0.3
+			})
+			.attr("stroke-linecap", "round")
+			.attr("stroke-linejoin", "round");
+		
+		this.kickProjectionLine.animate(settings.animationSpeed)
+			.plot(projection);
 	},
 
 	// display the moves that a particular player can make
@@ -491,9 +560,9 @@ Display.prototype = {
 		// create horizontal legend
 		this.legend.horizontal.forEach(function ($elem, x) {
 			$elem.css({
-				top: (boardPos.top + boardHeight + settings.legendPadding) + "px",
-				left: (x * self.tileSize + boardPos.left) + "px",
-				width: self.tileSize + "px"
+				top: (boardPos.top + boardHeight + settings.legendPadding),
+				left: (x * self.tileSize + boardPos.left),
+				width: self.tileSize
 			});
 		});
 		

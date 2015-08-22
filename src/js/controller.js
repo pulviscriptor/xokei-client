@@ -12,8 +12,10 @@ function Controller() {
 	var self = this;
 	
 	/// public variables
-	this.kickCallback = null;
+	this.kickDirection = null;
+	this.kickStrength = null;
 	this.listeners = {};
+	this.puckTrajectory = null;
 	this.selectedActor = null;
 	
 	this.addListener({
@@ -53,14 +55,17 @@ function Controller() {
 				
 				// move the actor in the view
 				self.view.display.moveActor(self.selectedActorIndex);
+				
+				// and clear the UI
+				self.clearUIState();
 			} else if (tile.validKickDirection) {
-				self.getKickStrength(function (strength) {
-					self.board.puck.kick(strength);
-					self.view.display.showKick();
-				});
+				self.clearUIState();
+				
+				self.kickDirection = tile;
+				self.view.display.showKickStrengthInput();
+			} else {
+				self.clearUIState();
 			}
-			
-			self.clearUIState();
 		},
 		
 		"mouse enter tile": function (data) {
@@ -74,6 +79,18 @@ function Controller() {
 		
 		"mouse exit tile": function () {
 			self.view.display.unhighlightTile();
+		},
+		
+		"kick puck": function () {
+			var end = self.puckTrajectory[self.puckTrajectory.length - 1];
+			
+			self.board.puck.kick(end);
+			self.view.display.showKick(self.puckTrajectory);
+		},
+		
+		"kick strength change": function (data) {
+			self.kickStrength = data.event;
+			self.projectPuckTrajectory();
 		},
 		
 		"window resize": function () {
@@ -109,16 +126,16 @@ Controller.prototype = {
 	clearUIState: function () {
 		this.view.display.deselectActor();
 		this.view.display.clearKickDirections();
+		this.view.display.clearKickProjection();
+		this.view.display.hideKickStrengthInput();
 		
 		this.puckSelected = false;
 		this.selectedActor = null;
+		this.kickDirection = null;
+		this.kickStrength = null;
+		this.puckTrajectory = null;
 	},
 	
-	getKickStrength: function (callback) {
-		this.kickCallback = callback;
-		this.view.display.openKickDialog(callback);
-	},
-
 	emit: function (eventName, data) {
 		var i;
 		
@@ -129,6 +146,13 @@ Controller.prototype = {
 		for (i = 0; i < this.listeners[eventName].length; i++) {
 			this.listeners[eventName][i](data);
 		}
+	},
+	
+	projectPuckTrajectory: function () {
+		this.puckTrajectory = this.board.puck.calculateTrajectory(
+			this.kickDirection, this.kickStrength);
+		
+		this.view.display.showPuckTrajectory(this.puckTrajectory);
 	},
 	
 	registerBoard: function (board) {

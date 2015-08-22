@@ -53,8 +53,28 @@ function Board(settings) {
 	this.generate();
 }
 
+/// public functions
 Board.prototype = {
-	/// functions
+	// return an array of the actors in the endzone of the specified player
+	actorsInEndZone: function (player) {
+		var actors = [],
+			x,
+			y,
+			zone = this.settings.zones[player].endZone;
+		
+		for (x = zone[0].x; x <= zone[1].x; x++) {
+			for (y = zone[0].y; y <= zone[1].y; y++) {
+				if (this.tiles[x][y].actor && 
+					this.tiles[x][y].actor.owner === player) {
+					
+					actors.push(this.tiles[x][y].actor);
+				}
+			}
+		}
+		
+		return actors;
+	},
+	
 	generate: function () {
 		var zone,
 			zones,
@@ -109,24 +129,14 @@ Board.prototype = {
 		}, this);
 	},
 	
-	// return an array of the actors in the endzone of the specified player
-	actorsInEndZone: function (player) {
-		var actors = [],
-			x,
-			y,
-			zone = this.settings.zones[player].endZone;
-		
-		for (x = zone[0].x; x <= zone[1].x; x++) {
-			for (y = zone[0].y; y <= zone[1].y; y++) {
-				if (this.tiles[x][y].actor && 
-					this.tiles[x][y].actor.owner === player) {
-					
-					actors.push(this.tiles[x][y].actor);
-				}
-			}
+	// returns the tile at the specified coordinates unless it is a wall or a
+	// nonexistent tile, in which case undefined is returned
+	tile: function (x, y) {
+		if (this.tiles[x] && this.tiles[x][y] && this.tiles[x][y].type !== 
+			"wall") {
+			
+			return this.tiles[x][y];
 		}
-		
-		return actors;
 	}
 };
 

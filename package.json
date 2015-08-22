@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "jquery": "^2.1.4",
-    "svg.draggable.js": "^2.0.0",
+    "json-loader": "^0.5.2",
+    "knob": "https://github.com/aterrien/jQuery-Knob",
     "svg.js": "^2.0.5"
   },
   "config": {
