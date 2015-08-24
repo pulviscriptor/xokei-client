@@ -133,7 +133,10 @@ module.exports = (function (settings) {
 			valid: "green",
 			wall: "white"
 		},
-		puck: "#7f7fff"
+		puck: "#7f7fff",
+		selectedActors: {
+			player1: "#fafaad"
+		}
 	},
 	
 	coordinates: {

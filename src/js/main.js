@@ -13,8 +13,6 @@ var Board = require("./board"),
 window.$ = window.jQuery = require("jquery");
 require("bootstrap-sass");
 
-console.log(settings);
-
 /// variables
 var board,
 	controller,

@@ -269,9 +269,18 @@ Display.prototype = {
 	},
 
 	// deselect an actor if it is selected
-	deselectActor: function () {		
+	deselectActor: function (actorIndex) {
 		this.clearValidMoves();
-		this.unhighlightTile();
+		
+		if (!this.actors[actorIndex]) {
+			return;
+		}
+		
+		this.actors[actorIndex].element
+			.animate(settings.animationSpeed)
+			.fill({
+				color: settings.colors.actors[Player.One]
+			});
 	},
 
 	// move an actor from one tile to another, with animation
@@ -380,14 +389,22 @@ Display.prototype = {
 	
 	// size a symbol appropriately
 	resizeSymbol: function (point) {
-		return [point[0] * this.tileSize * 0.1, 
-				point[1] * this.tileSize * 0.1];
+		return [Math.round(point[0] * this.tileSize * 0.1), 
+				Math.round(point[1] * this.tileSize * 0.1)];
 	},
 
 	// select a specific actor
-	selectActor: function (actor) {
+	selectActor: function (actorIndex) {
+		var svgActor = this.actors[actorIndex];
+		
 		// cause the valid moves to be displayed on the board
-		this.showValidMoves(actor);
+		this.showValidMoves(this.board.actors[actorIndex]);
+		
+		svgActor.element
+			.animate(settings.animationSpeed)
+			.fill({
+				color: settings.colors.selectedActors[Player.One]
+			});
 	},
 	
 	showKick: function(end) {

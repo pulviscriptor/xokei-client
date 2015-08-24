@@ -124,10 +124,11 @@ Controller.prototype = {
 	},
 	
 	clearUIState: function () {
-		this.view.display.deselectActor();
+		this.view.display.deselectActor(this.selectedActorIndex);
 		this.view.display.clearKickDirections();
 		this.view.display.clearKickProjection();
 		this.view.display.hideKickStrengthInput();
+		this.view.display.unhighlightTile();
 		
 		this.puckSelected = false;
 		this.selectedActor = null;
@@ -165,10 +166,10 @@ Controller.prototype = {
 	
 	// select an actor and cause the available positions to move to be shown
 	selectActor: function (actor) {
-		this.view.display.selectActor(actor);
-		
 		this.selectedActor = actor;
 		this.selectedActorIndex = this.board.actors.indexOf(actor);
+		
+		this.view.display.selectActor(this.selectedActorIndex);
 	},
 	
 	selectPuck: function () {
