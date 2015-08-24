@@ -26,8 +26,7 @@ module.exports = (function (settings) {
 		return prop;
 	};
 	
-	console.log(load(settings));
-	return load(settings);
+	return Object.freeze(load(settings));
 }({
 	// the border on actors belonging to the second player
 	actorBorderWidth: 6,
@@ -128,7 +127,7 @@ module.exports = (function (settings) {
 	coordinates: {
 		horizontal: ["[", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
 			"l", "]"],
-		vertical: ["1", "2", "3", "4", "5", "6", "7", "8"]
+		vertical: ["8", "7", "6", "5", "4", "3", "2", "1"]
 	},
 	
 	// a function that should determine and return the owner of a tile at the 
