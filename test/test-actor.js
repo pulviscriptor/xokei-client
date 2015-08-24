@@ -4,6 +4,7 @@ var expect = require("chai").expect;
 /// src requires
 var Actor = require("../src/js/actor.js"),
 	Board = require("../src/js/board.js"),
+	Player = require("../src/js/players.js"),
 	settings = require("../src/js/settings.js");
 
 var board = new Board({
@@ -11,7 +12,7 @@ var board = new Board({
 	layout: settings.boardLayout.map(function (row) {
 		return row.split("");
 	}),
-	owner: "player1"
+	owner: Player.One
 });
 
 board.placePuck({
@@ -23,7 +24,7 @@ describe("actor", function () {
 	var actor = new Actor({
 		x: 0,
 		y: 0,
-		owner: "player1"
+		owner: Player.One
 	}, board);
 	
 	it("should be able to move from one tile to another", function () {
@@ -69,7 +70,7 @@ describe("actor", function () {
 		var otherActor = new Actor({
 			x: 5,
 			y: 6,
-			owner: "player1"
+			owner: Player.One
 		}, board);
 		
 		// execution
@@ -107,12 +108,12 @@ describe("actor", function () {
 		var actor2 = new Actor({
 				x: 1,
 				y: 3,
-				owner: "player1"
+				owner: Player.One
 			}, board),
 			actor3 = new Actor({
 				x: 1,
 				y: 4,
-				owner: "player1"
+				owner: Player.One
 			}, board);
 		
 		actor.move(board.tiles[3][3], true);

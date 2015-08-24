@@ -1,3 +1,5 @@
+var Player = require("./players");
+
 module.exports = (function (settings) {
 	// process settings here, recursively iterating through all properties to 
 	// load settings that are dependent on other settings
@@ -7,7 +9,17 @@ module.exports = (function (settings) {
 		
 		if (typeof prop === "object") {
 			for (setting in prop) {
-				prop[setting] = load(prop[setting]);
+				if (setting === "player1") {
+					value = prop[setting];
+					delete prop[setting];
+					prop[Player.One] = load(value);
+				} else if (setting === "player2") {
+					value = prop[setting];
+					delete prop[setting];
+					prop[Player.Two] = load(value);
+				} else {
+					prop[setting] = load(prop[setting]);
+				}
 			}
 		} else if (typeof prop === "string" && 
 			prop[0] === "%" && 
@@ -134,10 +146,10 @@ module.exports = (function (settings) {
 	// specified coordinates
 	determineTileOwner: function (x) {
 		if (x < 7) {
-			return "player1";
-		} else {
-			return "player2";
+			return Player.One;
 		}
+		
+		return Player.Two;
 	},
 	
 	// tiles representing specific zones on the board
@@ -210,7 +222,7 @@ module.exports = (function (settings) {
 	// each line in the symbol; each line in turn consists of an array of points
 	// which make up that line; units are in tenths of a tile
 	symbols: {
-		player1Actor: {
+		x: {
 			paths: [
 				[[2.5, 2.5], [7.5, 7.5]],
 				[[7.5, 2.5], [2.5, 7.5]]

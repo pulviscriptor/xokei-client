@@ -3,6 +3,7 @@ var expect = require("chai").expect;
 
 /// requires
 var Board = require("../src/js/board.js"),
+	Player = require("../src/js/players.js"),
 	settings = require("../src/js/settings.js"),
 	Tile = require("../src/js/tile.js");
 
@@ -12,7 +13,7 @@ var board = new Board({
 	layout: settings.boardLayout.map(function (row) {
 		return row.split("");
 	}),
-	owner: "player1"
+	owner: Player.One
 });
 
 describe("tile", function () {

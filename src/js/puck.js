@@ -1,6 +1,5 @@
 /// requires
-
-/// private variables
+var Player = require("./players");
 
 /// object
 function Puck(settings, board) {
@@ -165,7 +164,7 @@ Puck.prototype = {
 			}
 			
 			// if this tile is an opponent's goal, then break the loop
-			if (tile.zone === "goal" && tile.owner === "player2") {
+			if (tile.zone === "goal" && tile.owner === Player.Two) {
 				break;
 			}
 		}

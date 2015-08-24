@@ -3,6 +3,7 @@ var expect = require("chai").expect;
 
 /// src requires
 var Board = require("../src/js/board.js"),
+	Player = require("../src/js/players.js"),
 	settings = require("../src/js/settings.js");
 
 describe("board", function () {
@@ -13,22 +14,22 @@ describe("board", function () {
 			layout: settings.boardLayout.map(function (row) {
 				return row.split("");
 			}),
-			owner: "player1"
+			owner: Player.One
 		}), actor, i;
 		
 		// execution
 		board.placeActors([{
 			x: 0,
 			y: 4,
-			owner: "player1"
+			owner: Player.One
 		}, {
 			x: 6,
 			y: 0,
-			owner: "player1"
+			owner: Player.One
 		}, {
 			x: 6,
 			y: 2,
-			owner: "player1"
+			owner: Player.One
 		}]);
 		
 		// posttest
@@ -48,7 +49,7 @@ describe("board", function () {
 			layout: settings.boardLayout.map(function (row) {
 				return row.split("");
 			}),
-			owner: "player1"
+			owner: Player.One
 		});
 		
 		// execution
@@ -72,18 +73,18 @@ describe("board", function () {
 				layout: settings.boardLayout.map(function (row) {
 					return row.split("");
 				}),
-				owner: "player1"
+				owner: Player.One
 			}),
 			x,
 			y,
-			zone = settings.zones.player1.endZone;
+			zone = settings.zones[Player.One].endZone;
 		
 		for (x = zone[0].x; x <= zone[1].x; x++) {
 			for (y = zone[0].y; y <= zone[1].y; y++) {
 				actors.push({
 					x: x,
 					y: y,
-					owner: "player1"
+					owner: Player.One
 				});
 			}
 		}
@@ -91,7 +92,7 @@ describe("board", function () {
 		board.placeActors(actors);
 		
 		// execution
-		actorsInEndZone = board.actorsInEndZone("player1");
+		actorsInEndZone = board.actorsInEndZone(Player.One);
 		
 		// posttest
 		expect(actorsInEndZone).to.have.length(actors.length);

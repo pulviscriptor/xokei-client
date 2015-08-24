@@ -7,10 +7,13 @@
 var Board = require("./board"),
 	Controller = require("./controller"),
 	View = require("./view"),
+	Player = require("./players"),
 	settings = require("./settings");
 
 window.$ = window.jQuery = require("jquery");
 require("bootstrap-sass");
+
+console.log(settings);
 
 /// variables
 var board,
@@ -31,7 +34,7 @@ function init() {
 		layout: settings.boardLayout.map(function (row) {
 			return row.split("");
 		}),
-		owner: "player1"
+		owner: Player.One
 	});
 	
 	window.board = board;
@@ -61,43 +64,43 @@ beginGame({
 	actors: [{
 		x: 0,
 		y: 4,
-		owner: "player1"
+		owner: Player.One
 	}, {
 		x: 6,
 		y: 0,
-		owner: "player1"
+		owner: Player.One
 	}, {
 		x: 6,
 		y: 2,
-		owner: "player1"
+		owner: Player.One
 	}, {
 		x: 6,
 		y: 5,
-		owner: "player1"
+		owner: Player.One
 	}, {
 		x: 6,
 		y: 7,
-		owner: "player1"
+		owner: Player.One
 	}, {
 		x: 13,
 		y: 3,
-		owner: "player2"
+		owner: Player.Two
 	}, {
 		x: 7,
 		y: 0,
-		owner: "player2"
+		owner: Player.Two
 	}, {
 		x: 7,
 		y: 2,
-		owner: "player2"
+		owner: Player.Two
 	}, {
 		x: 7,
 		y: 5,
-		owner: "player2"
+		owner: Player.Two
 	}, {
 		x: 7,
 		y: 7,
-		owner: "player2"
+		owner: Player.Two
 	}],
 	puck: {
 		x: 4,

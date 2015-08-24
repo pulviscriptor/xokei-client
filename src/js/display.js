@@ -4,7 +4,8 @@
 "use strict"; 
 
 /// requires
-var SVG = require("svg.js"),
+var Player = require("./players"),
+	SVG = require("svg.js"),
 	settings = require("./settings");
 
 require("jquery-knob");
@@ -137,11 +138,11 @@ Display.prototype = {
 				.move(this.actorOffset, this.actorOffset)
 				.data("actor", i);
 				
-			if (actor.owner === "player1") {
+			if (actor.owner === Player.One) {
 				this.actors[i].symbol = this.actors[i].draw
-					.use(this.symbols.player1Actor)
+					.use(this.symbols.x)
 					.style("pointer-events", "none");
-			} else if (actor.owner === "player2") {
+			} else if (actor.owner === Player.Two) {
 				clip = this.actors[i].draw
 					.circle(this.actorDiameter)
 					.move(this.actorOffset, this.actorOffset);
@@ -555,7 +556,7 @@ Display.prototype = {
 		if (this.actors[index].symbol) {
 			this.actors[index].symbol.remove();
 			this.actors[index].symbol = this.actors[index].draw
-				.use(this.symbols.player1Actor);
+				.use(this.symbols.x);
 		}
 	},
 
