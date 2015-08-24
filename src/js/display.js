@@ -119,6 +119,7 @@ Display.prototype = {
 	// draw and store the actors
 	createActors: function () {
 		var actor,
+			clip,
 			i;
 		
 		// draw actors
@@ -141,9 +142,16 @@ Display.prototype = {
 					.use(this.symbols.player1Actor)
 					.style("pointer-events", "none");
 			} else if (actor.owner === "player2") {
-				this.actors[i].element.stroke({
-					width: settings.actorBorderWidth
-				});
+				clip = this.actors[i].draw
+					.circle(this.actorDiameter)
+					.move(this.actorOffset, this.actorOffset);
+				
+				this.actors[i].element
+					.stroke({
+						width: settings.actorBorderWidth * 2,
+						color: settings.colors.actors.border
+					})
+					.clipWith(clip);
 			}
 			
 			if (actor.owner === this.board.settings.owner) {
@@ -381,8 +389,8 @@ Display.prototype = {
 		this.showValidMoves(actor);
 	},
 	
-	showKick: function() {
-		
+	showKick: function(end) {
+		console.log(end);
 	},
 	
 	showKickDirections: function (tiles) {
