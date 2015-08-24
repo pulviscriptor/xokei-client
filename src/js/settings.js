@@ -1,6 +1,36 @@
-module.exports = {
+module.exports = (function (settings) {
+	// process settings here, recursively iterating through all properties to 
+	// load settings that are dependent on other settings
+	var load = function (prop) {
+		var setting,
+			value;
+		
+		if (typeof prop === "object") {
+			for (setting in prop) {
+				prop[setting] = load(prop[setting]);
+			}
+		} else if (typeof prop === "string" && 
+			prop[0] === "%" && 
+			prop[prop.length - 1] === "%") {
+			
+			setting = prop.replace(/%/g, "").split(".");
+			value = settings;
+			
+			while (setting.length) {
+				value = value[setting.shift()];
+			}
+			
+			return value;
+		}
+		
+		return prop;
+	};
+	
+	console.log(load(settings));
+	return load(settings);
+}({
 	// the border on actors belonging to the second player
-	actorBorderWidth: 1.5,
+	actorBorderWidth: 6,
 	
 	// what percent of the size of a tile the actors should be
 	actorSize: 0.7,
@@ -83,7 +113,8 @@ module.exports = {
 	colors: {
 		actors: {
 			player1: "#f6f676",
-			player2: "#b67676"
+			player2: "#b67676",
+			border: "#7f7f7f"
 		},
 		field: {
 			dark: "#ececec",
@@ -186,12 +217,13 @@ module.exports = {
 				[[7.5, 2.5], [2.5, 7.5]]
 			],
 			stroke: {
-				opacity: 0.6,
-				width: 1.5
+				opacity: 1,
+				width: "%actorBorderWidth%",
+				color: "%colors.actors.border%"
 			}
 		}
 	},
 	
 	// size of the green circle indicating that a move is valid
 	validMoveIndicatorSize: 0.3
-};
+}));
