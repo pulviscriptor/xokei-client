@@ -6,6 +6,26 @@ var Board = require("../src/js/board.js"),
 	Player = require("../src/js/players.js"),
 	settings = require("../src/js/settings.js");
 
+/// utility functions
+function placeActors(player, zone) {
+	var actors = [],
+		x,
+		y;
+	
+	for (x = zone[0].x; x <= zone[1].x; x++) {
+		for (y = zone[0].y; y <= zone[1].y; y++) {
+			actors.push({
+				x: x,
+				y: y,
+				owner: player
+			});
+		}
+	}
+	
+	return actors;
+}
+
+/// tests
 describe("board", function () {
 	it("should place all actors passed in", function () {
 		// setup
@@ -92,9 +112,69 @@ describe("board", function () {
 		board.placeActors(actors);
 		
 		// execution
-		actorsInEndZone = board.actorsInEndZone(Player.One);
+		actorsInEndZone = board.actorsInZone(Player.One, "endZone");
 		
 		// posttest
 		expect(actorsInEndZone).to.have.length(actors.length);
+	});
+	
+	it("should correctly detect player's actors in their goal", function () {
+		// setup
+		var actors = placeActors(Player.One, settings.zones[Player.One].goal),
+			actorsInGoal,
+			board = new Board({
+				zones: settings.zones,
+				layout: settings.boardLayout.map(function (row) {
+					return row.split("");
+				}),
+				owner: Player.One
+			});
+			
+		board.placeActors(actors);
+		
+		// execution
+		actorsInGoal = board.actorsInZone(Player.One, "goal");
+		
+		// posttest
+		expect(actorsInGoal).to.have.length(actors.length);
+	});
+	
+	describe(".tile", function () {
+		it("should correctly return the requested tile", function () {
+			// setup
+			var board = new Board({
+					zones: settings.zones,
+					layout: settings.boardLayout.map(function (row) {
+						return row.split("");
+					}),
+					owner: Player.One
+				}),
+				manualTile = board.tiles[5][5],
+				programmaticTile;
+			
+			// execution
+			programmaticTile = board.tile(5, 5);
+			
+			// posttest
+			expect(programmaticTile).to.equal(manualTile);
+		});
+		
+		it("should return undefined for tiles outside the board", function () {
+			// setup
+			var board = new Board({
+					zones: settings.zones,
+					layout: settings.boardLayout.map(function (row) {
+						return row.split("");
+					}),
+					owner: Player.One
+				}),
+				tile;
+			
+			// execution
+			tile = board.tile(-5, 5);
+			
+			// posttest
+			expect(tile).to.be.undefined;
+		});
 	});
 });

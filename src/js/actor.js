@@ -49,8 +49,25 @@ Actor.prototype = {
 		if (this.tile.zone !== "endZone" &&
 			tile.zone === "endZone" &&
 			tile.owner === this.owner &&
-			this.board.actorsInEndZone(this.owner).length >= 
+			this.board.actorsInZone(this.owner, "endZone").length >= 
 				gameSettings.maximumPlayersInEndZone) {
+			
+			return false;
+		}
+		
+		// this move would mean there is more than one player in the actor's
+		// owner's goal
+		if (this.tile.zone !== "goal" &&
+			tile.zone === "goal" &&
+			tile.owner === this.owner &&
+			this.board.actorsInZone(this.owner, "goal").length >= 1) {
+			
+			return false;
+		}
+		
+		// this move would mean that the actor is moving into the opponent's net
+		if (tile.zone === "goal" &&
+			tile.owner !== this.owner) {
 			
 			return false;
 		}

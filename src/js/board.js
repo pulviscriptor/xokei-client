@@ -55,12 +55,14 @@ function Board(settings) {
 
 /// public functions
 Board.prototype = {
-	// return an array of the actors in the endzone of the specified player
-	actorsInEndZone: function (player) {		
+	// return an array of the actors in the specified zone belonging to the 
+	// specified player
+	actorsInZone: function (player, zone) {		
 		var actors = [],
 			x,
-			y,
-			zone = this.settings.zones[player].endZone;
+			y;
+		
+		zone = this.settings.zones[player][zone];
 		
 		for (x = zone[0].x; x <= zone[1].x; x++) {
 			for (y = zone[0].y; y <= zone[1].y; y++) {

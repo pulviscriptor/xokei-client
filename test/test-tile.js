@@ -45,8 +45,8 @@ describe("tile", function () {
 		expect(tile.x).to.equal(10);
 	});
 	
-	describe("neighborhood", function () {
-		it("should be eight tiles if surrounded by tiles", function () {
+	describe(".neighborhood", function () {
+		it("should return eight tiles if surrounded by tiles", function () {
 			// setup
 			var i,
 				manualNeighborhood = [
