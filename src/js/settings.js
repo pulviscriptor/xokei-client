@@ -155,6 +155,9 @@ module.exports = (function (settings) {
 		return Player.Two;
 	},
 	
+	// how long it takes the puck to move from one tile to another
+	kickSpeed: 100,
+	
 	// tiles representing specific zones on the board
 	zones: {
 		player1: {

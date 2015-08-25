@@ -259,11 +259,22 @@ Display.prototype = {
 
 	// deselect an actor if it is selected
 	deselectActor: function (actorIndex) {
+		var actor = this.board.actors[actorIndex],
+			tile;
+		
 		this.clearValidMoves();
 		
-		if (!this.actors[actorIndex]) {
+		if (!actor) {
 			return;
 		}
+		
+		tile = this.board.tiles[actor.x][actor.y];
+		
+		this.tiles[tile.x][tile.y].element
+			.fill({
+				color: settings.colors.field[tile.type],
+				opacity: 1
+			});
 		
 		this.actors[actorIndex].element
 			.animate(settings.animationSpeed)
@@ -379,21 +390,39 @@ Display.prototype = {
 	},
 
 	// select a specific actor
-	selectActor: function (actorIndex) {
-		var svgActor = this.actors[actorIndex];
-		
+	selectActor: function (actor) {
 		// cause the valid moves to be displayed on the board
-		this.showValidMoves(this.board.actors[actorIndex]);
+		this.showValidMoves(actor);
 		
-		svgActor.element
-			.animate(settings.animationSpeed)
+		// highlight the tile this actor is sitting on
+		this.tiles[actor.x][actor.y].element
 			.fill({
-				color: settings.colors.selectedActors[Player.One]
+				color: settings.colors.field.valid,
+				opacity: 0.3
 			});
 	},
 	
-	showKick: function(end) {
-		console.log(end);
+	showKick: function(trajectory) {
+		var self = this,
+			step = function (next) {
+				if (!next) {
+					return;
+				}
+				
+				self.puck.group
+					.animate(settings.kickSpeed, "-")
+					.move(next.x, next.y)
+					.after(step.bind(this, trajectory.shift()));
+			};
+		
+		trajectory = trajectory.map(function (tile) {
+			return {
+				x: tile.x * self.tileSize,
+				y: tile.y * self.tileSize
+			};
+		});
+		
+		step(trajectory.shift());
 	},
 	
 	showKickDirections: function (tiles) {
@@ -549,7 +578,8 @@ Display.prototype = {
 		if (this.actors[index].symbol) {
 			this.actors[index].symbol.remove();
 			this.actors[index].symbol = this.actors[index].draw
-				.use(this.symbols.x);
+				.use(this.symbols.x)
+				.style("pointer-events", "none");
 		}
 	},
 

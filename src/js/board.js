@@ -56,9 +56,7 @@ function Board(settings) {
 /// public functions
 Board.prototype = {
 	// return an array of the actors in the endzone of the specified player
-	actorsInEndZone: function (player) {
-		console.log(player);
-		
+	actorsInEndZone: function (player) {		
 		var actors = [],
 			x,
 			y,

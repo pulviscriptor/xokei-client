@@ -43,25 +43,33 @@ function Controller() {
 		},
 		
 		"click tile": function (data) {
-			var pos = data.element.data("position"),
+			var actor,
+				index,
+				pos = data.element.data("position"),
 				tile = self.view.display.tiles[pos.x][pos.y];
 			
 			// if the tile is clicked and it is a valid move, have the selected
 			// actor move to that tile
 			if (tile.validMove) {
-				// move the actor in the model
-				self.selectedActor.move(self.board.tiles[pos.x][pos.y]);
+				actor = self.selectedActor;
+				index = self.selectedActorIndex;
 				
-				// move the actor in the view
-				self.view.display.moveActor(self.selectedActorIndex);
-				
-				// and clear the UI
+				// clear the UI
 				self.clearUIState();
+				
+				// move the actor in the model
+				actor.move(self.board.tiles[pos.x][pos.y]);
+				
+				// and move the actor in the view
+				self.view.display.moveActor(index);
 			} else if (tile.validKickDirection) {
 				self.clearUIState();
 				
 				self.kickDirection = tile;
 				self.projectKickTrajectory();
+			} else if (tile.validKick) {
+				self.kickPuck(self.board.tiles[pos.x][pos.y]);
+				self.clearUIState();
 			} else {
 				self.clearUIState();
 			}
@@ -81,13 +89,6 @@ function Controller() {
 		
 		"mouse exit tile": function () {
 			self.view.display.unhighlightTile();
-		},
-		
-		"kick puck": function () {
-			var end = self.puckTrajectory[self.puckTrajectory.length - 1];
-			
-			self.board.puck.kick(end);
-			self.view.display.showKick(self.puckTrajectory);
 		},
 		
 		"window resize": function () {
@@ -144,6 +145,14 @@ Controller.prototype = {
 		}
 	},
 	
+	kickPuck: function (target) {
+		var trajectory = this.puckTrajectory
+			.splice(0, this.puckTrajectory.indexOf(target) + 1);
+			
+		this.board.puck.kick(trajectory[trajectory.length - 1]);
+		this.view.display.showKick(trajectory);
+	},
+	
 	projectKickTrajectory: function () {
 		this.puckTrajectory = this.board.puck.calculateTrajectory(
 			this.kickDirection);
@@ -164,7 +173,7 @@ Controller.prototype = {
 		this.selectedActor = actor;
 		this.selectedActorIndex = this.board.actors.indexOf(actor);
 		
-		this.view.display.selectActor(this.selectedActorIndex);
+		this.view.display.selectActor(this.selectedActor);
 	},
 	
 	selectPuck: function () {
