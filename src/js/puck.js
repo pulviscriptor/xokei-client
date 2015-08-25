@@ -89,20 +89,18 @@ Puck.prototype = {
 		return directions;
 	},
 	
-	// return a list of tiles representing the path this puck would take if 
-	// kicked with the strength passed in
-	calculateTrajectory: function (direction, strength) {
+	// return a list of tiles representing the path this puck would take if
+	// kicked in the direction of the tile passed in
+	calculateTrajectory: function (direction) {
 		var crossedBorder = false,
 			dx = direction.x - this.x,
 			dy = direction.y - this.y,
 			i = 0,
 			lastTileOwner = this.board.tile(direction.x, direction.y).owner,
 			tile,
-			trajectory = [this.board.tile(this.x, this.y)],
+			trajectory = [],
 			x = this.x,
 			y = this.y;
-		
-		strength = Math.round(strength || Infinity);
 		
 		while (i++ < 100) {
 			x += dx;
@@ -153,9 +151,8 @@ Puck.prototype = {
 				}
 			}
 			
-			// if the tile is occupied by an actor or has reached the end of the
-			// trajectory based on the amount of strength provided, end the loop
-			if (tile.actor || trajectory.length >= strength) {
+			// if the tile is occupied by an actor, end the loop
+			if (tile.actor) {
 				break;
 			}
 

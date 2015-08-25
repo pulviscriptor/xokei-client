@@ -8,8 +8,6 @@ var Player = require("./players"),
 	SVG = require("svg.js"),
 	settings = require("./settings");
 
-require("jquery-knob");
-
 /// object
 function Display(board) {
 	/// public variables
@@ -17,7 +15,6 @@ function Display(board) {
 	this.$board = $("#board");
 	this.$boardContainer = $("#board-container");
 	this.$kickDirections = [];
-	this.$knob = $("#kick-strength-knob");
 	this.$moveBox = $(".move-container");
 	
 	this.actors = [];
@@ -25,7 +22,6 @@ function Display(board) {
 	this.borders = [];
 	this.highlight = null;
 	this.highlightedTile = null;
-	this.kickProjectionLine = null;
 	this.legend = {
 		horizontal: [],
 		vertical: []
@@ -33,8 +29,10 @@ function Display(board) {
 	this.puck = null;
 	this.symbols = {};
 	this.tiles = [];
+	this.validKickDirectionIndicators = [];
 	this.validKickIndicators = [];
 	this.validMoveIndicators = [];
+	this.validKicks = [];
 	this.validMoves = [];
 	
 	// generate an SVG element to render the game to
@@ -47,19 +45,6 @@ function Display(board) {
 	// the game board
 	this.$moveBox.height(this.$board.height() - this.$moveBox.position().top - 
 		30 + Math.floor(settings.borderWidth / 2));
-	
-	// create and hide the kick strength knob
-	this.$knob
-		.knob({
-			bgColor: "#333",
-			fgColor: settings.colors.field.valid,
-			width: this.tileSize * 2
-		})
-		.css({
-			position: "absolute",
-			opacity: 0.3
-		})
-		.hide();
 }
 
 /// public functions
@@ -76,30 +61,34 @@ Display.prototype = {
 		
 		this.$kickDirections.length = 0;
 		
-		this.validKickIndicators.forEach(function (kickIndicator) {
+		this.validKickDirectionIndicators.forEach(function (kickIndicator) {
 			kickIndicator.validKickDirection = false;
 		});
 		
-		this.validKickIndicators.length = 0;
+		this.validKickDirectionIndicators.length = 0;
 	},
 	
-	clearKickProjection: function () {
+	clearKickTrajectory: function () {
 		var self = this;
 		
-		if (!this.kickProjectionLine) {
-			return;
-		}
-		
-		this.kickProjectionLine
-			.animate(settings.animationSpeed)
-			.stroke({
-				opacity: 0
-			});
+		this.validKickIndicators.forEach(function (indicator) {
+			indicator
+				.animate(settings.animationSpeed)
+				.fill({
+					opacity: 0
+				});
 			
-		setTimeout(function () {
-			self.kickProjectionLine.remove();
-			self.kickProjectionLine = null;
-		}, settings.animationSpeed + 10);
+			setTimeout(function () {
+				indicator.remove();
+			}, settings.animationSpeed + 10);
+		});
+		
+		this.validKicks.forEach(function (kick) {
+			self.tiles[kick.x][kick.y].validKick = false;
+		});
+		
+		this.validKickIndicators.length = 0;
+		this.validKicks.length = 0;
 	},
 	
 	clearValidMoves: function () {
@@ -291,10 +280,6 @@ Display.prototype = {
 				  this.board.actors[index].y * this.tileSize);
 	},
 	
-	hideKickStrengthInput: function () {
-		this.$knob.parent().hide(settings.animationSpeed);
-	},
-
 	// highlight a tile either valid or invalid
 	highlightTile: function (tile, valid) {
 		this.highlight = this.draw.rect(this.tileSize, this.tileSize)
@@ -420,7 +405,7 @@ Display.prototype = {
 				dy = tile.y - self.board.puck.y;
 			
 			self.tiles[tile.x][tile.y].validKickDirection = true;
-			self.validKickIndicators.push(self.tiles[tile.x][tile.y]);
+			self.validKickDirectionIndicators.push(self.tiles[tile.x][tile.y]);
 				
 			// show an arrow for each tile
 			$arrow = $("<i>")
@@ -448,43 +433,34 @@ Display.prototype = {
 			self.$kickDirections.push($arrow);
 		});
 	},
-	
-	// display the UI that allows the player to select how hard to kick the puck
-	showKickStrengthInput: function () {
-		var boardPos = this.$board.offset();
 		
-		this.$knob
-			.parent()
-			.css({
-				left: (this.board.puck.x * this.tileSize + boardPos.left) -
-					this.tileSize / 2,
-				top: (this.board.puck.y * this.tileSize + boardPos.top) -
-					this.tileSize / 2
-			})
-			.show();
-	},
-	
-	showPuckTrajectory: function (projection) {
-		var self = this;
+	showKickTrajectory: function (projection) {
+		var self = this,
+			diameter = this.tileSize * settings.validMoveIndicatorSize,
+			offset = Math.round((this.tileSize - diameter) / 2);
 		
-		projection = projection.map(function (tile) {
-			return [(tile.x * self.tileSize) + self.tileSize / 2,
-				(tile.y * self.tileSize) + self.tileSize / 2];
+		projection.forEach(function (tile, i) {
+			var indicator = self.draw.circle(diameter)
+					.move((self.tileSize * tile.x) + offset, 
+						(self.tileSize * tile.y) + offset)
+					.fill({
+						color: settings.colors.field.valid,
+						opacity: 0
+					})
+					.style("pointer-events", "none"),
+				displayTile = self.tiles[tile.x][tile.y];
+			
+			setTimeout(function () {
+				indicator.animate(settings.animationSpeed).fill({
+					opacity: 0.3
+				});
+			}, i * 10);
+			
+			displayTile.validKick = true;
+			
+			self.validKickIndicators.push(indicator);
+			self.validKicks.push(displayTile);
 		});
-		
-		this.kickProjectionLine = this.kickProjectionLine ||
-			this.draw.polyline([projection[0]])
-			.fill("none")
-			.stroke({
-				width: 8,
-				color: settings.colors.field.valid,
-				opacity: 0.3
-			})
-			.attr("stroke-linecap", "round")
-			.attr("stroke-linejoin", "round");
-		
-		this.kickProjectionLine.animate(settings.animationSpeed)
-			.plot(projection);
 	},
 
 	// display the moves that a particular player can make

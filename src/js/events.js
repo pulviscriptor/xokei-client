@@ -48,11 +48,6 @@ function listen(_controller, _display) {
 	
 	display.puck.element.click(emit.bind(display.puck.element, "click puck"));
 	
-	// listen for changes in the kick strength input
-	display.$knob.trigger("configure", {
-		change: emit.bind(display.$knob, "kick strength change")
-	});
-	
 	// listen for resize events to redraw the board
 	$(window).resize(function () {
 		if (resizeTimeout) {

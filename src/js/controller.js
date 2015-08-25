@@ -13,7 +13,6 @@ function Controller() {
 	
 	/// public variables
 	this.kickDirection = null;
-	this.kickStrength = null;
 	this.listeners = {};
 	this.puckTrajectory = null;
 	this.selectedActor = null;
@@ -62,7 +61,7 @@ function Controller() {
 				self.clearUIState();
 				
 				self.kickDirection = tile;
-				self.view.display.showKickStrengthInput();
+				self.projectKickTrajectory();
 			} else {
 				self.clearUIState();
 			}
@@ -72,7 +71,10 @@ function Controller() {
 			var pos = data.element.data("position"),
 				tile = self.view.display.tiles[pos.x][pos.y];
 				
-			if (tile.validMove || tile.validKickDirection) {
+			if (tile.validMove || 
+				tile.validKickDirection || 
+				tile.validKick) {
+				
 				self.view.display.highlightTile(tile, true);
 			}
 		},
@@ -86,11 +88,6 @@ function Controller() {
 			
 			self.board.puck.kick(end);
 			self.view.display.showKick(self.puckTrajectory);
-		},
-		
-		"kick strength change": function (data) {
-			self.kickStrength = data.event;
-			self.projectPuckTrajectory();
 		},
 		
 		"window resize": function () {
@@ -126,14 +123,12 @@ Controller.prototype = {
 	clearUIState: function () {
 		this.view.display.deselectActor(this.selectedActorIndex);
 		this.view.display.clearKickDirections();
-		this.view.display.clearKickProjection();
-		this.view.display.hideKickStrengthInput();
+		this.view.display.clearKickTrajectory();
 		this.view.display.unhighlightTile();
 		
 		this.puckSelected = false;
 		this.selectedActor = null;
 		this.kickDirection = null;
-		this.kickStrength = null;
 		this.puckTrajectory = null;
 	},
 	
@@ -149,11 +144,11 @@ Controller.prototype = {
 		}
 	},
 	
-	projectPuckTrajectory: function () {
+	projectKickTrajectory: function () {
 		this.puckTrajectory = this.board.puck.calculateTrajectory(
-			this.kickDirection, this.kickStrength);
+			this.kickDirection);
 		
-		this.view.display.showPuckTrajectory(this.puckTrajectory);
+		this.view.display.showKickTrajectory(this.puckTrajectory);
 	},
 	
 	registerBoard: function (board) {
