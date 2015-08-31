@@ -24,13 +24,16 @@ Puck.prototype = {
 	// surrounding it, and the player that is passed in
 	kickDirections: function (player) {
 		var directions = [],
-			neighborhood = this.board.tiles[this.x][this.y].neighborhood(),
-			self = this;
+			neighborhood,
+			self = this,
+			puckTile = this.board.tile(this.x, this.y);
+		
+		neighborhood = puckTile.neighborhood();
 		
 		neighborhood.forEach(function(actorTile) {
-			var dx,
+			var actorAngle,
+				dx,
 				dy,
-				actorAngle,
 				oppositeTile;
 			
 			if (!actorTile.actor || actorTile.actor.owner !== player) {
@@ -77,9 +80,14 @@ Puck.prototype = {
 					// or the puck is in a corner
 					(neighborhood.length < 4)) &&
 					
-					// and the tile is not occupied or already in the list,
+					// and the tile is not occupied or already in the list
 					!tile.actor &&
-					directions.indexOf(tile) < 0) {
+					
+					// and the tile is not already in the list
+					directions.indexOf(tile) < 0 &&
+					
+					// and the path to the tile is not blocked
+					puckTile.pathOpenTo(tile)) {
 					
 					// then we can add this direction to the list
 					directions.push(tile);
@@ -94,20 +102,18 @@ Puck.prototype = {
 	// kicked in the direction of the tile passed in
 	calculateTrajectory: function (direction) {
 		var crossedBorder = false,
-			currentNeighborhood,
 			dx = direction.x - this.x,
 			dy = direction.y - this.y,
 			i = 0,
-			lastTileOwner = this.board.tile(direction.x, direction.y).owner,
-			shareImpassableNeighbor,
-			tile = this.board.tile(this.x, this.y),
+			lastTile = this.board.tile(this.x, this.y),
+			tile,
 			trajectory = [],
 			x = this.x,
 			y = this.y;
 		
 		while (i++ < 100) {
 			if (tile) {
-				currentNeighborhood = tile.neighborhood(true);
+				lastTile = tile;
 			}
 			
 			x += dx;
@@ -115,15 +121,7 @@ Puck.prototype = {
 			
 			tile = this.board.tile(x, y);
 			
-			if (tile && currentNeighborhood) {
-				shareImpassableNeighbor = !!tile.neighborhood(true)
-					.filter(function (t) {
-						return t.type === "wall" && 
-							currentNeighborhood.indexOf(t) > -1;
-					}).length;
-			}
-			
-			if (!tile || tile.type === "wall" || shareImpassableNeighbor) {
+			if (!tile || tile.type === "wall" || !lastTile.pathOpenTo(tile)) {
 				// check if this is an orthagonal collision, in which case the
 				// path of the puck needs to end here
 				if (dx * dy === 0) {
@@ -152,8 +150,7 @@ Puck.prototype = {
 			// check if the owner of this tile does not equal the owner of the 
 			// original tile, which would indicate that the puck has crossed the
 			// border at some point
-			if (tile.owner !== lastTileOwner) {
-				lastTileOwner = tile.owner;
+			if (tile.owner !== lastTile.owner) {
 				if (crossedBorder) {
 					// if the tile has already crossed the border, then the next
 					// tile represents a second crossing of the border, which we
