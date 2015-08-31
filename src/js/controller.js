@@ -14,6 +14,7 @@ function Controller() {
 	/// public variables
 	this.kickDirection = null;
 	this.listeners = {};
+	this.messageShowing = false;
 	this.puckTrajectory = null;
 	this.selectedActor = null;
 	
@@ -75,6 +76,15 @@ function Controller() {
 			}
 		},
 		
+		"close message": function () {
+			self.messageShowing = false;
+		},
+		
+		"message": function (data) {
+			self.view.message(data);
+			self.messageShowing = true;
+		},
+		
 		"mouse enter tile": function (data) {
 			var pos = data.element.data("position"),
 				tile = self.view.display.tiles[pos.x][pos.y];
@@ -94,6 +104,10 @@ function Controller() {
 		"window resize": function () {
 			self.clearUIState();
 			self.view.display.resizeBoard();
+			
+			if (self.messageShowing) {
+				self.view.resizeMessage();
+			}
 		}
 	});
 }

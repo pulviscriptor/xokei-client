@@ -12,7 +12,7 @@ var controller,
 	resizeTimeout;
 
 /// functions
-function emit (eventName, event) {
+function emit(eventName, event) {
 	/*jshint validthis: true */
 	controller.emit(eventName, {
 		element: this,

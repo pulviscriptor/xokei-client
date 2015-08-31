@@ -10,6 +10,12 @@ body, html {
 	height: 100%;
 }
 
+.board-container {
+	width: calc((91vw - #{$menu-width});
+	height: 100%;
+	float: left;
+}
+
 .container {
 	position: absolute;
 	top: $space;
@@ -17,12 +23,6 @@ body, html {
 	bottom: $space;
 	width: 100vw - ($space * 2);
 	padding: 0;
-}
-
-.board-container {
-	width: calc((91vw - #{$menu-width});
-	height: 100%;
-	float: left;
 }
 
 .menu-container {
@@ -144,5 +144,32 @@ body, html {
 				padding-left: 10px;
 			}
 		}
+	}
+}
+
+.message-container {
+	background-color: rgba(180, 180, 180, 0.9);
+	position: absolute;
+	bottom: 20px;
+	padding: 10px;
+	color: #fff;
+	line-height: 19px;
+	vertical-align: middle;
+	
+	.message {
+		padding: 0;
+		margin: 0;
+		float: left;
+		margin-right: 20px;
+	}
+	
+	.close-message {
+		position: relative;
+		top: 1px;
+	}
+	
+	.close-message:hover {
+		color: #999;
+		cursor: pointer;
 	}
 }

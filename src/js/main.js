@@ -35,8 +35,6 @@ function init() {
 		owner: Player.One
 	});
 	
-	window.board = board;
-	
 	// initialize the display of the game and pass in the board so it can render
 	// the board later without needing a new reference to it. The display,
 	// combined with the events, make up the view
@@ -44,6 +42,17 @@ function init() {
 	
 	controller.registerBoard(board);
 	controller.registerView(view);
+	
+	// expose these parts of the game to the global scope if we are on a local
+	// server -- this is for debugging purposes
+	if (window.location.href.indexOf("localhost:") > -1) {
+		window.game = {
+			board: board,
+			controller: controller,
+			settings: settings,
+			view: view
+		};
+	}
 }
 
 // begin a game

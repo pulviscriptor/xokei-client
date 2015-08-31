@@ -5,25 +5,70 @@
 /// requires
 var Display = require("./display"),
 	events = require("./events");
-
-/// private variables
-
-/// private functions
 	
 /// object
 function View(board, controller) {
 	/// public variables
+	this.$message = $(".message");
+	this.$messageContainer = $(".message-container");
+	
 	this.board = board;
 	this.controller = controller;
 	this.display = new Display(board);
+	
+	this.initMessages();
 }
 
 /// public functions
-View.prototype.showGame = function () {
-	this.display.createActors();
-	this.display.createPuck();
+// display a closable message over the board to the player
+View.prototype = {
+	initMessages: function () {
+		var self = this;
+		
+		this.$messageContainer.hide();
+		this.$message.html("");
+		
+		$(".close-message").click(function () {
+			if (self.hideMessageTimer) {
+				clearTimeout(self.hideMessageTimer);
+				self.hideMessageTimer = null;
+			}
+			
+			self.$messageContainer.fadeOut(400);
+			self.controller.emit("close message");
+		});
+	},
 	
-	events.listen(this.controller, this.display);
+	message: function (message, life) {
+		var boardWidth = this.display.$board.width(),
+			self = this;
+		
+		this.$message.html(message.message || message);
+		this.$messageContainer
+			.css("left", (boardWidth - this.$messageContainer.width()) / 2)
+			.fadeIn(400);
+		
+		if (life || message.life) {
+			this.hideMessageTimer = setTimeout(function () {
+				self.$messageContainer.fadeOut(400);
+			}, life || message.life);
+		}
+	},
+	
+	// if the window size is changed, the message needs to be replaced at the
+	// center of the board
+	resizeMessage: function () {
+		this.$messageContainer.css("left", (this.display.$board.width() - 
+			this.$messageContainer.width()) / 2);
+	},
+
+	// cause the game board to be displayed
+	showGame: function () {
+		this.display.createActors();
+		this.display.createPuck();
+		
+		events.listen(this.controller, this.display);
+	}
 };
 
 /// exports
