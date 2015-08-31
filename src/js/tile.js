@@ -43,7 +43,7 @@ Tile.prototype = {
 	},
 	
 	// return this tile's Moore neighborhood
-	neighborhood: function () {
+	neighborhood: function (returnWalls) {
 		var dx = [0, -1, -1, -1, 0, 1, 1, 1],
 			dy = [1, 1, 0, -1, -1, -1, 0, 1],
 			self = this;
@@ -54,7 +54,7 @@ Tile.prototype = {
 			if (self.board.tiles[self.x + x]) {
 				tile = self.board.tiles[self.x + x][self.y + dy[i]];
 			
-				if (tile && tile.type !== "wall") {
+				if (tile && (tile.type !== "wall" || returnWalls)) {
 					return tile;
 				}
 			}

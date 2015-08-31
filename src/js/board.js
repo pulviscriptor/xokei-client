@@ -134,9 +134,7 @@ Board.prototype = {
 	// returns the tile at the specified coordinates unless it is a wall or a
 	// nonexistent tile, in which case undefined is returned
 	tile: function (x, y) {
-		if (this.tiles[x] && this.tiles[x][y] && this.tiles[x][y].type !== 
-			"wall") {
-			
+		if (this.tiles[x] && this.tiles[x][y]) {
 			return this.tiles[x][y];
 		}
 	}

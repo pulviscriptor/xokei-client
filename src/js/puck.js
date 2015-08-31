@@ -1,5 +1,5 @@
 /// requires
-var Player = require("./players");
+// var Player = require("./players");
 
 /// object
 function Puck(settings, board) {
@@ -71,7 +71,8 @@ Puck.prototype = {
 					
 					// or the puck is against a wall and the player is facing
 					// the wall
-					(!oppositeTile && dx * dy === 0) ||
+					((!oppositeTile || oppositeTile.type === "wall") &&
+						dx * dy === 0) ||
 					
 					// or the puck is in a corner
 					(neighborhood.length < 4)) &&
@@ -93,28 +94,42 @@ Puck.prototype = {
 	// kicked in the direction of the tile passed in
 	calculateTrajectory: function (direction) {
 		var crossedBorder = false,
+			currentNeighborhood,
 			dx = direction.x - this.x,
 			dy = direction.y - this.y,
 			i = 0,
 			lastTileOwner = this.board.tile(direction.x, direction.y).owner,
-			tile,
+			shareImpassableNeighbor,
+			tile = this.board.tile(this.x, this.y),
 			trajectory = [],
 			x = this.x,
 			y = this.y;
 		
 		while (i++ < 100) {
+			if (tile) {
+				currentNeighborhood = tile.neighborhood(true);
+			}
+			
 			x += dx;
 			y += dy;
 			
 			tile = this.board.tile(x, y);
-
-			if (!tile) {
+			
+			if (tile && currentNeighborhood) {
+				shareImpassableNeighbor = !!tile.neighborhood(true)
+					.filter(function (t) {
+						return t.type === "wall" && 
+							currentNeighborhood.indexOf(t) > -1;
+					}).length;
+			}
+			
+			if (!tile || tile.type === "wall" || shareImpassableNeighbor) {
 				// check if this is an orthagonal collision, in which case the
 				// path of the puck needs to end here
 				if (dx * dy === 0) {
 					break;
 				}
-								
+				
 				// we know that this is a diagonal collision, so we need to 
 				// reverse the direction and allow the puck to continue
 				if (y === 8 || y === -1) {
@@ -156,12 +171,12 @@ Puck.prototype = {
 				break;
 			}
 
-			if (tile) {
+			if (tile && tile.type !== "wall") {
 				trajectory.push(tile);
 			}
 			
-			// if this tile is an opponent's goal, then break the loop
-			if (tile.zone === "goal" && tile.owner === Player.Two) {
+			// if this tile is a goal, then break the loop
+			if (tile.zone === "goal") {
 				break;
 			}
 		}

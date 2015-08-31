@@ -66,7 +66,8 @@ module.exports = function(grunt) {
 				node: true,
 				strict: false,
 				undef: true,
-				unused: true
+				unused: true,
+				loopfunc: true
 			}
 		},
 		mochacov: {
