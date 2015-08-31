@@ -66,9 +66,7 @@ Actor.prototype = {
 		}
 		
 		// this move would mean that the actor is moving into the opponent's net
-		if (tile.zone === "goal" &&
-			tile.owner !== this.owner) {
-			
+		if (tile.zone === "goal" && tile.owner !== this.owner) {
 			return false;
 		}
 		

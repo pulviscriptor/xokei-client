@@ -109,7 +109,6 @@ Display.prototype = {
 	// draw and store the actors
 	createActors: function () {
 		var actor,
-			clip,
 			i;
 		
 		// draw actors
@@ -132,7 +131,7 @@ Display.prototype = {
 					.use(this.symbols.x)
 					.style("pointer-events", "none");
 			} else if (actor.owner === Player.Two) {
-				clip = this.actors[i].draw
+				this.actors[i].clip = this.actors[i].draw
 					.circle(this.actorDiameter)
 					.move(this.actorOffset, this.actorOffset);
 				
@@ -141,7 +140,7 @@ Display.prototype = {
 						width: settings.actorBorderWidth * 2,
 						color: settings.colors.actors.border
 					})
-					.clipWith(clip);
+					.clipWith(this.actors[i].clip);
 			}
 			
 			if (actor.owner === this.board.settings.owner) {
@@ -570,10 +569,19 @@ Display.prototype = {
 	// update the size and position of a single actor
 	updateActor: function (index) {
 		var actor = this.board.actors[index];
-		this.actors[index].draw.move(actor.x * this.tileSize, 
-			actor.y * this.tileSize);
-		this.actors[index].element.size(this.actorDiameter)
+		
+		this.actors[index].draw
+			.move(actor.x * this.tileSize, actor.y * this.tileSize);
+			
+		this.actors[index].element
+			.size(this.actorDiameter)
 			.move(this.actorOffset, this.actorOffset);
+		
+		if (actor.owner === Player.Two) {
+			this.actors[index].clip
+				.size(this.actorDiameter)
+				.move(this.actorOffset, this.actorOffset);
+		}
 		
 		if (this.actors[index].symbol) {
 			this.actors[index].symbol.remove();

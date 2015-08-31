@@ -92,6 +92,7 @@ function Controller() {
 		},
 		
 		"window resize": function () {
+			self.clearUIState();
 			self.view.display.resizeBoard();
 		}
 	});
