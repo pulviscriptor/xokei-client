@@ -7,14 +7,15 @@ var Display = require("./display"),
 	events = require("./events");
 	
 /// object
-function View(board, controller) {
+function View(board) {
 	/// public variables
 	this.$message = $(".message");
 	this.$messageContainer = $(".message-container");
 	
 	this.board = board;
-	this.controller = controller;
+	this.controller = null;
 	this.display = new Display(board);
+	this.events = events;
 	
 	this.initMessages();
 }
@@ -65,9 +66,12 @@ View.prototype = {
 	// cause the game board to be displayed
 	showGame: function () {
 		this.display.createActors();
-		this.display.createPuck();
 		
-		events.listen(this.controller, this.display);
+		if (this.board.puck) {
+			this.display.createPuck();
+		}
+		
+		this.events.listen(this.controller, this.display);
 	}
 };
 

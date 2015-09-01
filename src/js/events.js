@@ -46,7 +46,9 @@ function listen(_controller, _display) {
 		elem.click(emit.bind(elem, "click actor"));
 	}
 	
-	display.puck.element.click(emit.bind(display.puck.element, "click puck"));
+	if (display.puck) {
+		listenToPuckEvents();
+	}
 	
 	// listen for resize events to redraw the board
 	$(window).resize(function () {
@@ -59,7 +61,12 @@ function listen(_controller, _display) {
 	});
 }
 
+function listenToPuckEvents() {
+	display.puck.element.click(emit.bind(display.puck.element, "click puck"));
+}
+
 /// exports
 module.exports = {
-	listen: listen
+	listen: listen,
+	listenToPuckEvents: listenToPuckEvents
 };

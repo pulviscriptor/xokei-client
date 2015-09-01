@@ -29,6 +29,9 @@ function Tile(x, y, tile, board) {
 	
 	// vertical position on the board
 	this.y = y;
+	
+	// the zones this tile is in
+	this.zones = [];
 }
 
 Tile.prototype = {
@@ -37,9 +40,18 @@ Tile.prototype = {
 		this.actor = actor;
 	},
 	
+	addZone: function (zoneName) {
+		this.zones.push(zoneName);
+	},
+	
 	// determine Chebyshev distance from tile at another point
 	distance: function (other) {
 		return Math.max(Math.abs(this.x - other.x), Math.abs(this.y - other.y));
+	},
+	
+	// return whether or not this tile is in the zone that is passed in
+	inZone: function (zoneName) {
+		return this.zones.indexOf(zoneName) > -1;
 	},
 	
 	// return this tile's Moore neighborhood
@@ -100,6 +112,11 @@ Tile.prototype = {
 		// if the destination tile is not diagonal to this tile, we know for a
 		// fact that the path is open
 		return true;
+	},
+	
+	// remove this tile from the specified zone
+	removeZone: function (zone) {
+		this.zones.splice(this.zones.indexOf(zone), 1);
 	}
 };
 

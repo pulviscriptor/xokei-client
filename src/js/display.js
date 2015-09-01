@@ -27,6 +27,7 @@ function Display(board) {
 		vertical: []
 	};
 	this.puck = null;
+	this.puckGhost = null;
 	this.symbols = {};
 	this.tiles = [];
 	this.validKickDirectionIndicators = [];
@@ -89,6 +90,15 @@ Display.prototype = {
 		
 		this.validKickIndicators.length = 0;
 		this.validKicks.length = 0;
+	},
+	
+	clearPuckGhost: function () {
+		if (!this.puckGhost) {
+			return;
+		}
+		
+		this.puckGhost.group.remove();
+		this.puckGhost = null;
 	},
 	
 	clearValidMoves: function () {
@@ -244,7 +254,7 @@ Display.prototype = {
 	},
 
 	// draw the puck
-	createPuck: function () {
+	createPuck: function (animationSpeed) {
 		this.puck = {
 			group: this.draw.nested()
 				.move(this.board.puck.x * this.tileSize, 
@@ -252,8 +262,15 @@ Display.prototype = {
 		};
 		
 		this.puck.element = this.puck.group.circle(this.puckDiameter)
-			.fill(settings.colors.puck)
+			.fill({
+				color: settings.colors.puck,
+				opacity: 0
+			})
 			.move(this.puckOffset, this.puckOffset);
+			
+		this.puck.element.animate(animationSpeed || 0).fill({
+			opacity: 1
+		});
 	},
 
 	// deselect an actor if it is selected
@@ -281,13 +298,19 @@ Display.prototype = {
 				color: settings.colors.actors[Player.One]
 			});
 	},
-
-	// move an actor from one tile to another, with animation
-	moveActor: function (index) {
-		this.actors[index].draw
-			.animate(settings.animationSpeed)
-			.move(this.board.actors[index].x * this.tileSize,
-				  this.board.actors[index].y * this.tileSize);
+	
+	// prevent the mouse from interacting with actors
+	disableActorMouseEvents: function () {
+		this.actors.forEach(function (actor) {
+			actor.element.style("pointer-events", "none");
+		});
+	},
+	
+	// allow the mouse to interact with actors
+	enableActorMouseEvents: function () {
+		this.actors.forEach(function (actor) {
+			actor.element.style("pointer-events", null);
+		});	
 	},
 	
 	// highlight a tile either valid or invalid
@@ -295,7 +318,9 @@ Display.prototype = {
 		this.highlight = this.draw.rect(this.tileSize, this.tileSize)
 			.move(this.tileSize * tile.x, this.tileSize * tile.y)
 			.fill({
-				color: valid ? settings.colors.field.valid : "red",
+				color: valid ?
+					settings.colors.field.valid :
+					settings.colors.field.invalid,
 				opacity: 0
 			})
 			.style("pointer-events", "none");
@@ -308,6 +333,14 @@ Display.prototype = {
 			.fill({
 				opacity: 0.3
 			});
+	},
+
+	// move an actor from one tile to another, with animation
+	moveActor: function (index) {
+		this.actors[index].draw
+			.animate(settings.animationSpeed)
+			.move(this.board.actors[index].x * this.tileSize,
+				  this.board.actors[index].y * this.tileSize);
 	},
 	
 	// prerender symbols at a certain tileSize
@@ -489,6 +522,26 @@ Display.prototype = {
 			self.validKickIndicators.push(indicator);
 			self.validKicks.push(displayTile);
 		});
+	},
+	
+	showPuckGhost: function (position) {
+		this.puckGhost = {
+			group: this.draw.nested()
+				.move(position.x * this.tileSize, 
+					  position.y * this.tileSize)
+		};
+		
+		this.puckGhost.element = this.puckGhost.group.circle(this.puckDiameter)
+			.fill({
+				color: settings.colors.puck,
+				opacity: 0
+			})
+			.move(this.puckOffset, this.puckOffset)
+			.style("pointer-events", "none")
+			.animate(settings.animationSpeed)
+			.fill({
+				opacity: 0.3
+			});
 	},
 
 	// display the moves that a particular player can make

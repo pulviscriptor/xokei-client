@@ -131,6 +131,7 @@ module.exports = (function (settings) {
 			dark: "#ececec",
 			light: "white",
 			valid: "green",
+			invalid: "red",
 			wall: "white"
 		},
 		puck: "#7f7fff",
@@ -161,17 +162,6 @@ module.exports = (function (settings) {
 	// tiles representing specific zones on the board
 	zones: {
 		player1: {
-			goal: [
-				{
-					x: 0,
-					y: 3
-				},
-				{
-					x: 0,
-					y: 4
-				}
-			],
-			
 			endZone: [
 				{
 					x: 1,
@@ -181,9 +171,42 @@ module.exports = (function (settings) {
 					x: 2,
 					y: 5
 				}
+			],
+			
+			goal: [
+				{
+					x: 0,
+					y: 3
+				},
+				{
+					x: 0,
+					y: 4
+				}
+			],
+			
+			territory: [
+				{
+					x: 1,
+					y: 0
+				},
+				{
+					x: 6,
+					y: 7
+				}
 			]
 		},
 		player2: {
+			endZone: [
+				{
+					x: 11,
+					y: 2
+				},
+				{
+					x: 12,
+					y: 5
+				}
+			],
+			
 			goal: [
 				{
 					x: 13,
@@ -195,14 +218,14 @@ module.exports = (function (settings) {
 				}
 			],
 			
-			endZone: [
+			territory: [
 				{
-					x: 11,
-					y: 2
+					x: 7,
+					y: 0
 				},
 				{
 					x: 12,
-					y: 5
+					y: 7
 				}
 			]
 		}

@@ -7,6 +7,7 @@
 /// requires
 var Actor = require("./actor"),
 	Puck = require("./puck"),
+	settings = require("./settings"),
 	Tile = require("./tile");
 
 /// private variables
@@ -80,7 +81,7 @@ Board.prototype = {
 	generate: function () {
 		var zone,
 			zones,
-			zoneTitle,
+			zoneName,
 			player,
 			x,
 			y;
@@ -98,16 +99,24 @@ Board.prototype = {
 		for (player in this.settings.zones) {
 			zones = this.settings.zones[player];
 			
-			for (zoneTitle in zones) {
-				zone = zones[zoneTitle];
+			for (zoneName in zones) {
+				zone = zones[zoneName];
 				
-				for (x = zone[0].x; x <= zone[1].x; x++) {
-					for (y = zone[0].y; y <= zone[1].y; y++) {
-						this.tiles[x][y].set("zone", zoneTitle);
-					}
-				}
+				this.zone(player, zoneName).forEach(function (tile) {
+					tile.addZone(zoneName);
+				});
 			}
 		}
+	},
+	
+	// given the way the board is set up right now, return all tiles that are
+	// not occupied by an actor, are in the board owner's territory, and are not
+	// in a goal or endzone
+	getValidPuckPositions: function () {
+		return this.zone(this.settings.owner, "territory")
+			.filter(function (tile) {
+				return !tile.actor && !tile.inZone("endZone");
+			});
 	},
 	
 	// this function places the actors on the board from the array passed in, or
@@ -134,9 +143,28 @@ Board.prototype = {
 	// returns the tile at the specified coordinates unless it is a wall or a
 	// nonexistent tile, in which case undefined is returned
 	tile: function (x, y) {
+		y = (x.y !== undefined) ? x.y : y;
+		x = (x.x !== undefined) ? x.x : x;
+		
 		if (this.tiles[x] && this.tiles[x][y]) {
 			return this.tiles[x][y];
 		}
+	},
+	
+	// return all the tiles in a specific zone
+	zone: function (player, zoneName) {
+		var tilesInZone = [],
+			x,
+			y,
+			zone = settings.zones[player][zoneName];
+		
+		for (x = zone[0].x; x <= zone[1].x; x++) {
+			for (y = zone[0].y; y <= zone[1].y; y++) {
+				tilesInZone.push(this.tiles[x][y]);
+			}
+		}
+		
+		return tilesInZone;
 	}
 };
 

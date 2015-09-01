@@ -21,11 +21,6 @@ var board,
 /// functions
 // initialize the board and the display
 function init() {
-	// initialize the controller, which talks to both the view and the model. 
-	// The view sends events to the controller, which in turn sends updates from
-	// the board to the view.
-	controller = new Controller();
-	
 	// create and initialize the game board in memory--the board is the model
 	board = new Board({
 		zones: settings.zones,
@@ -34,14 +29,19 @@ function init() {
 		}),
 		owner: Player.One
 	});
-	
+
 	// initialize the display of the game and pass in the board so it can render
 	// the board later without needing a new reference to it. The display,
 	// combined with the events, make up the view
-	view = new View(board, controller);
+	view = new View(board);
 	
-	controller.registerBoard(board);
-	controller.registerView(view);
+	// create the controller, which talks to both the view and the model. The
+	// view sends events to the controller, which in turn sends updates from the
+	// board to the view.
+	controller = new Controller(board, view);
+	
+	// sent the controller to the view
+	view.controller = controller;
 	
 	// expose these parts of the game to the global scope if we are on a local
 	// server -- this is for debugging purposes
@@ -58,9 +58,16 @@ function init() {
 // begin a game
 function beginGame(state) {
 	board.placeActors(state.actors);
-	board.placePuck(state.puck);
+	
+	if (state.puck) {
+		board.placePuck(state.puck);
+	}
 	
 	view.showGame();
+	
+	if (!state.puck) {
+		controller.setUIState("placing puck");
+	}
 }
 
 /// initialization
@@ -108,9 +115,5 @@ beginGame({
 		x: 7,
 		y: 7,
 		owner: Player.Two
-	}],
-	puck: {
-		x: 4,
-		y: 5
-	}
+	}]
 });

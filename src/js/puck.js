@@ -173,7 +173,7 @@ Puck.prototype = {
 			}
 			
 			// if this tile is a goal, then break the loop
-			if (tile.zone === "goal") {
+			if (tile.inZone("goal")) {
 				break;
 			}
 		}
