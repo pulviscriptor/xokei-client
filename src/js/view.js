@@ -4,7 +4,8 @@
 
 /// requires
 var Display = require("./display"),
-	events = require("./events");
+	events = require("./events"),
+	Player = require("./players");
 	
 /// object
 function View(board) {
@@ -80,6 +81,17 @@ View.prototype = {
 		}
 		
 		this.events.listen(this.controller, this.display);
+	},
+	
+	// display who's turn it is
+	showTurnState: function (player) {
+		$(".player-name").css("text-decoration", "none");
+		
+		if (player === Player.One) {
+			$(".player-1-name").css("text-decoration", "underline");
+		} else {
+			$(".player-2-name").css("text-decoration", "underline");
+		}
 	}
 };
 

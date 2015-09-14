@@ -295,7 +295,7 @@ Display.prototype = {
 		this.actors[actorIndex].element
 			.animate(settings.animationSpeed)
 			.fill({
-				color: settings.colors.actors[Player.One]
+				color: settings.colors.actors[actor.owner]
 			});
 	},
 	
@@ -399,12 +399,14 @@ Display.prototype = {
 			this.updateActor(i);
 		}
 		
-		// resize puck
-		this.puck.group.move(this.board.puck.x * this.tileSize, 
-			this.board.puck.y * this.tileSize);
-		this.puck.element
-			.size(this.puckDiameter)
-			.move(this.puckOffset, this.puckOffset);
+		if (this.puck) {
+			// resize puck
+			this.puck.group.move(this.board.puck.x * this.tileSize, 
+				this.board.puck.y * this.tileSize);
+			this.puck.element
+				.size(this.puckDiameter)
+				.move(this.puckOffset, this.puckOffset);
+		}
 		
 		// move and resize the legend appropriately
 		this.updateLegend();

@@ -2,11 +2,9 @@
  */
  
 /// requires
-var settings = require("./settings");
-
-/// private variables
-
-/// private functions
+var Player = require("./players"),
+	settings = require("./settings"),
+	Turn = require("./turn");
 
 /// object
 function Controller(board, view) {
@@ -14,12 +12,27 @@ function Controller(board, view) {
 	this.board = board;
 	this.view = view;
 	
+	// the turn that this client is taking right now
+	this.currentTurn = null;
+	
+	// the direction the player has chosen to kick the puck
 	this.kickDirection = null;
+	
+	// an object containing all the event listeners that have been applied to 
+	// the current state, as well as handlers that are called when they occur
 	this.listeners = {};
+	
+	// whether or not a message is currently being displayed in the UI
 	this.messageShowing = false;
+	
+	// an array containing the valid positions the puck can be kicked to
 	this.puckTrajectory = null;
+	
+	// the actor that is currently highlighted by the UI
 	this.selectedActor = null;
 	
+	// an object containing all of the possible events in the game, held under
+	// the UI state that they should be 
 	this.states = {
 		// events that all states should be subscribed to regardless of UI state
 		"global": {
@@ -60,6 +73,9 @@ function Controller(board, view) {
 					this.view.events.listenToPuckEvents();
 					this.emit("placed puck");
 					this.setUIState("playing round");
+					
+					// record puck placement
+					this.currentTurn.recordMove(this.board.puck, null, pos);
 				}
 			},
 			
@@ -75,6 +91,10 @@ function Controller(board, view) {
 					life: "placed puck",
 					message: "Place the puck."
 				});
+				
+				this.currentTurn = new Turn(this, this.board.settings.owner);
+				this.currentTurn.recordMove("Begin round", null, null);
+				this.view.showTurnState(this.board.settings.owner);
 			},
 			
 			"mouse enter tile": function (data) {
@@ -110,7 +130,8 @@ function Controller(board, view) {
 				
 				this.clearUIState();
 				
-				// if this actor belongs to the owner of the board
+				// prevent the player from moving actors that do not belong to 
+				// them
 				if (actor.owner !== this.board.settings.owner) {
 					return false;
 				}
@@ -126,6 +147,7 @@ function Controller(board, view) {
 			"click tile": function (data) {
 				var actor,
 					index,
+					oldPos,
 					pos = data.element.data("position"),
 					tile = this.view.display.tiles[pos.x][pos.y];
 				
@@ -134,6 +156,10 @@ function Controller(board, view) {
 				if (tile.validMove) {
 					actor = this.selectedActor;
 					index = this.selectedActorIndex;
+					oldPos = {
+						x: actor.x,
+						y: actor.y
+					};
 					
 					// clear the UI
 					this.clearUIState();
@@ -141,15 +167,25 @@ function Controller(board, view) {
 					// move the actor in the model
 					actor.move(this.board.tiles[pos.x][pos.y]);
 					
-					// and move the actor in the view
+					// move the actor in the view
 					this.view.display.moveActor(index);
+					
+					// and record this move in the current turn
+					this.currentTurn.recordMove(actor, oldPos, pos);
 				} else if (tile.validKickDirection) {
 					this.clearUIState();
 					
 					this.kickDirection = tile;
 					this.projectKickTrajectory();
 				} else if (tile.validKick) {
+					oldPos = {
+						x: this.board.puck.x,
+						y: this.board.puck.y
+					};
+					
 					this.kickPuck(this.board.tiles[pos.x][pos.y]);
+					
+					this.currentTurn.recordMove(this.board.puck, oldPos, pos);
 					this.clearUIState();
 				} else {
 					this.clearUIState();
@@ -170,9 +206,58 @@ function Controller(board, view) {
 			
 			"mouse exit tile": function () {
 				this.view.display.unhighlightTile();
+			},
+			
+			// create a new turn from the data that has been (ostensibly)
+			// received from the server
+			"receive turn": function (data) {
+				var turn = new Turn(this, Player.Two);
+				turn.deserialize(data);
+				
+				// ordinarily we would want to call turn.display to render the
+				// turn to this client, now that it's just been received from 
+				// the server -- however, because we're faking it and allowing
+				// both players to make turns from this one client, it will have
+				// already been displayed in the UI, and so there's no reason to
+				// try to show it again
+				
+				// turn.display();
+				
+				this.turns.push(turn);
+				
+				// create a new turn and allow the other player to move
+				this.currentTurn = new Turn(this, Player.One);
+				this.board.settings.owner = Player.One;
+				this.view.showTurnState(Player.One);
+			},
+			
+			// when this client finishes making a turn, send the turn data to 
+			// the server -- err, that is, do nothing for now, until the server
+			// is implemented
+			"finish turn": function (turn) {
+				// get the turn data in serialized form, ready to be passed to 
+				// the server
+				// var turnData = turn.serialize();
+				
+				// pass the turn data to the server
+				
+				// and store this turn on the turns list
+				this.turns.push(turn);
+				
+				// now that we've saved this turn, it is no longer current, so
+				// create a new one and pass control of the board to the other 
+				// player
+				this.currentTurn = new Turn(this, Player.Two);
+				this.board.settings.owner = Player.Two;
+				this.view.showTurnState(Player.Two);
 			}
 		}
 	};
+	
+	// an array containing all of the turns that have taken place so far, both 
+	// turns that this client has made as well as all turns received from the
+	// server -- the length of this array represents the amount of turns so far
+	this.turns = [];
 }
 
 /// public functions
