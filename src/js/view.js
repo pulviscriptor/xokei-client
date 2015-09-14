@@ -23,25 +23,25 @@ function View(board) {
 /// public functions
 // display a closable message over the board to the player
 View.prototype = {
-	initMessages: function () {
-		var self = this;
+	closeMessage: function () {
+		if (this.hideMessageTimer) {
+			clearTimeout(this.hideMessageTimer);
+			this.hideMessageTimer = null;
+		}
 		
+		this.$messageContainer.fadeOut(400);
+		this.controller.emit("close message");
+	},
+	
+	initMessages: function () {
 		this.$messageContainer.hide();
 		this.$message.html("");
-		
-		$(".close-message").click(function () {
-			if (self.hideMessageTimer) {
-				clearTimeout(self.hideMessageTimer);
-				self.hideMessageTimer = null;
-			}
-			
-			self.$messageContainer.fadeOut(400);
-			self.controller.emit("close message");
-		});
+		$(".close-message").click(this.closeMessage.bind(this));
 	},
 	
 	message: function (message, life) {
 		var boardWidth = this.display.$board.width(),
+			func,
 			self = this;
 		
 		this.$message.html(message.message || message);
@@ -49,10 +49,18 @@ View.prototype = {
 			.css("left", (boardWidth - this.$messageContainer.width()) / 2)
 			.fadeIn(400);
 		
-		if (life || message.life) {
+		if (typeof life === "number" || typeof message.life === "number") {
 			this.hideMessageTimer = setTimeout(function () {
 				self.$messageContainer.fadeOut(400);
 			}, life || message.life);
+		} else if (typeof life === "string" || 
+			typeof message.life === "string") {
+			// we assume we have an event listener here
+			func = this.controller
+				.addListener(life || message.life, function () {
+					self.closeMessage();
+					self.controller.removeListener(life || message.life, func);
+				});
 		}
 	},
 	

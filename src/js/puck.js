@@ -84,10 +84,7 @@ Puck.prototype = {
 					!tile.actor &&
 					
 					// and the tile is not already in the list
-					directions.indexOf(tile) < 0 &&
-					
-					// and the path to the tile is not blocked
-					puckTile.pathOpenTo(tile)) {
+					directions.indexOf(tile) < 0) {
 					
 					// then we can add this direction to the list
 					directions.push(tile);
@@ -121,7 +118,7 @@ Puck.prototype = {
 			
 			tile = this.board.tile(x, y);
 			
-			if (!tile || tile.type === "wall" || !lastTile.pathOpenTo(tile)) {
+			if (!tile || tile.type === "wall") {
 				// check if this is an orthagonal collision, in which case the
 				// path of the puck needs to end here
 				if (dx * dy === 0) {

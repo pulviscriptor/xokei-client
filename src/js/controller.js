@@ -58,12 +58,12 @@ function Controller(board, view) {
 					}, settings.animationSpeed);
 					
 					this.view.events.listenToPuckEvents();
+					this.emit("placed puck");
 					this.setUIState("playing round");
 				}
 			},
 			
 			"destroy state": function () {
-				console.log("Destroying puck placement state.");
 				this.view.display.enableActorMouseEvents();
 			},
 			
@@ -71,7 +71,10 @@ function Controller(board, view) {
 				this.validPuckPositions = this.board.getValidPuckPositions();
 				this.view.display.disableActorMouseEvents();
 				
-				this.emit("message", "Place the puck.");
+				this.emit("message", {
+					life: "placed puck",
+					message: "Place the puck."
+				});
 			},
 			
 			"mouse enter tile": function (data) {
@@ -196,6 +199,8 @@ Controller.prototype = {
 		} else {
 			this.listeners[eventName] = [callback];
 		}
+		
+		return callback;
 	},
 	
 	setUIState: function (stateName) {
