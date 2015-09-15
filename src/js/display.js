@@ -226,7 +226,7 @@ Display.prototype = {
 				textAlign: "center",
 				fontSize: "28px",
 				paddingRight: "10px",
-				fontFamily: "\"Lucido Console\", monospace",
+				fontFamily: "\"Lucida Console\", monospace",
 				userSelect: "none"
 			}).appendTo(self.$boardContainer);
 		}
@@ -637,9 +637,15 @@ Display.prototype = {
 		}
 		
 		this.highlight.remove();
+		
+		// clear reference to the SVG object -- just because it has been removed
+		// from the DOM doesn't mean we aren't still maintaining a reference to
+		// it, so manually set that reference to null
 		this.highlight = null;
 		
 		this.highlightedTile.element.style("cursor", "default");
+		
+		// again, explicitly destroy reference to SVG object
 		this.highlightedTile = null;
 	},
 
