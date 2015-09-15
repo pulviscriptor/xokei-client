@@ -135,7 +135,9 @@ Display.prototype = {
 				.fill(settings.colors.actors[actor.owner])
 				.move(this.actorOffset, this.actorOffset)
 				.data("actor", i);
-				
+			
+			this.actors[i].element.style("cursor", "pointer");
+			
 			if (actor.owner === Player.One) {
 				this.actors[i].symbol = this.actors[i].draw
 					.use(this.symbols.x)
@@ -151,10 +153,6 @@ Display.prototype = {
 						color: settings.colors.actors.border
 					})
 					.clipWith(this.actors[i].clip);
-			}
-			
-			if (actor.owner === this.board.settings.owner) {
-				this.actors[i].element.style("cursor", "pointer");
 			}
 		}
 	},
