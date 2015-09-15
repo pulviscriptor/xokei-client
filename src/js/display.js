@@ -334,11 +334,20 @@ Display.prototype = {
 	},
 
 	// move an actor from one tile to another, with animation
-	moveActor: function (index) {
+	moveActor: function (index, callback) {
 		this.actors[index].draw
 			.animate(settings.animationSpeed)
 			.move(this.board.actors[index].x * this.tileSize,
-				  this.board.actors[index].y * this.tileSize);
+				  this.board.actors[index].y * this.tileSize)
+			.after(callback);
+	},
+	
+	// render the puck, wherever it currently is on the board
+	renderPuck: function () {
+		if (this.puck) {
+			this.puck.group.move(this.board.puck.x * this.tileSize, 
+								 this.board.puck.y * this.tileSize);
+		}
 	},
 	
 	// prerender symbols at a certain tileSize
@@ -434,10 +443,14 @@ Display.prototype = {
 			});
 	},
 	
-	showKick: function(trajectory) {
+	showKick: function(trajectory, callback) {
 		var self = this,
 			step = function (next) {
 				if (!next) {
+					if (callback) {
+						callback();
+					}
+					
 					return;
 				}
 				

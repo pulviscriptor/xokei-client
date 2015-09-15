@@ -192,6 +192,27 @@ function Controller(board, view) {
 				}
 			},
 			
+			// when this client finishes making a turn, send the turn data to 
+			// the server -- err, that is, do nothing for now, until the server
+			// is implemented
+			"finish turn": function (turn) {
+				// get the turn data in serialized form, ready to be passed to 
+				// the server
+				// var turnData = turn.serialize();
+				
+				// pass the turn data to the server
+				
+				// and store this turn on the turns list
+				this.turns.push(turn);
+				
+				// now that we've saved this turn, it is no longer current, so
+				// create a new one and pass control of the board to the other 
+				// player
+				this.currentTurn = new Turn(this, Player.Two);
+				this.board.settings.owner = Player.Two;
+				this.view.showTurnState(Player.Two);
+			},
+			
 			"mouse enter tile": function (data) {
 				var pos = data.element.data("position"),
 					tile = this.view.display.tiles[pos.x][pos.y];
@@ -231,25 +252,22 @@ function Controller(board, view) {
 				this.view.showTurnState(Player.One);
 			},
 			
-			// when this client finishes making a turn, send the turn data to 
-			// the server -- err, that is, do nothing for now, until the server
-			// is implemented
-			"finish turn": function (turn) {
-				// get the turn data in serialized form, ready to be passed to 
-				// the server
-				// var turnData = turn.serialize();
+			"redo": function () {
+				// if the current turn is not our turn, don't try to redo it
+				if (this.currentTurn.owner !== this.board.settings.owner) {
+					return;
+				}
 				
-				// pass the turn data to the server
+				this.currentTurn.redoMove();
+			},
+			
+			"undo": function () {
+				// if the current turn is not our turn, don't try to undo it
+				if (this.currentTurn.owner !== this.board.settings.owner) {
+					return;
+				}
 				
-				// and store this turn on the turns list
-				this.turns.push(turn);
-				
-				// now that we've saved this turn, it is no longer current, so
-				// create a new one and pass control of the board to the other 
-				// player
-				this.currentTurn = new Turn(this, Player.Two);
-				this.board.settings.owner = Player.Two;
-				this.view.showTurnState(Player.Two);
+				this.currentTurn.undoMove();
 			}
 		}
 	};
