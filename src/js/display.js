@@ -501,15 +501,26 @@ Display.prototype = {
 			offset = Math.round((this.tileSize - diameter) / 2);
 		
 		projection.forEach(function (tile, i) {
-			var indicator = self.draw.circle(diameter)
+			var displayTile = self.tiles[tile.x][tile.y],
+				indicator;
+			
+			// don't display two kick indicators on a single tile, and also
+			// don't display a kick indicator on top of the puck
+			if (self.validKicks.indexOf(displayTile) > -1 ||
+				(tile.x === self.board.puck.x &&
+				 tile.y === self.board.puck.y)) {
+				
+				return;
+			}
+			
+			indicator = self.draw.circle(diameter)
 					.move((self.tileSize * tile.x) + offset, 
 						(self.tileSize * tile.y) + offset)
 					.fill({
 						color: settings.colors.field.valid,
 						opacity: 0
 					})
-					.style("pointer-events", "none"),
-				displayTile = self.tiles[tile.x][tile.y];
+					.style("pointer-events", "none");
 			
 			setTimeout(function () {
 				indicator.animate(settings.animationSpeed).fill({

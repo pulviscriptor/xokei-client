@@ -101,14 +101,15 @@ Puck.prototype = {
 		var crossedBorder = false,
 			dx = direction.x - this.x,
 			dy = direction.y - this.y,
-			i = 0,
 			lastTile = this.board.tile(this.x, this.y),
+			reflectX,
+			reflectY,
 			tile,
 			trajectory = [],
 			x = this.x,
 			y = this.y;
 		
-		while (i++ < 100) {
+		while (1) {
 			if (tile) {
 				lastTile = tile;
 			}
@@ -125,18 +126,23 @@ Puck.prototype = {
 					break;
 				}
 				
+				reflectX = x <= 1 || x >= 13;
+				reflectY = y === 8 || y === -1;
+				
 				// we know that this is a diagonal collision, so we need to 
 				// reverse the direction and allow the puck to continue
-				if (y === 8 || y === -1) {
+				if (reflectY) {
 					x -= dx;
 					y -= dy;
 					
 					dy *= -1;
 				}
 				
-				if (x <= 1 || x >= 13) {
-					x -= dx;
-					y -= dy;
+				if (reflectX) {
+					if (!reflectY) {
+						x -= dx;
+						y -= dy;
+					}
 					
 					dx *= -1;
 				}
