@@ -25,15 +25,15 @@ Turn.prototype = {
 	},
 	
 	// finish this turn
-	finish: function () {
+	finish: function (scored) {
 		if (this.controller.board.settings.owner === Player.One) {
 			// for now, we'll pretend to send this turn to the server, so as to
 			// turn control of the board over to player two
-			this.controller.emit("finish turn", this);
+			this.controller.emit("finish turn", this, scored);
 		} else if (this.controller.board.settings.owner === Player.Two) {
 			// for now, we'll pretend we received this turn from the server, so
 			// as to return control of the board to player one
-			this.controller.emit("receive turn", this.serialize());
+			this.controller.emit("receive turn", this.serialize(), scored);
 		}
 	},
 	
@@ -73,24 +73,51 @@ Turn.prototype = {
 	
 	// record a move in this turn
 	recordMove: function (target, start, finish) {
+		var finishTile,
+			score,
+			scored;
+		
 		if (this.history.length == 2) {
 			throw new Error("This turn has already been completed.");
 		}
 		
-		this.history.push({
-			target: target,
-			start: start,
-			finish: finish
-		});
+		finishTile = finish ?
+			this.controller.board.tile(finish) :
+			null;
+			
+		if (this.controller.turns.length) {
+			score = this.controller.turns.slice(-1)[0].score();
+		} else {
+			score = {};
+			score[Player.One] = 0;
+			score[Player.Two] = 0;
+		}
 		
-		if (this.history.length == 2) {
-			this.finish();
+		if (finishTile && finishTile.inZone("goal") &&
+			target === this.controller.board.puck) {
+			scored = true;			
+			if (finishTile.owner === Player.One) {
+				score[Player.Two]++;
+			} else {
+				score[Player.One]++;
+			}
+		}
+		
+		this.history.push({
+			finish: finish,
+			score: score,
+			start: start,
+			target: target
+		});
+				
+		if (this.history.length == 2 || scored) {
+			this.finish(scored);
 		}
 		
 		// if we've made a new move, throw away any moves that are being held in
 		// the future, because they exist in a disconnected timeline and can't
 		// be retrieved, kind of like what almost happens to Marty in "Back to
-		// the Future 3" (at least I think it's the 3rd one... I don't recall)
+		// the Future 2" (at least I think it's the 2nd one... I don't recall)
 		this.future = [];
 	},
 	
@@ -101,6 +128,22 @@ Turn.prototype = {
 		
 		this.history.push(this.future.pop());
 		this.playMove(this.history[this.history.length - 1], true);
+	},
+	
+	// get the last score from this move
+	score: function () {
+		var score,
+			turn = this.history.slice(-1)[0];
+				
+		if (turn && turn.score) {
+			return JSON.parse(JSON.stringify(turn.score));
+		}
+		
+		score = {};
+		score[Player.One] = 0;
+		score[Player.Two] = 0;
+		
+		return score;
 	},
 	
 	// return the data that represents this turn

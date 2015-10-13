@@ -78,6 +78,21 @@ Board.prototype = {
 		return actors;
 	},
 	
+	// remove all actors and the puck from the board
+	clear: function () {
+		var x,
+			y;
+		
+		this.actors = [];
+		this.puck = null;
+		
+		for (x = 0; x < this.width; x++) {
+			for (y = 0; y < this.height; y++) {
+				this.tile(x, y).actor = null;
+			}
+		}
+	},
+	
 	generate: function () {
 		var zone,
 			zones,

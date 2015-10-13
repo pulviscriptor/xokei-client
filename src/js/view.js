@@ -13,6 +13,12 @@ function View(board) {
 	this.$message = $(".message");
 	this.$messageContainer = $(".message-container");
 	
+	this.$playerOneName = $(".player-1-name");
+	this.$playerOneScore = $(".player-1-score");
+	
+	this.$playerTwoName = $(".player-2-name");
+	this.$playerTwoScore = $(".player-2-score");
+	
 	this.board = board;
 	this.controller = null;
 	this.display = new Display(board);
@@ -71,6 +77,14 @@ View.prototype = {
 		this.$messageContainer.css("left", (this.display.$board.width() - 
 			this.$messageContainer.width()) / 2);
 	},
+	
+	reshowGame: function () {
+		this.display.createActors();
+		
+		if (this.board.puck) {
+			this.display.createPuck();
+		}
+	},
 
 	// cause the game board to be displayed
 	showGame: function () {
@@ -88,10 +102,16 @@ View.prototype = {
 		$(".player-name").css("text-decoration", "none");
 		
 		if (player === Player.One) {
-			$(".player-1-name").css("text-decoration", "underline");
+			this.$playerOneName.css("text-decoration", "underline");
 		} else {
-			$(".player-2-name").css("text-decoration", "underline");
+			this.$playerTwoName.css("text-decoration", "underline");
 		}
+	},
+	
+	// update the scores of the players on the screen
+	updateScore: function (score) {
+		this.$playerOneScore.html(score[Player.One]);
+		this.$playerTwoScore.html(score[Player.Two]);
 	}
 };
 

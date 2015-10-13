@@ -23,7 +23,6 @@ function emit(eventName, event) {
 // initialize all events--must be passed the display
 function listen(_controller, _display) {
 	var elem,
-		i,
 		x,
 		y;
 	
@@ -40,10 +39,8 @@ function listen(_controller, _display) {
 		}
 	}
 	
-	// loop through player's actors and create click events for them
-	for (i = 0; i < display.actors.length; i++) {
-		elem = display.actors[i].element;
-		elem.click(emit.bind(elem, "click actor"));
+	if (display.actors.length) {
+		listenToActorEvents();
 	}
 	
 	if (display.puck) {
@@ -61,6 +58,17 @@ function listen(_controller, _display) {
 	});
 }
 
+function listenToActorEvents() {
+	var elem,
+		i;
+	
+	// loop through player's actors and create click events for them
+	for (i = 0; i < display.actors.length; i++) {
+		elem = display.actors[i].element;
+		elem.click(emit.bind(elem, "click actor"));
+	}
+}
+
 function listenToPuckEvents() {
 	display.puck.element.click(emit.bind(display.puck.element, "click puck"));
 }
@@ -68,5 +76,6 @@ function listenToPuckEvents() {
 /// exports
 module.exports = {
 	listen: listen,
+	listenToActorEvents: listenToActorEvents,
 	listenToPuckEvents: listenToPuckEvents
 };

@@ -168,10 +168,11 @@ function Controller(board, view) {
 					actor.move(this.board.tiles[pos.x][pos.y]);
 					
 					// move the actor in the view
-					this.view.display.moveActor(index);
-					
-					// and record this move in the current turn
-					this.currentTurn.recordMove(actor, oldPos, pos);
+					this.view.display.moveActor(index, function () {
+						// and record this move in the current turn once the
+						// move is done rendering
+						this.currentTurn.recordMove(actor, oldPos, pos);
+					}.bind(this));
 				} else if (tile.validKickDirection) {
 					this.clearUIState();
 					
@@ -183,9 +184,11 @@ function Controller(board, view) {
 						y: this.board.puck.y
 					};
 					
-					this.kickPuck(this.board.tiles[pos.x][pos.y]);
+					this.kickPuck(this.board.tiles[pos.x][pos.y], function () {
+						this.currentTurn.recordMove(this.board.puck, 
+							oldPos, pos);
+					}.bind(this));
 					
-					this.currentTurn.recordMove(this.board.puck, oldPos, pos);
 					this.clearUIState();
 				} else {
 					this.clearUIState();
@@ -195,7 +198,7 @@ function Controller(board, view) {
 			// when this client finishes making a turn, send the turn data to 
 			// the server -- err, that is, do nothing for now, until the server
 			// is implemented
-			"finish turn": function (turn) {
+			"finish turn": function (turn, scored) {
 				// get the turn data in serialized form, ready to be passed to 
 				// the server
 				// var turnData = turn.serialize();
@@ -211,6 +214,17 @@ function Controller(board, view) {
 				this.currentTurn = new Turn(this, Player.Two);
 				this.board.settings.owner = Player.Two;
 				this.view.showTurnState(Player.Two);
+				
+				// if this turn ended by a player scoring, we need to reset the
+				// board to allow for a new round to start, and we need to 
+				// update the score on the screen
+				if (scored) {
+					// display updated scores
+					this.view.updateScore(this.turns.slice(-1)[0].score());
+					
+					// reset the board
+					this.reset();
+				}
 			},
 			
 			"mouse enter tile": function (data) {
@@ -231,7 +245,7 @@ function Controller(board, view) {
 			
 			// create a new turn from the data that has been (ostensibly)
 			// received from the server
-			"receive turn": function (data) {
+			"receive turn": function (data, scored) {
 				var turn = new Turn(this, Player.Two);
 				turn.deserialize(data);
 				
@@ -250,6 +264,17 @@ function Controller(board, view) {
 				this.currentTurn = new Turn(this, Player.One);
 				this.board.settings.owner = Player.One;
 				this.view.showTurnState(Player.One);
+				
+				// if this turn ended by a player scoring, we need to reset the
+				// board to allow for a new round to start, and we need to 
+				// update the score on the screen
+				if (scored) {
+					// display updated scores
+					this.view.updateScore(this.turns.slice(-1)[0].score());
+					
+					// reset the board
+					this.reset();
+				}
 			},
 			
 			"redo": function () {
@@ -343,7 +368,7 @@ Controller.prototype = {
 		this.puckTrajectory = null;
 	},
 	
-	emit: function (eventName, data) {
+	emit: function (eventName) {
 		var i;
 		
 		if (!this.listeners[eventName]) {
@@ -351,16 +376,17 @@ Controller.prototype = {
 		}
 		
 		for (i = 0; i < this.listeners[eventName].length; i++) {
-			this.listeners[eventName][i](data);
+			this.listeners[eventName][i].apply(this, 
+				Array.prototype.slice.apply(arguments).slice(1));
 		}
 	},
 	
-	kickPuck: function (target) {
+	kickPuck: function (target, callback) {
 		var trajectory = this.puckTrajectory
 			.splice(0, this.puckTrajectory.indexOf(target) + 1);
 			
 		this.board.puck.kick(trajectory[trajectory.length - 1]);
-		this.view.display.showKick(trajectory);
+		this.view.display.showKick(trajectory, callback);
 	},
 	
 	projectKickTrajectory: function () {
@@ -381,6 +407,21 @@ Controller.prototype = {
 				listeners.splice(index, 1);
 			}
 		}
+	},
+	
+	// reset the board after finishing a round
+	reset: function () {
+		setTimeout(function () {
+			this.board.clear();
+			this.view.display.clear();
+			
+			this.board.placeActors(window.globalVariables
+				.mockServerResponse.actors);
+			
+			this.view.reshowGame();
+			this.view.events.listenToActorEvents();
+			this.setUIState("placing puck");
+		}.bind(this));
 	},
 	
 	// select an actor and cause the available positions to move to be shown

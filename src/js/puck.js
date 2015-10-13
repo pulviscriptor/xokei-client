@@ -109,7 +109,7 @@ Puck.prototype = {
 		this.x = tile.x;
 		this.y = tile.y;
 		
-		// give the tile this puck is sitting on a reference
+		// give the tile this puck is sitting on a reference to it
 		this.board.tile(this.x, this.y).addActor(this);
 	},
 	

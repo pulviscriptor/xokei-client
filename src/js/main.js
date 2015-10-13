@@ -10,7 +10,55 @@ var Board = require("./board"),
 	Player = require("./players"),
 	settings = require("./settings");
 
+/// global variables
+window.globalVariables = {
+	mockServerResponse: {
+		actors: [{
+			x: 0,
+			y: 4,
+			owner: Player.One
+		}, {
+			x: 6,
+			y: 0,
+			owner: Player.One
+		}, {
+			x: 6,
+			y: 2,
+			owner: Player.One
+		}, {
+			x: 6,
+			y: 5,
+			owner: Player.One
+		}, {
+			x: 6,
+			y: 7,
+			owner: Player.One
+		}, {
+			x: 13,
+			y: 3,
+			owner: Player.Two
+		}, {
+			x: 7,
+			y: 0,
+			owner: Player.Two
+		}, {
+			x: 7,
+			y: 2,
+			owner: Player.Two
+		}, {
+			x: 7,
+			y: 5,
+			owner: Player.Two
+		}, {
+			x: 7,
+			y: 7,
+			owner: Player.Two
+		}]
+	}
+};
+
 window.$ = window.jQuery = require("jquery");
+
 require("bootstrap-sass");
 
 /// variables
@@ -60,7 +108,7 @@ function beginGame(state) {
 	board.placeActors(state.actors);
 	
 	if (state.puck) {
-		board.placePuck(state.puck);
+		board.placePuck(state.puck, controller);
 	}
 	
 	view.showGame();
@@ -74,46 +122,4 @@ function beginGame(state) {
 init();
 
 // mock server response
-beginGame({
-	actors: [{
-		x: 0,
-		y: 4,
-		owner: Player.One
-	}, {
-		x: 6,
-		y: 0,
-		owner: Player.One
-	}, {
-		x: 6,
-		y: 2,
-		owner: Player.One
-	}, {
-		x: 6,
-		y: 5,
-		owner: Player.One
-	}, {
-		x: 6,
-		y: 7,
-		owner: Player.One
-	}, {
-		x: 13,
-		y: 3,
-		owner: Player.Two
-	}, {
-		x: 7,
-		y: 0,
-		owner: Player.Two
-	}, {
-		x: 7,
-		y: 2,
-		owner: Player.Two
-	}, {
-		x: 7,
-		y: 5,
-		owner: Player.Two
-	}, {
-		x: 7,
-		y: 7,
-		owner: Player.Two
-	}]
-});
+beginGame(window.globalVariables.mockServerResponse);

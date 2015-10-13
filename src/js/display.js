@@ -51,6 +51,19 @@ function Display(board) {
 /// public functions
 // remove styling from any tiles which have been marked as valid moves
 Display.prototype = {
+	// remove all actors from the board
+	clear: function () {
+		if (this.actors.length) {
+			this.actors.forEach(function (actor) {
+				actor.draw.remove();
+			});
+		}
+		
+		if (this.puck) {
+			this.puck.group.remove();
+		}
+	},
+	
 	clearKickDirections: function () {
 		this.$kickDirections.forEach(function ($kickIndicator) {
 			$kickIndicator.animate({
