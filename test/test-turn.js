@@ -1,4 +1,4 @@
-/*/// src requires
+/// src requires
 var Board = require("../src/js/board.js"),
 	Controller = require("../src/js/controller.js"),
 	Player = require("../src/js/players.js"),
@@ -15,17 +15,6 @@ var board = new Board({
 		}),
 		owner: Player.One
 	}),
-	mockController = {
-		board: board,
-		view: {
-			display: {
-				moveActor: sinon.spy(),
-				renderPuck: sinon.spy()
-			}
-		},
-		emit: sinon.spy(),
-		turns: []
-	},
 	playerOneMoves = [
 		{
 			finish: null,
@@ -87,9 +76,19 @@ describe("turn", function () {
 	it("should initalize with a controller, owner, and empty future and " + 
 	   "history", function () {
 	   	// setup
-		var controller = JSON.parse(JSON.stringify(mockController)),
+		var controller = {
+				board: board,
+				view: {
+					display: {
+						moveActor: sinon.spy(),
+						renderPuck: sinon.spy()
+					}
+				},
+				emit: sinon.spy(),
+				turns: []
+			},
 			turn = new Turn(controller, Player.One);
-		
+					
 		// posttest
 		expect(turn.controller).to.equal(controller);
 		expect(turn.owner).to.equal(Player.One);
@@ -97,14 +96,121 @@ describe("turn", function () {
 		expect(turn.history).to.be.empty;
 	});
 	
+	describe(".deserialize", function () {
+		it("should load history and owner from serialized data", function () {
+			// setup
+			var controller = {
+					board: board,
+					view: {
+						display: {
+							moveActor: sinon.spy(),
+							renderPuck: sinon.spy()
+						}
+					},
+					emit: sinon.spy(),
+					turns: []
+				},
+				firstMove = playerOneMoves[0],
+				loadedTurn = new Turn(controller, Player.One),
+				secondMove = playerOneMoves[1],
+				turnToSave = new Turn(controller, Player.One);
+				
+			// execution
+			turnToSave.recordMove(firstMove.target, firstMove.start, 
+				firstMove.finish);
+			
+			turnToSave.recordMove(secondMove.target, secondMove.start,
+				secondMove.finish);
+			
+			loadedTurn.deserialize(turnToSave.serialize());
+			
+			// posttest
+			expect(loadedTurn).to.eql(turnToSave);
+		});
+	});
+	
+	describe(".finish", function () {
+		it("should emit a 'finish turn' even if owner is Player " + 
+		   "One", function () {
+			// setup
+			var controller = {
+					board: board,
+					view: {
+						display: {
+							moveActor: sinon.spy(),
+							renderPuck: sinon.spy()
+						}
+					},
+					emit: sinon.spy(),
+					turns: []
+				},
+				firstMove = playerOneMoves[0],
+				secondMove = playerOneMoves[1],
+				turn = new Turn(controller, Player.One);
+				
+			// execution
+			turn.recordMove(firstMove.target, firstMove.start, 
+				firstMove.finish);
+			
+			turn.recordMove(secondMove.target, secondMove.start,
+				secondMove.finish);
+			
+			// posttest
+			expect(controller.emit.args[0][0]).to.equal("finish turn");
+			expect(controller.emit.args[0][1]).to.eql(turn);
+			expect(controller.emit.args[0][2]).to.equal(undefined);
+		});
+		
+		it("should emit a 'recieve turn' event if owner is Player " + 
+		   "Two", function () {
+			// setup
+			var controller = {
+					board: board,
+					view: {
+						display: {
+							moveActor: sinon.spy(),
+							renderPuck: sinon.spy()
+						}
+					},
+					emit: sinon.spy(),
+					turns: []
+				},
+				firstMove = playerTwoMoves[0],
+				secondMove = playerTwoMoves[1],
+				turn = new Turn(controller, Player.Two);
+				
+			// execution
+			turn.recordMove(firstMove.target, firstMove.start, 
+				firstMove.finish);
+			
+			turn.recordMove(secondMove.target, secondMove.start,
+				secondMove.finish);
+			
+			// posttest
+			expect(controller.emit.args[0][0]).to.equal("receive turn");
+			expect(controller.emit.args[0][1]).to.eql(turn.serialize());
+			expect(controller.emit.args[0][2]).to.equal(undefined);
+		});
+	});
+	
 	describe(".recordMove", function () {
 		it("should error on trying to record more than two moves", function () {
 			// setup
-			var controller = JSON.parse(JSON.stringify(mockController)),
+			var controller = {
+					board: board,
+					view: {
+						display: {
+							moveActor: sinon.spy(),
+							renderPuck: sinon.spy()
+						}
+					},
+					emit: sinon.spy(),
+					turns: []
+				},
 				failingFunc,
 				move,
 				turn = new Turn(controller, Player.One);
-			
+						
 			// execution
 			move = playerOneMoves[0];
 			turn.recordMove(move.target, move.start, move.finish);
@@ -124,11 +230,21 @@ describe("turn", function () {
 		
 		it("should maintain score based on last turn's score", function () {
 			// setup
-			var controller = JSON.parse(JSON.stringify(mockController)),
+			var controller = {
+					board: board,
+					view: {
+						display: {
+							moveActor: sinon.spy(),
+							renderPuck: sinon.spy()
+						}
+					},
+					emit: sinon.spy(),
+					turns: []
+				},
 				expectedScore = {},
 				move = playerOneMoves[2],
 				turn = new Turn(controller, Player.One);
-				
+								
 			expectedScore[Player.One] = 1;
 			expectedScore[Player.Two] = 1;
 				
@@ -144,10 +260,10 @@ describe("turn", function () {
 			}];
 			
 			// execution
-			move.recordMove(move.target, move.start, move.finish);
+			turn.recordMove(move.target, move.start, move.finish);
 			
 			// posttest
-			expect(move.score()).to.eql(expectedScore);
+			expect(turn.score()).to.eql(expectedScore);
 		});
 	});
-});*/
+});

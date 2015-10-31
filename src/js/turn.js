@@ -26,11 +26,11 @@ Turn.prototype = {
 	
 	// finish this turn
 	finish: function (scored) {
-		if (this.controller.board.settings.owner === Player.One) {
+		if (this.owner === Player.One) {
 			// for now, we'll pretend to send this turn to the server, so as to
 			// turn control of the board over to player two
 			this.controller.emit("finish turn", this, scored);
-		} else if (this.controller.board.settings.owner === Player.Two) {
+		} else if (this.owner === Player.Two) {
 			// for now, we'll pretend we received this turn from the server, so
 			// as to return control of the board to player one
 			this.controller.emit("receive turn", this.serialize(), scored);
