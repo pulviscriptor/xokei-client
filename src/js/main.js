@@ -108,7 +108,7 @@ function beginGame(state) {
 	board.placeActors(state.actors);
 	
 	if (state.puck) {
-		board.placePuck(state.puck, controller);
+		board.placePuck(state.puck);
 	}
 	
 	view.showGame();

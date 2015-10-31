@@ -79,7 +79,7 @@ module.exports = function(grunt) {
 					"output": "test/results.html",
 					"quiet": false,
 					"reporter": "html-cov",
-					"require": ["test/setup"]
+					"require": ["test/common"]
 				}
 			},
 			options: {
@@ -91,7 +91,7 @@ module.exports = function(grunt) {
 					"clearRequireCache": false,
 					"quiet": false,
 					"reporter": "spec",
-					"require": ["test/setup"]
+					"require": ["test/common"]
 				}
 			}
 		},

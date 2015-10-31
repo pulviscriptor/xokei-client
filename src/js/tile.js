@@ -83,37 +83,6 @@ Tile.prototype = {
 		return this;
 	},
 	
-	// return whether or not there is an open path to the tile passed in
-	pathOpenTo: function (dest) {
-		var diagonal,
-			destNeighborhood;
-		
-		// if no destination has been passed in, there's obviously not a way to
-		// get there
-		if (!dest) {
-			return false;
-		}
-		
-		diagonal = (this.x - dest.x) * (this.y - dest.y) !== 0;
-		destNeighborhood = dest.neighborhood(true);
-		
-		// if this tile is diagonal from the destination
-		if (diagonal) {
-			// return whether or not this tile is neighbors with any tiles that
-			// are blocked, and that are in the neighborhood of the destination
-			// tile -- if there are, there is not an open path to that tile; 
-			// if there are not, then the path is open
-			return !this.neighborhood(true).filter(function (neighbor) {
-				return neighbor.type === "wall" && 
-					destNeighborhood.indexOf(neighbor) > -1;
-			}).length;
-		}
-		
-		// if the destination tile is not diagonal to this tile, we know for a
-		// fact that the path is open
-		return true;
-	},
-	
 	// remove this tile from the specified zone
 	removeZone: function (zone) {
 		this.zones.splice(this.zones.indexOf(zone), 1);

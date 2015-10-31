@@ -1,6 +1,3 @@
-/// require assertion library
-var expect = require("chai").expect;
-
 /// src requires
 var Actor = require("../src/js/actor.js"),
 	Board = require("../src/js/board.js"),
@@ -123,5 +120,47 @@ describe("actor", function () {
 		
 		// posttest
 		expect(actor.tile).to.equal(board.tiles[3][3]);
+	});
+	
+	it("should not be able to move into its own goal if there is already an" + 
+	   "actor there", function () {
+		var actor2;
+		
+		// setup
+		board.clear();
+		
+		actor = new Actor({
+			x: 0,
+			y: 3,
+			owner: Player.One
+		}, board);
+		
+		actor2 = new Actor({
+			x: 1,
+			y: 4,
+			owner: Player.One
+		}, board);
+				
+		// execution
+		actor2.move(board.tile(0, 4));
+		
+		// posttest
+		expect(board.tile(0, 4).actor).to.be.null;
+	});
+	
+	it("should not be able to move into the opponent's goal", function () {
+		// setup
+		board.clear();
+		actor = new Actor({
+			x: 12,
+			y: 4,
+			owner: Player.One
+		}, board);
+		
+		// execution
+		actor.move(board.tile(13, 4));
+		
+		// posttest
+		expect(board.tile(13, 4).actor).to.be.null;
 	});
 });

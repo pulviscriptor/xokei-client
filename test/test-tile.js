@@ -1,6 +1,3 @@
-/// require assertion library
-var expect = require("chai").expect;
-
 /// requires
 var Board = require("../src/js/board.js"),
 	Player = require("../src/js/players.js"),
@@ -83,6 +80,19 @@ describe("tile", function () {
 			
 			// posttest
 			expect(neighborhood).to.have.length(3);
+		});
+	});
+	
+	describe(".removeZone", function () {
+		it("should remove the zone from the tile passed in", function () {
+			// setup
+			var tile = board.tile(0, 4);
+			
+			// execution
+			tile.removeZone("goal");
+			
+			// posttest
+			expect(tile.zones).to.be.empty;
 		});
 	});
 });

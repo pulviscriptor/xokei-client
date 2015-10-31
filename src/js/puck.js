@@ -55,11 +55,9 @@ Puck.prototype = {
 					dy *= -1;
 				}
 				
-				if (reflectX) {
-					if (!reflectY) {
-						x -= dx;
-						y -= dy;
-					}
+				if (reflectX && !reflectY) {
+					x -= dx;
+					y -= dy;
 					
 					dx *= -1;
 				}

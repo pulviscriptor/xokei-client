@@ -1,10 +1,8 @@
-/// require assertion library
-var expect = require("chai").expect;
-
 /// src requires
 var Board = require("../src/js/board.js"),
 	Player = require("../src/js/players.js"),
-	settings = require("../src/js/settings.js");
+	settings = require("../src/js/settings.js"),
+	p1ValidPuckPositions = require("./p1ValidPuckPositions.json");
 
 /// utility functions
 function placeActors(player, zone) {
@@ -175,6 +173,100 @@ describe("board", function () {
 			
 			// posttest
 			expect(tile).to.be.undefined;
+		});
+	});
+	
+	describe(".clear", function () {
+		it("should remove all actors from the board", function () {
+			// setup
+			var actors = placeActors(Player.One, 
+				settings.zones[Player.One].goal),
+				board = new Board({
+					zones: settings.zones,
+					layout: settings.boardLayout.map(function (row) {
+						return row.split("");
+					}),
+					owner: Player.One
+				}),
+				x,
+				y;
+				
+			board.placeActors(actors);
+			
+			// execution
+			board.clear();
+			
+			// posttest
+			expect(board.actors.length).to.be.empty;
+			
+			for (x = 0; x < board.width; x++) {
+				for (y = 0; y < board.height; y++) {
+					expect(board.tile(x, y).actor).to.be.null;
+				}
+			}
+		});
+	});
+	
+	describe(".validPuckPositions", function () {
+		it("should return tiles in the player's zone that are not occupied, " +
+		   "goal tiles, or endzone tiles", function () {
+   			// setup
+			var board = new Board({
+				zones: settings.zones,
+				layout: settings.boardLayout.map(function (row) {
+					return row.split("");
+				}),
+				owner: Player.One
+			});
+			
+			board.placeActors([{
+				x: 0,
+				y: 4,
+				owner: Player.One
+			}, {
+				x: 6,
+				y: 0,
+				owner: Player.One
+			}, {
+				x: 6,
+				y: 2,
+				owner: Player.One
+			}, {
+				x: 6,
+				y: 5,
+				owner: Player.One
+			}, {
+				x: 6,
+				y: 7,
+				owner: Player.One
+			}, {
+				x: 13,
+				y: 3,
+				owner: Player.Two
+			}, {
+				x: 7,
+				y: 0,
+				owner: Player.Two
+			}, {
+				x: 7,
+				y: 2,
+				owner: Player.Two
+			}, {
+				x: 7,
+				y: 5,
+				owner: Player.Two
+			}, {
+				x: 7,
+				y: 7,
+				owner: Player.Two
+			}]);
+			
+			expect(board.getValidPuckPositions().map(function (tile) {
+				return {
+					x: tile.x,
+					y: tile.y
+				};
+			})).to.eql(p1ValidPuckPositions);
 		});
 	});
 });

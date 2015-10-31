@@ -34,11 +34,6 @@ Actor.prototype = {
 			return false;
 		}
 		
-		// the tile is occupied by the puck
-		if (this.board.puck.x === tile.x && this.board.puck.y === tile.y) {
-			return false;
-		}
-		
 		// the tile is greater than one move away from the actor's current tile
 		if (this.tile.distance(tile) !== 1) {
 			return false;

@@ -1,6 +1,5 @@
 /* The Board object holds all the tiles and all the game pieces in memory, but
- * does not handle rendering them in any way. It also enforces rules, making 
- * sure that moves are legal.
+ * does not handle rendering them in any way.
  */
 "use strict";
  
@@ -9,8 +8,6 @@ var Actor = require("./actor"),
 	Puck = require("./puck"),
 	settings = require("./settings"),
 	Tile = require("./tile");
-
-/// private variables
 
 /// private functions
 // translates a horizontal layout to a vertical layout so that it can be
