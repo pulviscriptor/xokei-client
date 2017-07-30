@@ -1,0 +1,1 @@
+This is folder to mark down some information about game to look at it later
