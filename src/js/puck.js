@@ -42,6 +42,12 @@ Puck.prototype = {
 				if (dx * dy === 0) {
 					break;
 				}
+
+				// we must disallow puck to bounce off corners of goal zones
+				// so we need to check if this wall is below or above goal zone
+				if(this.board.tile(x, y - dy).zones.indexOf('goal') >= 0) {
+					break;
+				}
 				
 				reflectX = x <= 1 || x >= 13;
 				reflectY = y === 8 || y === -1;
