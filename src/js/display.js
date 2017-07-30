@@ -419,7 +419,7 @@ Display.prototype = {
 			this.updateActor(i);
 		}
 		
-		if (this.puck) {
+		if (this.board.puck) {
 			// resize puck
 			this.puck.group.move(this.board.puck.x * this.tileSize, 
 				this.board.puck.y * this.tileSize);
