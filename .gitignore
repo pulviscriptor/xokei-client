@@ -37,3 +37,6 @@ test/results.html
 
 # Sourcemap for compiled JS
 build/*.map
+
+# JavaScript IDE
+.idea
