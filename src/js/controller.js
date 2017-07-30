@@ -125,6 +125,7 @@ function Controller(board, view) {
 				// if the actor that has been clicked on is the currently 
 				// selected actor, don't do anything
 				if (actor === this.selectedActor) {
+					this.clearUIState();
 					return false;
 				}
 				
@@ -434,6 +435,7 @@ Controller.prototype = {
 	
 	selectPuck: function () {
 		if (this.puckSelected) {
+			this.clearUIState();
 			return;
 		}
 		
