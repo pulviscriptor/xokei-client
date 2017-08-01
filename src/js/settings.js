@@ -265,5 +265,11 @@ module.exports = (function (settings) {
 	},
 	
 	// size of the green circle indicating that a move is valid
-	validMoveIndicatorSize: 0.3
+	validMoveIndicatorSize: 0.3,
+
+	// rules of the game
+	game: {
+		// how much scores player should have to win
+		winScores: 6
+	}
 }));

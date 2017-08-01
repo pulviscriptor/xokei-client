@@ -221,49 +221,69 @@ function Controller(board, view) {
 				// board to allow for a new round to start, and we need to 
 				// update the score on the screen
 				if (scored) {
+					var score = this.turns.slice(-1)[0].score();
+
 					// display updated scores
-					this.view.updateScore(this.turns.slice(-1)[0].score());
-					
-					// reset the board
-					this.reset();
+					this.view.updateScore(score);
+
+					// is game won
+					if(Math.max(score.player1, score.player2) >= settings.game.winScores) {
+						setTimeout(function () {
+							this.setUIState('game inactive');
+							this.emit('game won', score);
+						}.bind(this));
+					}else{
+						// reset the board
+						// this.reset();
+					}
 				}
 			},
 
-            // create a new turn from the data that has been (ostensibly)
-            // received from the server
-            //TODO: check turn.js:finish (this is emulated server move)
-            "receive turn": function (data, scored) {
-                var turn = new Turn(this, Player.Two);
-                turn.deserialize(data);
+			// create a new turn from the data that has been (ostensibly)
+			// received from the server
+			//TODO: check turn.js:finish (this is emulated server move)
+			"receive turn": function (data, scored) {
+				var turn = new Turn(this, Player.Two);
+				turn.deserialize(data);
 
-                // ordinarily we would want to call turn.display to render the
-                // turn to this client, now that it's just been received from
-                // the server -- however, because we're faking it and allowing
-                // both players to make turns from this one client, it will have
-                // already been displayed in the UI, and so there's no reason to
-                // try to show it again
+				// ordinarily we would want to call turn.display to render the
+				// turn to this client, now that it's just been received from
+				// the server -- however, because we're faking it and allowing
+				// both players to make turns from this one client, it will have
+				// already been displayed in the UI, and so there's no reason to
+				// try to show it again
 
-                // turn.display();
+				// turn.display();
 
-                this.turns.push(turn);
+				this.turns.push(turn);
 
-                // create a new turn and allow the other player to move
-                this.currentTurn = new Turn(this, Player.One);
-                this.board.settings.owner = Player.One;
-                this.view.showTurnState(Player.One);
+				// create a new turn and allow the other player to move
+				this.currentTurn = new Turn(this, Player.One);
+				this.board.settings.owner = Player.One;
+				this.view.showTurnState(Player.One);
 
-                // if this turn ended by a player scoring, we need to reset the
-                // board to allow for a new round to start, and we need to
-                // update the score on the screen
-                if (scored) {
-                    // display updated scores
-                    this.view.updateScore(this.turns.slice(-1)[0].score());
+				// if this turn ended by a player scoring, we need to reset the
+				// board to allow for a new round to start, and we need to
+				// update the score on the screen
+				if (scored) {
+					var score = this.turns.slice(-1)[0].score();
 
-                    // reset the board
-                    this.reset();
-                }
-            },
-			
+					// display updated scores
+					this.view.updateScore(score);
+
+					// is game won
+					if(Math.max(score.player1, score.player2) >= settings.game.winScores) {
+						setTimeout(function () {
+							this.setUIState('game inactive');
+							this.emit('game won', score);
+						}.bind(this));
+					}else{
+						// reset the board
+						this.reset();
+					}
+				}
+			},
+
 			"mouse enter tile": function (data) {
 				var pos = data.element.data("position"),
 					tile = this.view.display.tiles[pos.x][pos.y];
@@ -296,6 +316,18 @@ function Controller(board, view) {
 				}
 				
 				this.currentTurn.undoMove();
+			}
+		},
+
+		// state when game is not active
+		// for example game finished or not started
+		"game inactive": {
+			"game won": function (scores) {
+				if(scores.player1 > scores.player2) {
+					window.alert('Temporary debug message: \n\n Player1 won with score ' + scores.player1 + ':' + scores.player2);
+				}else{
+					window.alert('Temporary debug message: \n\n Player2 won with score ' + scores.player2 + ':' + scores.player1);
+				}
 			}
 		}
 	};
@@ -377,7 +409,7 @@ Controller.prototype = {
 		if (!this.listeners[eventName]) {
 			return;
 		}
-		
+
 		for (i = 0; i < this.listeners[eventName].length; i++) {
 			this.listeners[eventName][i].apply(this, 
 				Array.prototype.slice.apply(arguments).slice(1));
@@ -401,7 +433,7 @@ Controller.prototype = {
 		if(this.puckTrajectory.length == 1) {
 			this.kickPuck(this.puckTrajectory[0], function () {
 				//this.currentTurn.recordMove(this.board.puck, oldPos, pos); //TODO recordMove when "undo system" will me made
-            });
+			});
 			return;
 		}
 
