@@ -270,6 +270,6 @@ module.exports = (function (settings) {
 	// rules of the game
 	game: {
 		// how much scores player should have to win
-		winScores: 6
+		scoreToWin: 6
 	}
 }));

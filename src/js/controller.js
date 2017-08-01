@@ -227,7 +227,7 @@ function Controller(board, view) {
 					this.view.updateScore(score);
 
 					// is game won
-					if(Math.max(score.player1, score.player2) >= settings.game.winScores) {
+					if(Math.max(score.player1, score.player2) >= settings.game.scoreToWin) {
 						setTimeout(function () {
 							this.setUIState('game inactive');
 							this.emit('game won', score);
@@ -272,7 +272,7 @@ function Controller(board, view) {
 					this.view.updateScore(score);
 
 					// is game won
-					if(Math.max(score.player1, score.player2) >= settings.game.winScores) {
+					if(Math.max(score.player1, score.player2) >= settings.game.scoreToWin) {
 						setTimeout(function () {
 							this.setUIState('game inactive');
 							this.emit('game won', score);
