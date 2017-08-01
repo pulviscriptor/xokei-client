@@ -393,7 +393,16 @@ Controller.prototype = {
 	projectKickTrajectory: function () {
 		this.puckTrajectory = this.board.puck.calculateTrajectory(
 			this.kickDirection);
-		
+
+		// if we have only one available move on selected trajectory
+		// then don't show single dot, just move there
+		if(this.puckTrajectory.length == 1) {
+			this.kickPuck(this.puckTrajectory[0], function () {
+				//this.currentTurn.recordMove(this.board.puck, oldPos, pos); //TODO recordMove when "undo system" will me made
+            });
+			return;
+		}
+
 		this.view.display.showKickTrajectory(this.puckTrajectory);
 	},
 	
