@@ -199,8 +199,9 @@ function Controller(board, view) {
 			// when this client finishes making a turn, send the turn data to 
 			// the server -- err, that is, do nothing for now, until the server
 			// is implemented
+			//TODO: check turn.js:finish (this is non-emulated player move)
 			"finish turn": function (turn, scored) {
-				// get the turn data in serialized form, ready to be passed to 
+				// get the turn data in serialized form, ready to be passed to
 				// the server
 				// var turnData = turn.serialize();
 				
@@ -227,6 +228,41 @@ function Controller(board, view) {
 					this.reset();
 				}
 			},
+
+            // create a new turn from the data that has been (ostensibly)
+            // received from the server
+            //TODO: check turn.js:finish (this is emulated server move)
+            "receive turn": function (data, scored) {
+                var turn = new Turn(this, Player.Two);
+                turn.deserialize(data);
+
+                // ordinarily we would want to call turn.display to render the
+                // turn to this client, now that it's just been received from
+                // the server -- however, because we're faking it and allowing
+                // both players to make turns from this one client, it will have
+                // already been displayed in the UI, and so there's no reason to
+                // try to show it again
+
+                // turn.display();
+
+                this.turns.push(turn);
+
+                // create a new turn and allow the other player to move
+                this.currentTurn = new Turn(this, Player.One);
+                this.board.settings.owner = Player.One;
+                this.view.showTurnState(Player.One);
+
+                // if this turn ended by a player scoring, we need to reset the
+                // board to allow for a new round to start, and we need to
+                // update the score on the screen
+                if (scored) {
+                    // display updated scores
+                    this.view.updateScore(this.turns.slice(-1)[0].score());
+
+                    // reset the board
+                    this.reset();
+                }
+            },
 			
 			"mouse enter tile": function (data) {
 				var pos = data.element.data("position"),
@@ -242,40 +278,6 @@ function Controller(board, view) {
 			
 			"mouse exit tile": function () {
 				this.view.display.unhighlightTile();
-			},
-			
-			// create a new turn from the data that has been (ostensibly)
-			// received from the server
-			"receive turn": function (data, scored) {
-				var turn = new Turn(this, Player.Two);
-				turn.deserialize(data);
-				
-				// ordinarily we would want to call turn.display to render the
-				// turn to this client, now that it's just been received from 
-				// the server -- however, because we're faking it and allowing
-				// both players to make turns from this one client, it will have
-				// already been displayed in the UI, and so there's no reason to
-				// try to show it again
-				
-				// turn.display();
-				
-				this.turns.push(turn);
-				
-				// create a new turn and allow the other player to move
-				this.currentTurn = new Turn(this, Player.One);
-				this.board.settings.owner = Player.One;
-				this.view.showTurnState(Player.One);
-				
-				// if this turn ended by a player scoring, we need to reset the
-				// board to allow for a new round to start, and we need to 
-				// update the score on the screen
-				if (scored) {
-					// display updated scores
-					this.view.updateScore(this.turns.slice(-1)[0].score());
-					
-					// reset the board
-					this.reset();
-				}
 			},
 			
 			"redo": function () {
