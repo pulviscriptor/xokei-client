@@ -56,6 +56,9 @@ function listen(_controller, _display) {
 		resizeTimeout = setTimeout(emit.bind(null, "window resize"), 
 			settings.resizeDelay);
 	});
+
+	// events for dialog windows
+	$('#game-won-new-game-button').click(emit.bind(controller, "click new game"));
 }
 
 function listenToActorEvents() {

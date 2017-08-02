@@ -174,3 +174,46 @@ body, html {
 		cursor: pointer;
 	}
 }
+
+#hidden {
+	display: none !important;
+}
+
+#game-won-window {
+	border-radius: 10px;
+	border: 3px solid #000000;
+	text-align: center;
+	display: inline-block;
+	padding: 28px;
+	position: absolute;
+	background-color: #f1f0f0;
+	color: #333;
+	font-size: 1.5em;
+	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
+}
+
+#game-won-new-game-button {
+	display: inline-block;
+	border-radius: 5px;
+	color: #fff;
+	font-size: 1.2em;
+	background: #707070;
+	padding: 4px 14px;
+	text-decoration: none;
+	margin-top: 11px;
+	cursor: pointer;
+	user-select: none;
+}
+
+#game-won-new-game-button:hover {
+	background: #4a4a4a;
+	text-decoration: none;
+}
+
+#game-won-scores {
+	font-weight: bold;
+}
+
+#game-won-winner-name {
+	font-weight: bold;
+}

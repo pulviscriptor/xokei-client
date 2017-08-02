@@ -112,6 +112,37 @@ View.prototype = {
 	updateScore: function (score) {
 		this.$playerOneScore.html(score[Player.One]);
 		this.$playerTwoScore.html(score[Player.Two]);
+	},
+
+	// resize our dialog windows
+	resizeDialogsWindows: function () {
+		var $wonDialog = $('#game-won-window');
+		if(!$wonDialog.hasClass('hidden')) {
+			$wonDialog.position({
+				of: $('#board')
+			});
+		}
+	},
+
+	// display window with won message and button to start new game
+	gameWon: function (scores) {
+		if(scores.player1 > scores.player2) {
+			$('#game-won-winner-name').text('Player1');
+			$('#game-won-winner-score').text(scores.player1);
+			$('#game-won-looser-score').text(scores.player2);
+		}else{
+			$('#game-won-winner-name').text('Player2');
+			$('#game-won-winner-score').text(scores.player2);
+			$('#game-won-looser-score').text(scores.player1);
+		}
+		$('#game-won-window').removeClass('hidden').position({
+			of: $('#board')
+		});
+	},
+
+	// button "New Game" clicked in "won message" dialog
+	newGameClicked: function () {
+		$('#game-won-window').addClass('hidden');
 	}
 };
 

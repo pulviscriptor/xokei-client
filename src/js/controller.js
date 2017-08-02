@@ -52,6 +52,9 @@ function Controller(board, view) {
 				if (this.messageShowing) {
 					this.view.resizeMessage();
 				}
+				
+				// resize dialog windows
+				this.view.resizeDialogsWindows();
 			}
 		},
 		
@@ -323,11 +326,12 @@ function Controller(board, view) {
 		// for example game finished or not started
 		"game inactive": {
 			"game won": function (scores) {
-				if(scores.player1 > scores.player2) {
-					window.alert('Temporary debug message: \n\n Player1 won with score ' + scores.player1 + ':' + scores.player2);
-				}else{
-					window.alert('Temporary debug message: \n\n Player2 won with score ' + scores.player2 + ':' + scores.player1);
-				}
+				this.view.gameWon(scores);
+			},
+			
+			"click new game": function () {
+				this.view.newGameClicked();
+				this.reset();
 			}
 		}
 	};
