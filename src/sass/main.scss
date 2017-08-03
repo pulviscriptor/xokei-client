@@ -190,30 +190,98 @@ body, html {
 	color: #333;
 	font-size: 1.5em;
 	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
+
+	#game-won-new-game-button {
+		display: inline-block;
+		border-radius: 5px;
+		color: #fff;
+		font-size: 1.2em;
+		background: #707070;
+		padding: 4px 14px;
+		text-decoration: none;
+		margin-top: 11px;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	#game-won-new-game-button:hover {
+		background: #4a4a4a;
+		text-decoration: none;
+	}
+
+	#game-won-scores {
+		font-weight: bold;
+	}
+
+	#game-won-winner-name {
+		font-weight: bold;
+	}
+
 }
 
-#game-won-new-game-button {
+#game-select-window {
+	border-radius: 10px;
+	border: 3px solid #000000;
+	text-align: center;
 	display: inline-block;
-	border-radius: 5px;
-	color: #fff;
-	font-size: 1.2em;
-	background: #707070;
-	padding: 4px 14px;
-	text-decoration: none;
-	margin-top: 11px;
-	cursor: pointer;
-	user-select: none;
-}
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	position: absolute;
+	background-color: #f1f0f0;
+	color: #333;
+	/*font-size: 1.5em;*/
+	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
 
-#game-won-new-game-button:hover {
-	background: #4a4a4a;
-	text-decoration: none;
-}
+	#game-select-welcome-message {
+		font-size: 1.8em;
+		font-weight: bold;
+	}
 
-#game-won-scores {
+	#game-select-skip-tutorial-message {
+		font-size: 0.9em;
+	}
+
+	.game-select-mode-box {
+		display: inline-block;
+		border-radius: 5px;
+		border: 1px solid #000000;
+		background-color: #fcfcfc;
+		box-shadow: 2px 2px 6px 0 rgba(0,0,0,.5);
+		padding: 10px;
+		margin: 10px;
+		height: 140px;
+		width: 250px;
+	}
+
+	.game-select-mode-name {
+		font-size: 1.5em;
+		font-weight: bold;
+	}
+
+	.game-select-mode-description {
+		font-size: 0.8em;
+	}
+
+	.game-select-mode-unavailable {
+		position: relative;
+		bottom: -30px;
+		color: #ff0000;
 	font-weight: bold;
-}
+	}
 
-#game-won-winner-name {
-	font-weight: bold;
+	.game-select-mode-box:hover {
+		cursor: pointer;
+		background-color: #EEE;
+	}
+
+
+	.game-select-mode-box-unavailable {
+		cursor: not-allowed !important;
+		background-color: #DDD !important;
+	}
+
+
+
 }

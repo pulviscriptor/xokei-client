@@ -122,6 +122,13 @@ View.prototype = {
 				of: $('#board')
 			});
 		}
+
+		var $gameSelectDialog = $('#game-select-window');
+		if(!$gameSelectDialog.hasClass('hidden')) {
+			$gameSelectDialog.position({
+				of: $('#board')
+			});
+		}
 	},
 
 	// display window with won message and button to start new game

@@ -102,6 +102,10 @@ function init() {
 			view: view
 		};
 	}
+	// we need to place our starting screen/window/dialogs in positions
+	view.resizeDialogsWindows();
+
+
 }
 
 // begin a game
