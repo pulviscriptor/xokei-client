@@ -332,6 +332,13 @@ function Controller(board, view) {
 			"click new game": function () {
 				this.view.newGameClicked();
 				this.reset();
+			},
+			
+			"click mode 2p local": function () {
+				this.view.hideWelcomeWindow();
+				setTimeout(function () {
+					this.setUIState("placing puck");
+				}.bind(this));
 			}
 		}
 	};

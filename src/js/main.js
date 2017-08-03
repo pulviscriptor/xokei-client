@@ -102,10 +102,9 @@ function init() {
 			view: view
 		};
 	}
+
 	// we need to place our starting screen/window/dialogs in positions
 	view.resizeDialogsWindows();
-
-
 }
 
 // begin a game
@@ -118,9 +117,12 @@ function beginGame(state) {
 	
 	view.showGame();
 	
-	if (!state.puck) {
+	/*if (!state.puck) {
 		controller.setUIState("placing puck");
-	}
+	}*/
+
+	// we have welcome screen to display and interact with
+	controller.setUIState("game inactive");
 }
 
 /// initialization

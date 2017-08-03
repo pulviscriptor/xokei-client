@@ -58,7 +58,11 @@ function listen(_controller, _display) {
 	});
 
 	// events for dialog windows
-	$('#game-won-new-game-button').click(emit.bind(controller, "click new game"));
+	$('#game-won-new-game-button').		click(emit.bind(controller, "click new game"));
+	$('#game-select-mode-1p-human').	click(emit.bind(controller, "click mode 1p human"));
+	$('#game-select-mode-1p-ai').		click(emit.bind(controller, "click mode 1p ai"));
+	$('#game-select-mode-2p-local').	click(emit.bind(controller, "click mode 2p local"));
+	$('#game-select-mode-raplay-saved').click(emit.bind(controller, "click mode replay saved"));
 }
 
 function listenToActorEvents() {

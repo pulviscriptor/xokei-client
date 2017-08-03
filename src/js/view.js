@@ -150,6 +150,10 @@ View.prototype = {
 	// button "New Game" clicked in "won message" dialog
 	newGameClicked: function () {
 		$('#game-won-window').addClass('hidden');
+	},
+
+	hideWelcomeWindow: function () {
+		$('#game-select-window').addClass('hidden');
 	}
 };
 
