@@ -1,0 +1,20 @@
+This is mark to calculate settings for score points.
+So in web-browser's console we need to do this:
+
+$('#score-point-player1-1').removeClass('hidden').draggable();
+
+Then drag '#score-point-player1-1' to target place
+
+Then execute:
+
+var $board           = $('.board');
+var boardOffset      = $board.offset();
+var boardHeight      = $board.outerHeight();
+var boardWidth       = $board.outerWidth();
+var $scorePoint      = $('#score-point-player1-1');
+var scorePointOffset = $scorePoint.offset();
+var scorePointSize   = $scorePoint.outerHeight();
+var scorePointX      = ( ( ( scorePointOffset.left - boardOffset.left ) + scorePointSize/2 ) / boardWidth * 100 ).toFixed(2);
+var scorePointY      = ( ( ( scorePointOffset.top  - boardOffset.top )  + scorePointSize/2 ) / boardHeight * 100).toFixed(2);
+console.log('x: ' + scorePointX);
+console.log('y: ' + scorePointY);
