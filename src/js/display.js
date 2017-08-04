@@ -223,6 +223,10 @@ Display.prototype = {
 		// create the legend--that is, the elements that contain the characters 
 		// that represent the coordinate system for the board
 		this.createLegend();
+
+		// create scores dots on sides of board
+		this.createScorePoints();
+		this.resizeScorePoints();
 	},
 
 	// create the HTML elements that will contain the coordinates for the board
@@ -262,6 +266,65 @@ Display.prototype = {
 				lineHeight: this.tileSize + "px"
 			}).text(settings.coordinates.vertical[y]));
 		}
+	},
+
+	// create score points on sides of board
+	createScorePoints: function () {
+		//var boardHeight = this.$board.height();
+		//var boardPos = this.$board.position();
+		var $body = $('body');
+		var $el;
+		var i;
+
+		for (i in settings.scorePoints.player1) {
+			$el = $('<span class="score-point score-point-player1 hidden" data-score="' + i +
+				'" id="score-point-player1-' + i +
+				'" style="background-color:' + settings.scorePoints.color +
+				'" title="Score point">&nbsp;</span>').tooltip();
+			$body.prepend($el);
+		}
+
+		for (i in settings.scorePoints.player2) {
+			$el = $('<span class="score-point score-point-player2 hidden" data-score="' + i +
+				'" id="score-point-player2-' + i +
+				'" style="background-color:' + settings.scorePoints.color +
+				'" title="Score point">&nbsp;</span>').tooltip();
+			$body.prepend($el);
+		}
+	},
+
+	// resize and move score points on sizes of board
+	resizeScorePoints: function () {
+		var $el;
+		var i;
+		var settingsPos;
+		var boardOffset = this.$board.offset();
+		var boardHeight = this.$board.outerHeight();
+		var boardWidth = this.$board.outerWidth();
+		var scorePointSize = this.tileSize * (settings.scorePoints.size/100);
+
+		for (i in settings.scorePoints.player1) {
+			settingsPos = settings.scorePoints.player1[i];
+			$el = $('#score-point-player1-' + i);
+			$el.css({
+				left: boardOffset.left + (boardWidth * (settingsPos.x/100) ) - ( scorePointSize/2 ) + 'px',
+				top:  boardOffset.top + (boardHeight * (settingsPos.y/100) ) - ( scorePointSize/2 ) + 'px'
+			});
+		}
+
+		for (i in settings.scorePoints.player2) {
+			settingsPos = settings.scorePoints.player2[i];
+			$el = $('#score-point-player2-' + i);
+			$el.css({
+				left: boardOffset.left + (boardWidth * (settingsPos.x/100) ) - ( scorePointSize/2 ) + 'px',
+				top:  boardOffset.top + (boardHeight * (settingsPos.y/100) ) - ( scorePointSize/2 ) + 'px'
+			});
+		}
+
+		$('.score-point').css({
+			width:  scorePointSize + 'px',
+			height: scorePointSize + 'px'
+		});
 	},
 
 	// draw the puck
@@ -435,6 +498,9 @@ Display.prototype = {
 		this.$moveBox.height(this.$board.height() - 
 			this.$moveBox.position().top - 30 + 
 			Math.floor(settings.borderWidth / 2));
+
+		// move and resize score points
+		this.resizeScorePoints();
 	},
 	
 	// size a symbol appropriately

@@ -191,6 +191,7 @@ body, html {
 	font-size: 1.5em;
 	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
 	cursor: move;
+	z-index: 2;
 
 	#game-won-new-game-button {
 		display: inline-block;
@@ -234,6 +235,7 @@ body, html {
 	color: #333;
 	/*font-size: 1.5em;*/
 	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
+	z-index: 3;
 
 	#game-select-welcome-message {
 		font-size: 1.8em;
@@ -269,7 +271,7 @@ body, html {
 		position: relative;
 		bottom: -30px;
 		color: #ff0000;
-	font-weight: bold;
+		font-weight: bold;
 	}
 
 	.game-select-mode-box:hover {
@@ -277,12 +279,16 @@ body, html {
 		background-color: #EEE;
 	}
 
-
 	.game-select-mode-box-unavailable {
 		cursor: not-allowed !important;
 		background-color: #DDD !important;
 	}
+}
 
-
-
+.score-point {
+	position: absolute;
+	display: inline-block;
+	border-radius: 100px;
+	z-index: 1;
+	border: 3px solid #3c3c3c;
 }

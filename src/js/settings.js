@@ -271,5 +271,79 @@ module.exports = (function (settings) {
 	game: {
 		// how much scores player should have to win
 		scoreToWin: 6
+	},
+
+	// position of score points
+	scorePoints: {
+		color: 'green',
+		// size relative to tile size
+		// 100 means exact tile size
+		size: 50,
+
+		// x and y are relative to board
+		// x=100,y=100 means right bottom of board
+		player1: {
+			6: {
+				x: 3.42,
+				y: 6.39
+			},
+
+			5: {
+				x: 3.42,
+				y: 18.89
+			},
+
+			4: {
+				x: 3.42,
+				y: 31.39
+			},
+
+			3: {
+				x: 3.42,
+				y: 68.89
+			},
+
+			2: {
+				x: 3.42,
+				y: 81.39
+			},
+
+			1: {
+				x: 3.42,
+				y: 93.89
+			}
+		},
+
+		player2: {
+			6: {
+				x: 96.58,
+				y: 6.39
+			},
+
+			5: {
+				x: 96.58,
+				y: 18.89
+			},
+
+			4: {
+				x: 96.58,
+				y: 31.39
+			},
+
+			3: {
+				x: 96.58,
+				y: 68.89
+			},
+
+			2: {
+				x: 96.58,
+				y: 81.39
+			},
+
+			1: {
+				x: 96.58,
+				y: 93.89
+			}
+		}
 	}
 }));

@@ -112,6 +112,26 @@ View.prototype = {
 	updateScore: function (score) {
 		this.$playerOneScore.html(score[Player.One]);
 		this.$playerTwoScore.html(score[Player.Two]);
+
+		$('.score-point-player1').each(function () {
+			var $el = $(this);
+			var dataScore = parseInt($el.data('score'));
+			if(dataScore > score[Player.One] && !$el.hasClass('hidden')) {
+				$el.addClass('hidden');
+			}else if(dataScore <= score[Player.One] && $el.hasClass('hidden')) {
+				$el.removeClass('hidden');
+			}
+		});
+
+		$('.score-point-player2').each(function () {
+			var $el = $(this);
+			var dataScore = parseInt($el.data('score'));
+			if(dataScore > score[Player.Two] && !$el.hasClass('hidden')) {
+				$el.addClass('hidden');
+			}else if(dataScore <= score[Player.Two] && $el.hasClass('hidden')) {
+				$el.removeClass('hidden');
+			}
+		});
 	},
 
 	// initialize our dialog windows
