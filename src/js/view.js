@@ -114,6 +114,11 @@ View.prototype = {
 		this.$playerTwoScore.html(score[Player.Two]);
 	},
 
+	// initialize our dialog windows
+	initDialogsWindows: function () {
+		$('#game-won-window').draggable({ containment: "window" });
+	},
+
 	// resize our dialog windows
 	resizeDialogsWindows: function () {
 		var $wonDialog = $('#game-won-window');
@@ -150,6 +155,13 @@ View.prototype = {
 	// button "New Game" clicked in "won message" dialog
 	newGameClicked: function () {
 		$('#game-won-window').addClass('hidden');
+		this.showWelcomeWindow();
+	},
+
+	showWelcomeWindow: function () {
+		$('#game-select-window').removeClass('hidden').position({
+			of: $('#board')
+		});
 	},
 
 	hideWelcomeWindow: function () {
