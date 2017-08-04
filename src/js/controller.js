@@ -331,14 +331,14 @@ function Controller(board, view) {
 			
 			"click new game": function () {
 				this.view.newGameClicked();
-				this.reset();
 			},
 			
 			"click mode 2p local": function () {
 				this.view.hideWelcomeWindow();
-				setTimeout(function () {
+				this.resetGame();
+				/*setTimeout(function () {
 					this.setUIState("placing puck");
-				}.bind(this));
+				}.bind(this));*/
 			}
 		}
 	};
@@ -463,20 +463,35 @@ Controller.prototype = {
 			}
 		}
 	},
-	
+
 	// reset the board after finishing a round
 	reset: function () {
 		setTimeout(function () {
 			this.board.clear();
 			this.view.display.clear();
-			
+
 			this.board.placeActors(window.globalVariables
 				.mockServerResponse.actors);
-			
+
 			this.view.reshowGame();
 			this.view.events.listenToActorEvents();
 			this.setUIState("placing puck");
 		}.bind(this));
+	},
+
+	// reset the game after one of player won
+	resetGame: function () {
+		// clear turns of previous game
+		this.turns = [];
+
+		// clear displayed score
+		var scores = {};
+		scores[Player.One] = '0';
+		scores[Player.Two] = '0';
+		this.view.updateScore(scores);
+
+		// new round for new clean game
+		this.reset();
 	},
 	
 	// select an actor and cause the available positions to move to be shown
