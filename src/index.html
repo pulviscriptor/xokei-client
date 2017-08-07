@@ -68,31 +68,41 @@
 		<br>
 		<span id="game-select-skip-tutorial-message"><input id="game-select-skip-tutorial-checkbox" type="checkbox" checked disabled> Skip the tutrorial. I know what I am doing.</span><br>
 
-        <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-1p-human">
-            <span class="game-select-mode-name">1P Human</span><br>
-            <span class="game-select-mode-description">Play online against human opponent</span><br>
-            <span class="game-select-mode-unavailable">Not available - there is no server</span>
-        </div>
+        <table id="game-select-table">
+            <tr>
+                <td>
+                    <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-1p-human">
+                        <span class="game-select-mode-name">1P Human</span><br>
+                        <span class="game-select-mode-description">Play online against human opponent</span><br>
+                        <span class="game-select-mode-unavailable">Not available - there is no server</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-1p-ai">
+                        <span class="game-select-mode-name">1P AI</span><br>
+                        <span class="game-select-mode-description">Play online against AI opponent</span><br>
+                        <span class="game-select-mode-unavailable">Not available - not implemented</span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="game-select-mode-box" id="game-select-mode-2p-local">
+                        <span class="game-select-mode-name">2P Local</span><br>
+                        <span class="game-select-mode-description">Play against a friend on the same computer</span><br>
+                        <!-- <span class="game-select-mode-unavailable">Not available - there is no server</span> -->
+                    </div>
+                </td>
+                <td>
+                    <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-raplay-saved">
+                        <span class="game-select-mode-name">Replay Saved</span><br>
+                        <span class="game-select-mode-description">Replay a previously saved game</span><br>
+                        <span class="game-select-mode-unavailable">Not available - not implemented</span>
+                    </div>
+                </td>
+            </tr>
 
-        <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-1p-ai">
-            <span class="game-select-mode-name">1P AI</span><br>
-            <span class="game-select-mode-description">Play online against AI opponent</span><br>
-            <span class="game-select-mode-unavailable">Not available - not implemented</span>
-        </div>
-
-        <br>
-
-        <div class="game-select-mode-box" id="game-select-mode-2p-local">
-            <span class="game-select-mode-name">2P Local</span><br>
-            <span class="game-select-mode-description">Play against a friend on the same computer</span><br>
-            <!-- <span class="game-select-mode-unavailable">Not available - there is no server</span> -->
-        </div>
-
-        <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-raplay-saved">
-            <span class="game-select-mode-name">Replay Saved</span><br>
-            <span class="game-select-mode-description">Replay a previously saved game</span><br>
-            <span class="game-select-mode-unavailable">Not available - not implemented</span>
-        </div>
+        </table>
 		
 	</div>
 

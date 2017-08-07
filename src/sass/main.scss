@@ -236,6 +236,11 @@ body, html {
 	/*font-size: 1.5em;*/
 	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
 	z-index: 3;
+	white-space: nowrap;
+
+	#game-select-table {
+		border: 0px;
+	}
 
 	#game-select-welcome-message {
 		font-size: 1.8em;
