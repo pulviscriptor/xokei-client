@@ -103,9 +103,6 @@ function init() {
 		};
 	}
 
-	// we need to place our starting screen/window/dialogs in positions
-	view.resizeDialogsWindows();
-
 	// initialize dialogs (like make it draggable for example)
 	view.initDialogsWindows();
 }

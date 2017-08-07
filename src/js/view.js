@@ -137,6 +137,8 @@ View.prototype = {
 	// initialize our dialog windows
 	initDialogsWindows: function () {
 		$('#game-won-window').draggable({ containment: "window" });
+		$('#game-select-window').draggable({ containment: "window" }).removeClass('hidden');
+		this.resizeDialogsWindows();
 	},
 
 	// resize our dialog windows
