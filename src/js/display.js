@@ -139,7 +139,7 @@ Display.prototype = {
 			actor = this.board.actors[i];
 			
 			this.actors[i] = {
-				draw: this.draw.nested()
+				draw: this.draw.nested().addClass('actor-player').addClass('actor-player' + (actor.owner === Player.One?'1':'2'))
 					.move(actor.x * this.tileSize, actor.y * this.tileSize)
 			};
 			

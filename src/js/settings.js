@@ -270,7 +270,11 @@ module.exports = (function (settings) {
 	// rules of the game
 	game: {
 		// how much scores player should have to win
-		scoreToWin: 6
+		scoreToWin: 6,
+
+		// opacity of player's actors when player can't move
+		// 1 means no opacity, 0 means you can't see actor at all
+		inactivePlayerOpacity: 0.6
 	},
 
 	// position of score points
