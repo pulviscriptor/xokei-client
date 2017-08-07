@@ -237,7 +237,7 @@ function Controller(board, view) {
 						}.bind(this));
 					}else{
 						// reset the board
-						// this.reset();
+						this.reset();
 					}
 				}
 			},
