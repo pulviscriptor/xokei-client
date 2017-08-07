@@ -5,7 +5,8 @@
 /// requires
 var Display = require("./display"),
 	events = require("./events"),
-	Player = require("./players");
+	Player = require("./players"),
+	settings = require("./settings");
 	
 /// object
 function View(board) {
@@ -121,7 +122,9 @@ View.prototype = {
 			}else if(dataScore <= score[Player.One] && $el.hasClass('hidden')) {
 				$el.removeClass('hidden');
 			}
-		});
+		}).attr('data-original-title', 'You scored ' + score[Player.One] +
+			' goals. Your opponent scored ' + score[Player.Two] + '. Game ends at ' +
+			settings.game.scoreToWin + ' goals.');
 
 		$('.score-point-player2').each(function () {
 			var $el = $(this);
@@ -131,7 +134,9 @@ View.prototype = {
 			}else if(dataScore <= score[Player.Two] && $el.hasClass('hidden')) {
 				$el.removeClass('hidden');
 			}
-		});
+		}).attr('data-original-title', 'You scored ' + score[Player.Two] +
+			' goals. Your opponent scored ' + score[Player.One] + '. Game ends at ' +
+			settings.game.scoreToWin + ' goals.');
 	},
 
 	// initialize our dialog windows
