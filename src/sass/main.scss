@@ -298,3 +298,25 @@ body, html {
 	z-index: 1;
 	border: 3px solid #3c3c3c;
 }
+
+/* This hides tooltips when they are hidden */
+.ui-helper-hidden-accessible {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
+
+.score-tooltip-content {
+	background-color: #7d7a7a;
+	padding: 8px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 300px;
+	border-radius: 5px;
+	color: #FFF;
+}

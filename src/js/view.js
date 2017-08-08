@@ -125,9 +125,10 @@ View.prototype = {
 			}else if(dataScore <= score[Player.One] && $el.hasClass('hidden')) {
 				$el.removeClass('hidden');
 			}
-		}).attr('data-original-title', 'You scored ' + score[Player.One] +
-			' goals. Your opponent scored ' + score[Player.Two] + '. Game ends at ' +
-			settings.game.scoreToWin + ' goals.');
+		}).data('tooltip', 'You scored <b>' + score[Player.One] + '</b> goal' + (score[Player.One]>1?'s':'') +
+			'<br>Your opponent scored <b>' + score[Player.Two] + '</b>' +
+			'<br>Game ends at <b>' + settings.game.scoreToWin + '</b> goals');
+
 
 		$('.score-point-player2').each(function () {
 			var $el = $(this);
@@ -137,9 +138,9 @@ View.prototype = {
 			}else if(dataScore <= score[Player.Two] && $el.hasClass('hidden')) {
 				$el.removeClass('hidden');
 			}
-		}).attr('data-original-title', 'You scored ' + score[Player.Two] +
-			' goals. Your opponent scored ' + score[Player.One] + '. Game ends at ' +
-			settings.game.scoreToWin + ' goals.');
+		}).data('tooltip', 'You scored <b>' + score[Player.Two] + '</b>' + ' goal' + (score[Player.Two]>1?'s':'') +
+			'<br>Your opponent scored <b>' + score[Player.One] + '</b>' +
+			'<br>Game ends at <b>' + settings.game.scoreToWin + '</b> goals');
 	},
 
 	// initialize our dialog windows
