@@ -137,9 +137,10 @@ Display.prototype = {
 		// draw actors
 		for (i = 0; i < this.board.actors.length; i++) {
 			actor = this.board.actors[i];
-			
+
 			this.actors[i] = {
 				draw: this.draw.nested().addClass('actor-player').addClass('actor-player' + (actor.owner === Player.One?'1':'2'))
+					.style( 'opacity', (this.board.settings.owner == actor.owner ? '1' : settings.game.inactivePlayerOpacity) )
 					.move(actor.x * this.tileSize, actor.y * this.tileSize)
 			};
 			

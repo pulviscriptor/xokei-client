@@ -274,7 +274,7 @@ module.exports = (function (settings) {
 
 		// opacity of player's actors when player can't move
 		// 1 means no opacity, 0 means you can't see actor at all
-		inactivePlayerOpacity: 0.6
+		inactivePlayerOpacity: 0.4
 	},
 
 	// position of score points

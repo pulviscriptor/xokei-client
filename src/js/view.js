@@ -101,14 +101,14 @@ View.prototype = {
 	// display who's turn it is
 	showTurnState: function (player) {
 		$(".player-name").css("text-decoration", "none");
-		$(".actor-player").css("opacity", "1");
+		$(".actor-player").stop(true).fadeTo(200, "1");
 
 		if (player === Player.One) {
 			this.$playerOneName.css("text-decoration", "underline");
-			$(".actor-player2").fadeTo(100, settings.game.inactivePlayerOpacity);
+			$(".actor-player2").stop(true).fadeTo(200, settings.game.inactivePlayerOpacity);
 		} else {
 			this.$playerTwoName.css("text-decoration", "underline");
-			$(".actor-player1").fadeTo(100, settings.game.inactivePlayerOpacity);
+			$(".actor-player1").stop(true).fadeTo(200, settings.game.inactivePlayerOpacity);
 		}
 	},
 	
