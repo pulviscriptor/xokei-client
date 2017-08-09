@@ -137,6 +137,9 @@ function Controller(board, view) {
 				// prevent the player from moving actors that do not belong to 
 				// them
 				if (actor.owner !== this.board.settings.owner) {
+					if(!$('.message-container').is(':visible')) {
+						this.view.message('Wait your turn', 2000);
+					}
 					return false;
 				}
 
