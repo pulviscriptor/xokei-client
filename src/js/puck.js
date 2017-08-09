@@ -124,6 +124,12 @@ Puck.prototype = {
 			neighborhood,
 			self = this,
 			puckTile = this.board.tile(this.x, this.y);
+
+		// we assume puck is blocked by players around it until we don't see empty tile near it
+		var blockedByPlayers = true;
+
+		// we assume there is no owner of turn near puck until we see some
+		var noOwnerNearPuck = true;
 		
 		neighborhood = puckTile.neighborhood();
 		
@@ -132,7 +138,20 @@ Puck.prototype = {
 				dx,
 				dy,
 				oppositeTile;
-			
+
+			// is there empty space near puck?
+			if (!actorTile.actor) {
+				blockedByPlayers = false;
+			}
+
+			// is there owner of turn near puck?
+			if (actorTile.actor && actorTile.actor.owner == player) {
+				noOwnerNearPuck = false;
+			}
+
+			// we need to know in which direction we can kick puck
+			// for that we need to know on which side of puck is owner of turn located
+			// for that we interested only in owners around puck
 			if (!actorTile.actor || actorTile.actor.owner !== player) {
 				return;
 			}
@@ -189,7 +208,11 @@ Puck.prototype = {
 			});
 		});
 
-		return directions;
+		return {
+			directions: directions,
+			blockedByPlayers: blockedByPlayers,
+			noOwnerNearPuck: noOwnerNearPuck
+		};
 	},
 	
 	// place this puck on the board

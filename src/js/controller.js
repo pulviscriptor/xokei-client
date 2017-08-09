@@ -514,10 +514,16 @@ Controller.prototype = {
 		}
 		
 		this.clearUIState();
-		
-		this.puckSelected = true;
-		this.view.display.showKickDirections(this.board.puck
-			.kickDirections(this.board.settings.owner));
+
+		var kickDirections = this.board.puck.kickDirections(this.board.settings.owner);
+		if(kickDirections.directions.length) {
+			this.puckSelected = true;
+			this.view.display.showKickDirections(kickDirections.directions);
+		}else if(kickDirections.noOwnerNearPuck && !$('.message-container').is(':visible')) {
+			this.view.message('You must be near puck', 2000);
+		}else if(kickDirections.blockedByPlayers && !$('.message-container').is(':visible')) {
+			this.view.message('Puck is blocked by players', 2000);
+		}
 	}
 };
 
