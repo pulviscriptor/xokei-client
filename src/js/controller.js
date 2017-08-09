@@ -442,9 +442,14 @@ Controller.prototype = {
 		// if we have only one available move on selected trajectory
 		// then don't show single dot, just move there
 		if(this.puckTrajectory.length == 1) {
+			var oldPos = {
+				x: this.board.puck.x,
+				y: this.board.puck.y
+			};
+			var finish = this.puckTrajectory[0];
 			this.kickPuck(this.puckTrajectory[0], function () {
-				//this.currentTurn.recordMove(this.board.puck, oldPos, pos); //TODO recordMove when "undo system" will me made
-			});
+				this.currentTurn.recordMove(this.board.puck, oldPos, finish);
+			}.bind(this));
 			return;
 		}
 
