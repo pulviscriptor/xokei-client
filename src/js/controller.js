@@ -138,7 +138,8 @@ function Controller(board, view) {
 				// them
 				if (actor.owner !== this.board.settings.owner) {
 					if(!$('.message-container').is(':visible')) {
-						this.view.message('Wait your turn', 2000);
+						var amountOfMoves = 2-this.currentTurn.history.length;
+						this.view.message('Wait for your turn<br>Your opponent has ' + amountOfMoves + ' move' + (amountOfMoves > 1 ? 's' : '') + ' left', 2000);
 					}
 					return false;
 				}
