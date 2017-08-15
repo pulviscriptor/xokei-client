@@ -92,16 +92,13 @@ function init() {
 	// sent the controller to the view
 	view.controller = controller;
 	
-	// expose these parts of the game to the global scope if we are on a local
-	// server -- this is for debugging purposes
-	if (window.location.href.indexOf("localhost:") > -1) {
-		window.game = {
-			board: board,
-			controller: controller,
-			settings: settings,
-			view: view
-		};
-	}
+	// expose these parts of the game to the global scope for phantom testing
+	window.game = {
+		board: board,
+		controller: controller,
+		settings: settings,
+		view: view
+	};
 
 	// initialize dialogs (like make it draggable for example)
 	view.initDialogsWindows();
