@@ -21,6 +21,9 @@ module.exports = function(grunt) {
 			},
 			scripts: {
 				src: ["build/**/*.js", "!build/application.js", "build/js"]
+			},
+			phantom: {
+				src: ["phantom/build/**"]
 			}
 		},
 		connect: {
@@ -35,14 +38,22 @@ module.exports = function(grunt) {
 		copy: {
 			build: {
 				cwd: "src",
-				src: ["**", 
-					  "!**/*.scss", 
-					  "!**/*.js", 
-					  "!sass", 
-					  "!js", 
-					  "!css", 
-					  "!**/components/**"],
+				src: ["**",
+					"!**/*.scss",
+					"!**/*.js",
+					"!sass",
+					"!js",
+					"!css",
+					"!**/components/**",
+					"!index.html"],
 				dest: "build",
+				expand: true
+			},
+			phantom: {
+				cwd: "build",
+				src: ["**",
+					"!index.html"],
+				dest: "phantom/build",
 				expand: true
 			}
 		},
@@ -128,17 +139,20 @@ module.exports = function(grunt) {
 				files: "src/**/*.js",
 				tasks: ["scripts"]
 			},
-			copy: {
-				files: ["src/**",
-						"src/*",
-						"!src/**/*.scss",
-						"!src/**/*.js",
-						"!src/**/*"],
-				tasks: ["copy"]
-			},
+			// i didn't understood what this used for and looks like it does nothing
+			// "scripts" watch will pick this files and run "build" which will run "copy" task
+			// so we don't need this watcher
+			//copy: {
+			//	files: ["src/**",
+			//			"src/*",
+			//			"!src/**/*.scss",
+			//			"!src/**/*.js",
+			//			"!src/**/*"],
+			//	tasks: ["copy"]
+			//},
 			html: {
 				files: ["src/index.html"],
-				tasks: ["copy"]
+				tasks: ["copy:build"]
 			},
 			test: {
 				files: ["test/*.js"],
@@ -165,6 +179,19 @@ module.exports = function(grunt) {
 					root: [path.join(__dirname, "src", "components")]
 				}
 			}
+		},
+		mocha_phantomjs: {
+			all: ['phantom/build/index.html']
+		},
+		htmlbuild: {
+			build: {
+				src: 'src/index.html',
+				dest: 'build/'
+			},
+			phantom: {
+				src: 'src/index.html',
+				dest: 'phantom/build/'
+			}
 		}
 	});
 
@@ -179,38 +206,59 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-mocha-cov");
 	grunt.loadNpmTasks("grunt-sass");
 	grunt.loadNpmTasks('grunt-webpack');
-	
+	grunt.loadNpmTasks('grunt-mocha-phantomjs');
+	grunt.loadNpmTasks('grunt-html-build');
+
 	grunt.registerTask(
 		"test",
-		["mochacov:passing",
-		 "mochacov:coverage"
-		 ]);
+		[
+			"mochacov:passing",
+			"mochacov:coverage"
+		]);
+
+	grunt.registerTask(
+		"phantom",
+		[
+			"clean:phantom",
+			"copy:phantom",
+			"htmlbuild:phantom",
+			"mocha_phantomjs"
+		]);
 	
 	grunt.registerTask(
-		"stylesheets", 
-		["sass",
-		 "autoprefixer",
-		 "cssmin"
-		 ]);
+		"stylesheets",
+		[
+			"sass",
+			"autoprefixer",
+			"cssmin"
+		]);
 	
 	grunt.registerTask(
-		"scripts", 
-		["jshint",
-		 "test",
-		 "webpack",
-		 "uglify",
-		 "clean:scripts"]);
+		"scripts",
+		[
+			"jshint",
+			"test",
+			"webpack",
+			"uglify",
+			"clean:scripts",
+			"phantom"
+		]);
 	
 	grunt.registerTask(
-		"build", 
-		["clean:build",
-		 "copy",
-		 "stylesheets",
-		 "scripts"]);
+		"build",
+		[
+			"clean:build",
+			"copy:build",
+			"htmlbuild:build",
+			"stylesheets",
+			"scripts"
+		]);
 	
 	grunt.registerTask(
-		"default", 
-		["build",
-		 "connect",
-		 "watch"]);
+		"default",
+		[
+			"build",
+			"connect",
+			"watch"
+		]);
 }
