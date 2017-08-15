@@ -157,6 +157,10 @@ module.exports = function(grunt) {
 			test: {
 				files: ["test/*.js"],
 				tasks: ["build"]
+			},
+			phantom: {
+				files: ["phantom/test.js"],
+				tasks: ["phantom"]
 			}
 		},
 		webpack: {
