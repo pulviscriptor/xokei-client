@@ -368,4 +368,3 @@ module.exports = function(grunt) {
 			"watch:phantom"
 		]);
 };
-
