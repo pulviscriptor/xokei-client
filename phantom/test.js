@@ -139,5 +139,488 @@ describe('Testing game', function () {
 			$('i.fa.fa-times-circle.fa-lg.close-message').click();
 			wait.disappear('.message-container', done);
 		});
+
+		it('should find player1 actors at F8 F6 F3 F1 [4', function () {
+			expect(
+				game.board.tile(0,4).actor.owner == 'player1' &&
+				game.board.tile(6,0).actor.owner == 'player1' &&
+				game.board.tile(6,2).actor.owner == 'player1' &&
+				game.board.tile(6,5).actor.owner == 'player1' &&
+				game.board.tile(6,7).actor.owner == 'player1'
+			).to.be.true;
+		});
+
+		it('should find player2 actors at G8 G6 G3 G1 ]5', function () {
+			expect(
+				game.board.tile(13,3).actor.owner == 'player2' &&
+				game.board.tile(7,0).actor.owner == 'player2' &&
+				game.board.tile(7,2).actor.owner == 'player2' &&
+				game.board.tile(7,5).actor.owner == 'player2' &&
+				game.board.tile(7,7).actor.owner == 'player2'
+			).to.be.true;
+		});
+
+		it('should pass turn to player1', function () {
+			expect(game.board.settings.owner).to.be.equal('player1');
+		});
+
+		it('should underline player1 name', function () {
+			expect($('.player-1-name').css('text-decoration')).to.contain('underline');
+		});
+
+		it('should display 0:0 score', function () {
+			expect($('.player-1-score').text() + ':' + $('.player-2-score').text()).to.be.equal('0:0');
+		});
+
+		it('should not be able to place puck and player2 territory', function () {
+			simulate.placePuck(8,0);
+			expect($('.puck-actor').length).to.equal(0);
+		});
+
+		it('should place puck at player1 territory', function () {
+			simulate.placePuck(4,3);
+			expect($('.puck-actor').length).to.equal(1);
+		});
+
+		it('should find puck at D3', function () {
+			expect(game.board.tile(4,3).actor).to.be.instanceOf(game.puck);
+		});
+
+		it('should pass turn to player2', function () {
+			expect(game.board.settings.owner).to.be.equal('player2');
+		});
+
+		it('should remove underline from player1 name', function () {
+			expect($('.player-1-name').css('text-decoration')).to.contain('none');
+		});
+
+		it('should underline player2 name', function () {
+			expect($('.player-2-name').css('text-decoration')).to.contain('underline');
+		});
+
+		it('should show message when player2 tries to click puck', function (done) {
+			simulate.clickPuck();
+			wait.appear('.message-container', done);
+		});
+
+		it('should show message with "must be near puck" text', function () {
+			expect($('.message-container .message').text()).to.contain('near puck');
+		});
+
+		it('should hide message when we close it', function (done) {
+			$('i.fa.fa-times-circle.fa-lg.close-message').click();
+			wait.disappear('.message-container', done);
+		});
+
+		it('should show message if we try to click player1 actor', function (done) {
+			simulate.clickActor(0);
+			wait.appear('.message-container', done);
+		});
+
+		it('should show message with "wait for your turn" text', function () {
+			expect($('.message-container .message').text()).to.contain('for your turn');
+		});
+
+		it('should hide message when we close it', function (done) {
+			$('i.fa.fa-times-circle.fa-lg.close-message').click();
+			wait.disappear('.message-container', done);
+		});
+
+		it('should not create any valid moves', function () {
+			expect($('.valid-move-circle').length).to.be.equal(0);
+		});
+
+		it('should select actor and display valid moves', function () {
+			simulate.clickActor(8);
+			expect($('.valid-move-circle').length).to.be.equal(7);
+		});
+
+		it('should hide moves if we click actor again', function () {
+			simulate.clickActor(8);
+			expect($('.valid-move-circle').length).to.be.equal(0);
+		});
+
+		it('should select actor and display valid moves', function () {
+			simulate.clickActor(9);
+			expect($('.valid-move-circle').length).to.be.equal(4);
+		});
+
+		it('should move selected actor', function (done) {
+			simulate.clickTile(8, 6);
+			wait.finishActorMove(9, done);
+		});
+
+		it('should select actor and display valid moves', function () {
+			simulate.clickActor(9);
+			expect($('.valid-move-circle').length).to.be.equal(7);
+		});
+
+		it('should move selected actor', function (done) {
+			simulate.clickTile(9, 5);
+			wait.finishActorMove(9, done);
+		});
+
+		it('should pass turn to player1', function () {
+			expect(game.board.settings.owner).to.be.equal('player1');
+		});
+
+		it('should select actor and display valid moves', function () {
+			simulate.clickActor(2);
+			expect($('.valid-move-circle').length).to.be.equal(7);
+		});
+
+		it('should move selected actor', function (done) {
+			simulate.clickTile(5, 3);
+			wait.finishActorMove(2, done);
+		});
+
+		it('should display arrows for puck when we click it', function () {
+			simulate.clickPuck();
+			expect($('.kick-direction-arrow').length).to.be.equal(5);
+		});
+
+		it('should display valid moves when we click on arrow', function () {
+			simulate.clickTile(3, 3);
+			expect($('.valid-puck-move-circle').length).to.be.equal(4);
+		});
+
+		it('should delete puck after we made goal', function (done) {
+			simulate.clickTile(0, 3);
+			wait.appear($('.message-container .message'), done);
+		});
+
+		it('should find player1 actors at F8 F6 F3 F1 [4', function () {
+			expect(
+				game.board.tile(0,4).actor.owner == 'player1' &&
+				game.board.tile(6,0).actor.owner == 'player1' &&
+				game.board.tile(6,2).actor.owner == 'player1' &&
+				game.board.tile(6,5).actor.owner == 'player1' &&
+				game.board.tile(6,7).actor.owner == 'player1'
+			).to.be.true;
+		});
+
+		it('should find player2 actors at G8 G6 G3 G1 ]5', function () {
+			expect(
+				game.board.tile(13,3).actor.owner == 'player2' &&
+				game.board.tile(7,0).actor.owner == 'player2' &&
+				game.board.tile(7,2).actor.owner == 'player2' &&
+				game.board.tile(7,5).actor.owner == 'player2' &&
+				game.board.tile(7,7).actor.owner == 'player2'
+			).to.be.true;
+		});
+
+		it('should pass turn to player2', function () {
+			expect(game.board.settings.owner).to.be.equal('player2');
+		});
+
+		it('should underline player2 name', function () {
+			expect($('.player-2-name').css('text-decoration')).to.contain('underline');
+		});
+
+		it('should display 0:1 score', function () {
+			expect($('.player-1-score').text() + ':' + $('.player-2-score').text()).to.be.equal('0:1');
+		});
+
+		it('should display 1 score point', function () {
+			expect($('.score-point:visible').length).to.be.equal(1);
+		});
+
+		it('should display player2 score point', function () {
+			expect($('.score-point-player2:visible').length).to.be.equal(1);
+		});
+
+		it('should place puck at H4', function () {
+			simulate.clickTile(8, 4);
+			expect(game.board.tile(8,4).actor).to.be.instanceOf(game.puck);
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(3);
+			simulate.clickTile(7, 4);
+			wait.finishActorMove(3, function () {
+				if(game.board.tile(7,4).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(2);
+			simulate.clickTile(7, 3);
+			wait.finishActorMove(2, function () {
+				if(game.board.tile(7,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(9);
+			simulate.clickTile(8, 6);
+			wait.finishActorMove(9, function () {
+				if(game.board.tile(8,6).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(9);
+			simulate.clickTile(9, 5);
+			wait.finishActorMove(9, function () {
+				if(game.board.tile(9,5).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(4);
+			simulate.clickTile(7, 6);
+			wait.finishActorMove(4, function () {
+				if(game.board.tile(7,6).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(4);
+			simulate.clickTile(8, 5);
+			wait.finishActorMove(4, function () {
+				if(game.board.tile(8,5).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(7);
+			simulate.clickTile(8, 2);
+			wait.finishActorMove(7, function () {
+				if(game.board.tile(8,2).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(7);
+			simulate.clickTile(9, 3);
+			wait.finishActorMove(7, function () {
+				if(game.board.tile(9,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(1);
+			simulate.clickTile(7, 1);
+			wait.finishActorMove(1, function () {
+				if(game.board.tile(7,1).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(1);
+			simulate.clickTile(8, 2);
+			wait.finishActorMove(1, function () {
+				if(game.board.tile(8,2).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(5);
+			simulate.clickTile(12, 3);
+			wait.finishActorMove(5, function () {
+				if(game.board.tile(12,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(5);
+			simulate.clickTile(11, 3);
+			wait.finishActorMove(5, function () {
+				if(game.board.tile(11,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(1);
+			simulate.clickTile(8, 3);
+			wait.finishActorMove(1, function () {
+				if(game.board.tile(8,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(0);
+			simulate.clickTile(0, 3);
+			wait.finishActorMove(0, function () {
+				if(game.board.tile(0,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(5);
+			simulate.clickTile(10, 3);
+			wait.finishActorMove(5, function () {
+				if(game.board.tile(10,3).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should move actor towards puck', function (done) {
+			simulate.clickActor(5);
+			simulate.clickTile(9, 4);
+			wait.finishActorMove(5, function () {
+				if(game.board.tile(9,4).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should not select puck', function (done) {
+			simulate.clickPuck();
+			wait.appear($('.message-container .message'), done);
+		});
+
+		it('should display message that puck is blocked by players', function () {
+			expect($('.message-container .message').text()).to.contain('blocked by');
+		});
+
+		it('should hide message when we close it', function (done) {
+			$('i.fa.fa-times-circle.fa-lg.close-message').click();
+			wait.disappear('.message-container', done);
+		});
+
+		it('should move actor away from puck', function (done) {
+			simulate.clickActor(3);
+			simulate.clickTile(6, 5);
+			wait.finishActorMove(3, function () {
+				if(game.board.tile(6,5).actor) {
+					done();
+				}else{
+					done('Can\'t find actor in destination');
+				}
+			});
+		});
+
+		it('should kick puck to goal', function (done) {
+			simulate.clickPuck();
+			simulate.clickTile(7, 4);
+			simulate.clickTile(0, 4);
+			wait.appear($('.message-container .message'), done);
+		});
+
+		it('should hide message when we close it', function (done) {
+			$('i.fa.fa-times-circle.fa-lg.close-message').click();
+			wait.disappear('.message-container', done);
+		});
+
+		it('should siplay 2 score points', function () {
+			expect($('.score-point:visible').length).to.be.equal(2);
+		});
+
+		it('should place puck and display valid moves', function () {
+			simulate.clickTile(7, 4);
+			simulate.clickPuck();
+			simulate.clickTile(8,5);
+			expect($('.valid-puck-move-circle').length).to.be.equal(6);
+		});
+
+		it('should make goal to player2 side', function (done) {
+			simulate.clickTile(13,4);
+			wait.appear($('.message-container .message'), done);
+		});
+
+		it('should place puck and not bounce from corner of goal zone', function () {
+			simulate.clickTile(7,3);
+			simulate.clickPuck();
+			simulate.clickTile(6,4);
+			expect($('.valid-puck-move-circle').length).to.be.equal(6);
+		});
+
+		it('should make another goal into player2 zone', function (done) {
+			simulate.clickTile(6,4);
+			wait.finishPuckMove(function () {
+				simulate.clickPuck();
+				simulate.clickTile(7,4);
+				simulate.clickTile(13,4);
+				wait.finishPuckMove(done);
+			});
+		});
+
+		it('should hide message when we close it', function (done) {
+			$('i.fa.fa-times-circle.fa-lg.close-message').click();
+			wait.disappear('.message-container', done);
+		});
+
+		it('should move puck without displaying valid points if there is only 1 move available', function (done) {
+			simulate.clickTile(8,1);
+			simulate.clickActor(1);
+			simulate.clickTile(7,1);
+			wait.finishActorMove(1, function () {
+				simulate.clickPuck();
+				simulate.clickTile(8,0);
+				wait.finishPuckMove(function () {
+					if(game.board.tile(8,0).actor instanceof game.puck) {
+						done();
+					}else{
+						done('Something went wrong');
+					}
+				});
+			});
+		});
+
+		it('No more tests!', function () {
+			expect(true).true;
+		});
 	});
 });
