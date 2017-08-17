@@ -351,7 +351,7 @@ Display.prototype = {
 					  this.board.puck.y * this.tileSize)
 		};
 		
-		this.puck.element = this.puck.group.circle(this.puckDiameter)
+		this.puck.element = this.puck.group.circle(this.puckDiameter).addClass('puck-actor')
 			.fill({
 				color: settings.colors.puck,
 				opacity: 0
@@ -568,7 +568,7 @@ Display.prototype = {
 	showKickDirections: function (tiles) {
 		var self = this;
 		
-		tiles.forEach(function (tile) {
+		tiles.forEach(function (tile, i) {
 			var $arrow,
 				dx = tile.x - self.board.puck.x,
 				dy = tile.y - self.board.puck.y;
@@ -579,6 +579,8 @@ Display.prototype = {
 			// show an arrow for each tile
 			$arrow = $("<i>")
 				.addClass("fa fa-arrow-right")
+				.addClass("kick-direction-arrow")
+				.addClass("kick-direction-arrow-" + i)
 				.css({
 					position: "absolute",
 					left: self.board.puck.x * self.tileSize,
@@ -622,6 +624,7 @@ Display.prototype = {
 			}
 			
 			indicator = self.draw.circle(diameter)
+					.addClass('valid-puck-move-circle')
 					.move((self.tileSize * tile.x) + offset, 
 						(self.tileSize * tile.y) + offset)
 					.fill({
@@ -684,7 +687,9 @@ Display.prototype = {
 						color: settings.colors.field.valid,
 						opacity: 0
 					})
-					.style("pointer-events", "none");
+					.style("pointer-events", "none")
+					.addClass('valid-move-circle')
+					.addClass('valid-move-circle-' + i);
 			
 			setTimeout(function () {
 				indicator.animate(settings.animationSpeed).fill({
