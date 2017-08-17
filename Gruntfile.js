@@ -22,16 +22,36 @@ module.exports = function(grunt) {
 			scripts: {
 				src: ["build/**/*.js", "!build/application.js", "build/js"]
 			},
+			sourcemaps: {
+				src: ["build/application.js.map"]
+			},
 			phantom: {
 				src: ["phantom/build/**"]
 			}
 		},
 		connect: {
-			server: {
+			dev: {
 				options: {
 					port: 8000,
 					base: "build",
-					hostname: "*"
+					hostname: "*",
+					keepalive: false
+				}
+			},
+			demo: {
+				options: {
+					port: 8000,
+					base: "build",
+					hostname: "*",
+					keepalive: true
+				}
+			},
+			phantom: {
+				options: {
+					port: 8800,
+					base: ".",
+					hostname: "127.0.0.1",
+					keepalive: false
 				}
 			}
 		},
@@ -128,7 +148,7 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			options: {
-				livereload: true,
+				livereload: false,
 				spawn: false
 			},
 			stylesheets: {
@@ -159,8 +179,8 @@ module.exports = function(grunt) {
 				tasks: ["build"]
 			},
 			phantom: {
-				files: ["phantom/test.js"],
-				tasks: ["phantom"]
+				files: ["phantom/test.js", "build/application.js", "build/index.html"],
+				tasks: ["wait:phantom", "test_phantom"]
 			}
 		},
 		webpack: {
@@ -196,6 +216,32 @@ module.exports = function(grunt) {
 				src: 'src/index.html',
 				dest: 'phantom/build/'
 			}
+		},
+		concurrent: {
+			options: {
+				logConcurrentOutput: true,
+				limit: 4
+			},
+			dev: {
+				tasks: [
+					"watch:stylesheets",
+					"watch:scripts",
+					"watch:html",
+					"watch:test"
+				]
+			},
+			phantom: {
+				tasks: [
+					"watch:phantom"
+				]
+			}
+		},
+		wait: {
+			phantom: {
+				options: {
+					delay: 5000
+				}
+			}
 		}
 	});
 
@@ -212,6 +258,29 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-webpack');
 	grunt.loadNpmTasks('grunt-mocha-phantomjs');
 	grunt.loadNpmTasks('grunt-html-build');
+	grunt.loadNpmTasks('grunt-concurrent');
+	grunt.loadNpmTasks('grunt-wait');
+
+	grunt.registerTask(
+		"welcome_message", function () {
+			grunt.log.writeln('######################################################'.bold);
+			grunt.log.writeln('Welcome to xokei'.bold);
+			grunt.log.writeln('');
+			grunt.log.writeln('Next commands are available for you:'['yellow']);
+			grunt.log.writeln('Run ' + '`grunt release`'['green'] + ' to build source codes to ' + './build/'['magenta'] + ' folder that you can host on your server');
+			grunt.log.writeln('Run ' + '`grunt demo`'['green'] + ' to launch demo web server hosting ' + './build/'['magenta'] + ' folder');
+			grunt.log.writeln('');
+			grunt.log.writeln('Commands for developers:'['yellow']);
+			grunt.log.writeln('Run ' + '`grunt dev`'['green'] + ' to build source codes, start web server and watch for file changes');
+			grunt.log.writeln('Run ' + '`grunt phantom`'['green'] + '* in separate window to watch for changes and run phantom (headless web browser) tests');
+			grunt.log.writeln('*only if you want to run tests to make sure your changes will not break anything');
+			grunt.log.writeln('######################################################'.bold);
+		});
+	grunt.registerTask(
+		"phantom_message", function () {
+			grunt.log.writeln('You can look at tests in your browser at ' + 'http://127.0.0.1:8800/phantom/build'['magenta'] + ' if you want');
+		});
+
 
 	grunt.registerTask(
 		"test",
@@ -221,12 +290,12 @@ module.exports = function(grunt) {
 		]);
 
 	grunt.registerTask(
-		"phantom",
+		"test_phantom",
 		[
 			"clean:phantom",
 			"copy:phantom",
 			"htmlbuild:phantom",
-			"mocha_phantomjs"
+			"mocha_phantomjs",
 		]);
 	
 	grunt.registerTask(
@@ -241,11 +310,11 @@ module.exports = function(grunt) {
 		"scripts",
 		[
 			"jshint",
-			"test",
+			//"test",
 			"webpack",
 			"uglify",
-			"clean:scripts",
-			"phantom"
+			"clean:scripts"
+			//"phantom"
 		]);
 	
 	grunt.registerTask(
@@ -257,12 +326,46 @@ module.exports = function(grunt) {
 			"stylesheets",
 			"scripts"
 		]);
-	
+
 	grunt.registerTask(
 		"default",
 		[
-			"build",
-			"connect",
-			"watch"
+			"welcome_message"
+			//"build",
+			//"connect",
+			//"watch"
 		]);
-}
+
+	/////////////////////////////////////
+
+	grunt.registerTask(
+		"release",
+		[
+			"build",
+			"clean:sourcemaps"
+		]);
+
+	grunt.registerTask(
+		"demo",
+		[
+			"connect:demo"
+		]);
+
+	grunt.registerTask(
+		"dev",
+		[
+			"build",
+			"connect:dev",
+			"concurrent:dev"
+		]);
+
+	grunt.registerTask(
+		"phantom",
+		[
+			"test_phantom",
+			"connect:phantom",
+			"phantom_message",
+			"watch:phantom"
+		]);
+};
+
