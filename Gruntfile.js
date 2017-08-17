@@ -226,8 +226,8 @@ module.exports = function(grunt) {
 				tasks: [
 					"watch:stylesheets",
 					"watch:scripts",
-					"watch:html",
-					"watch:test"
+					"watch:html"
+					//"watch:test"
 				]
 			},
 			phantom: {
