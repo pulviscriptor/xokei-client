@@ -180,7 +180,7 @@ module.exports = function(grunt) {
 			},
 			phantom: {
 				files: ["phantom/test.js", "build/application.js", "build/index.html"],
-				tasks: ["wait:phantom", "test_phantom"]
+				tasks: ["test_phantom"]
 			}
 		},
 		webpack: {
@@ -226,13 +226,8 @@ module.exports = function(grunt) {
 				tasks: [
 					"watch:stylesheets",
 					"watch:scripts",
-					"watch:html"
-					//"watch:test"
-				]
-			},
-			phantom: {
-				tasks: [
-					"watch:phantom"
+					"watch:html",
+					"watch:test"
 				]
 			}
 		},
@@ -310,7 +305,7 @@ module.exports = function(grunt) {
 		"scripts",
 		[
 			"jshint",
-			//"test",
+			"test",
 			"webpack",
 			"uglify",
 			"clean:scripts"
