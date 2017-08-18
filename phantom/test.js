@@ -54,6 +54,22 @@ var wait = {
 		setTimeout(this.finish.bind(this, done, $el, attempt, stable, currentValue, getValue), this.interval);
 	},
 
+	// repeat getValue() until it changes from currentValue
+	change: function (currentValue, getValue, done, attempt) {
+		if(!attempt) attempt = 1;
+
+		if(getValue() != currentValue) {
+			done();
+		}else{
+			attempt++;
+			if(attempt > this.attempts) {
+				done('Timeout inside wait.change');
+			}else{
+				setTimeout(this.change.bind(this, currentValue, getValue, done, attempt));
+			}
+		}
+	},
+
 	appear: function (el, done) {
 		this.repeat(done, true, function () {
 			return $(el).is(':visible');
@@ -66,13 +82,13 @@ var wait = {
 		});
 	},
 
-	finishActorMove: function (id, done) {
+	/*finishActorMove: function (id, done) {
 		var $el = $('circle[data-actor=' + id + ']');
 		this.finish(done, $el, 0, 0, 0, function () {
 			var pos = $el[0].getBoundingClientRect();;
 			return pos.top + ':' + pos.left;
 		});
-	},
+	},*/
 
 	finishPuckMove: function (done) {
 		var $el = $('.puck-actor');
@@ -116,8 +132,65 @@ var simulate = {
 	}
 };
 
+var util = {
+	cordsX: '[abcdefghijkl]',
+	cordsY: '87654321',
+
+	notationToCoordinates: function (notation) {
+		var x = this.cordsX.indexOf(notation.toLowerCase()[0]);
+		var y = this.cordsY.indexOf(notation.toLowerCase()[1]);
+
+		if(x < 0) throw new Error('Unknown notation X coordinate: ' + notation[0]);
+		if(y < 0) throw new Error('Unknown notation Y coordinate: ' + notation[1]);
+
+		return {x: x, y: y};
+	},
+
+	coordinatesToNotation: function (cords, y) {
+		if(y) { cords = {x: cords, y: y}; };
+
+		if(typeof cords.x != 'number') throw new Error('Expected cords.x to be a number and it was ' + cords.x);
+		if(typeof cords.y != 'number') throw new Error('Expected cords.y to be a number and it was ' + cords.y);
+		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
+		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
+
+		return this.cordsX[cords.x] + this.cordsY[cords.y];
+	}
+};
+
+function Actor(id) {
+	if(typeof id != 'number') throw new Error('Actor ID should be a number and it was ' + id);
+	if(id < 0 || id > 9) throw new Error('Actor ID should be 0-9 and it was ' + id);
+
+	return {
+		moveTo: function (notation, done) {
+			var cords = util.notationToCoordinates(notation);
+			var actor = game.board.actors[id];
+			var diffX = Math.abs(cords.x - actor.x);
+			var diffY = Math.abs(cords.y - actor.y);
+
+			if(diffX > 1) throw new Error('Actor should be not more than 1 tile away from target on X and it was ' + diffX);
+			if(diffY > 1) throw new Error('Actor should be not more than 1 tile away from target on Y and it was ' + diffY);
+			if(diffY == 0 && diffX == 0) throw new Error('Actor should move somewhere, but his current position is his destination');
+			if(game.board.tile(cords.x, cords.y).actor) throw new Error('Tile ' + notation + ' is already occupied');
+
+			simulate.clickActor(id);
+			simulate.clickTile(cords.x, cords.y);
+			wait.change(game.controller.turns.length, function () {
+				return game.controller.turns.length;
+			}, function () {
+				var currentActor = game.board.actors[id];
+				if( currentActor.x != cords.x || currentActor.y != cords.y ) throw new Error('Expected to see actor in ' + notation + ' but it moved to ' + util.coordinatesToNotation(currentActor));
+				done();
+			});
+		}
+	};
+}
+
 describe('Testing game', function () {
 	describe('Game', function () {
+		this.timeout(5000);
+
 		it('should show welcome window', function () {
 			expect($('#game-select-window').is(':visible')).to.equal(true);
 		});
