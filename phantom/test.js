@@ -6,6 +6,15 @@ describe('Testing game', function () {
 			expect($('#game-select-window').is(':visible')).to.equal(true);
 		});
 
+		it('should drag welcome window screen', function () {
+			var $el = $('#game-select-welcome-message');
+			var offset = $el.offset();
+			$el.simulate( "mouseover" ).simulate( "drag", { dx: 200, dy: -100 } );
+			var newOffset = $el.offset();
+
+			expect(newOffset.top == offset.top || newOffset.left == offset.left).to.equal(false);
+		});
+
 		it('should close welcome window after starting 2P game', function () {
 			$('#game-select-mode-2p-local').click();
 			expect($('#game-select-window').is(':visible')).to.equal(false);
@@ -683,6 +692,15 @@ describe('Testing game', function () {
 
 		it('should show game won message', function (done) {
 			wait.appear('#game-won-win-message', done);
+		});
+
+		it('should drag won window', function () {
+			var $el = $('#game-won-window');
+			var offset = $el.offset();
+			$el.simulate( "mouseover" ).simulate( "drag", { dx: 200, dy: -100 } );
+			var newOffset = $el.offset();
+
+			expect(newOffset.top == offset.top || newOffset.left == offset.left).to.equal(false);
 		});
 
 		it('should say Player2 won the game', function () {
