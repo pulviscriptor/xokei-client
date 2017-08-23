@@ -163,7 +163,7 @@ describe('Testing game', function () {
 
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 	describe('Blocking puck', function () {
@@ -256,7 +256,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('g4');
 			simulate.clickTile('[4');
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 
@@ -278,7 +278,7 @@ describe('Testing game', function () {
 
 		it('should make goal to player2 side and display message "place puck"', function (done) {
 			simulate.clickTile(']4');
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 
@@ -309,7 +309,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 	describe('Move puck without displaying valid points if there is only 1 move available', function () {
@@ -338,7 +338,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 	describe('Goal from 1 tile away', function () {
@@ -411,7 +411,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 	describe('Shoot puck backwards from wall', function () {
@@ -455,7 +455,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 
 	});
@@ -606,7 +606,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('i5');
 			simulate.clickTile('[5');
-			wait.message('Place the puck', done);
+			wait.message('Player 1: place the puck.', done);
 		});
 	});
 	describe('Infinite puck bouncing', function () {
@@ -640,7 +640,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('d5');
 			simulate.clickTile('[5');
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 	describe('Skip round to 5:5', function () {
@@ -660,7 +660,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('f5');
 			simulate.clickTile('[5');
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 	});
 	describe('Skip round to win', function () {
@@ -879,7 +879,7 @@ describe('Testing game', function () {
 
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
-			wait.message('Place the puck', done);
+			wait.message('Player 2: place the puck.', done);
 		});
 
 		it('should display correct notation', function () {
