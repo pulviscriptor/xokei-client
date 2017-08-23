@@ -89,10 +89,12 @@ function Controller(board, view) {
 			"init state": function () {
 				this.validPuckPositions = this.board.getValidPuckPositions();
 				this.view.display.disableActorMouseEvents();
-				
+
+				var owner_name = (this.board.settings.owner == Player.One) ? 'Player 1' : 'Player 2';
+
 				this.emit("message", {
 					life: "placed puck",
-					message: "Place the puck."
+					message: owner_name + ": place the puck."
 				});
 				
 				this.currentTurn = new Turn(this, this.board.settings.owner);
