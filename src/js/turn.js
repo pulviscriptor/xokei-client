@@ -153,10 +153,70 @@ Turn.prototype = {
 			owner: this.owner
 		};
 	},
-	
+
 	// return the syntax that represents this turn
 	toString: function () {
-		
+
+	},
+
+	// string for notation box
+	notation: function (scored) {
+		/*var ret = '';
+		for(var i=0;i<this.history.length;i++) {
+			var turn = this.history[i];
+			console.log(turn);
+
+			if(turn.target == 'Begin round') {
+				//ret += "";
+			}else if(turn.target instanceof window.game.puck) {
+				if(!turn.start) {
+					ret += "p" + (this.controller.coordinatesToNotation(turn.target)) + " ";
+				}else{
+					ret += (this.controller.coordinatesToNotation(turn.start)  + this.controller.coordinatesToNotation(turn.finish)) + " ";
+				}
+			}else if(turn.target.owner) {
+				//ret += (turn.target.owner + " moved from " + turn.start.x + ',' + turn.start.y + " to " + turn.target.x + ',' + turn.target.y);
+				ret += (this.controller.coordinatesToNotation(turn.start)  + this.controller.coordinatesToNotation(turn.finish)) + " ";
+			}else{
+				ret += ("Unknown turn(" + i + "): " + JSON.stringify(this.serialize()));
+			}
+		}*/
+
+		var turn = this.history[0];
+		var next = this.history[1];
+
+		//console.log(this);
+
+		if(turn.target == 'Begin round') {
+			this.controller.view.notate( this.controller.turns.length, this.notateSingle(next) );
+		}else if(turn.target instanceof window.game.puck) {
+			if(!next || next.target instanceof window.game.puck) {
+				//console.log(turn);
+				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) );
+			}else{
+				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) + " " + this.notateSingle(next) );
+			}
+		}else{
+			if(turn.finish.x == next.start.x && turn.finish.y == next.start.y) {
+				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) );
+			}else{
+				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) + " " + this.notateSingle(next, scored) );
+			}
+		}
+
+		//console.log(ret);
+	},
+
+	notateSingle: function (turn, scored) {
+		if(turn.target instanceof window.game.puck) {
+			if(!turn.start) {
+				return "p" + (this.controller.coordinatesToNotation(turn.target));
+			}else{
+				return "p" + (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.target)) + (scored?'+':'');
+			}
+		}else{
+			return (turn.target.owner=="player1" ? '1' : '2') + (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.target));
+		}
 	},
 	
 	undoMove: function () {

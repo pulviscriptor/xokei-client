@@ -197,6 +197,16 @@ View.prototype = {
 
 	hideWelcomeWindow: function () {
 		$('#game-select-window').addClass('hidden');
+	},
+
+	// add turn to notation box
+	notate: function (id, str) {
+		$('#moves').append('<span class="move-notation" id="move-notation-' + id + '">' + str + ' </span>');
+	},
+
+	// remove all text from moves box
+	clearNotations: function () {
+		$('#moves').html('');
 	}
 };
 

@@ -216,6 +216,7 @@ function Controller(board, view) {
 				
 				// and store this turn on the turns list
 				this.turns.push(turn);
+				turn.notation(scored);
 				
 				// now that we've saved this turn, it is no longer current, so
 				// create a new one and pass control of the board to the other 
@@ -263,6 +264,7 @@ function Controller(board, view) {
 				// turn.display();
 
 				this.turns.push(turn);
+				turn.notation(scored);
 
 				// create a new turn and allow the other player to move
 				this.currentTurn = new Turn(this, Player.One);
@@ -492,6 +494,7 @@ Controller.prototype = {
 	resetGame: function () {
 		// clear turns of previous game
 		this.turns = [];
+		this.view.clearNotations();
 
 		// clear displayed score
 		var scores = {};
