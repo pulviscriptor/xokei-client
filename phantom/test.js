@@ -341,7 +341,7 @@ describe('Testing game', function () {
 			wait.message('Place the puck', done);
 		});
 	});
-	describe('Goal from 1 time away', function () {
+	describe('Goal from 1 tile away', function () {
 		it('should start new round', function () {
 			util.validateNewRound({
 				owner: 2,
@@ -711,6 +711,16 @@ describe('Testing game', function () {
 			expect($('#game-won-scores').text()).to.be.equal('6:5');
 		});
 
+		it('should display correct notation', function () {
+			expect($('#moves').text()).to.be.equal('pd5 2g1i3 1f6e5 pd5[5+ ph4 ' +
+				'1f3g4 1f6g5 2g1i3 1f1h3 2g6i5 1f8h6 2]5k5 1h6h5 1[4[5 2k5i4 ' +
+				'1g4f3 ph4[4+ pg4 pg4]4+ pg5 pg5]4+ pg5 pg5]4+ pj4 1f6h4 2g6h7 ' +
+				'1h4i4 pj4l4 2h7h5 1i4k4 2h5h3 pl4]4+ pi8 1f8h7 2g8e8 1h7i7 ' +
+				'pi8]4+ pj5 1[4[4 2g8i6 1[4[4 2i6k6 1[4[4 2k6l5 2g6h6 1[4[4 ' +
+				'2h6j4 1[4[4 2j4l4 1[4[4 2g3i3 1[4[4 2i3j3 2l5k5 1[4[4 pj5[5+ ' +
+				'pe5 2g1g2 2]5]4 pe5[5+ pg4 pg4[5+ pg4 1f1f2 1[4[5 pg4[4+ ');
+		});
+
 		it('should start new 2P game', function () {
 			$('#game-won-new-game-button').click();
 			expect($('#game-won-window').is(':visible')).to.equal(false);
@@ -870,6 +880,10 @@ describe('Testing game', function () {
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
 			wait.message('Place the puck', done);
+		});
+
+		it('should display correct notation', function () {
+			expect($('#moves').text()).to.be.equal("pd5 2g1i3 1f6e5 pd5[5+ ");
 		});
 	});
 	describe('Done!', function () {
