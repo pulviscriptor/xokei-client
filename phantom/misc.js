@@ -163,28 +163,30 @@ var simulate = {
 };
 
 var util = {
-	cordsX: '[abcdefghijkl]',
-	cordsY: '87654321',
+	/*cordsX: '[abcdefghijkl]',
+	cordsY: '87654321',*/
 
 	notationToCoordinates: function (notation) {
-		var x = this.cordsX.indexOf(notation.toLowerCase()[0]);
+		/*var x = this.cordsX.indexOf(notation.toLowerCase()[0]);
 		var y = this.cordsY.indexOf(notation.toLowerCase()[1]);
 
 		if(x < 0) throw new Error('Unknown notation X coordinate: ' + notation[0]);
 		if(y < 0) throw new Error('Unknown notation Y coordinate: ' + notation[1]);
 
-		return {x: x, y: y};
+		return {x: x, y: y};*/
+		return window.game.controller.notationToCoordinates(notation);
 	},
 
 	coordinatesToNotation: function (cords, y) {
-		if(typeof y == 'number') { cords = {x: cords, y: y}; };
+		/*if(typeof y == 'number') { cords = {x: cords, y: y}; };
 
 		if(typeof cords.x != 'number') throw new Error('Expected cords.x to be a number and it was ' + cords.x);
 		if(typeof cords.y != 'number') throw new Error('Expected cords.y to be a number and it was ' + cords.y);
 		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
 		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
 
-		return this.cordsX[cords.x] + this.cordsY[cords.y];
+		return this.cordsX[cords.x] + this.cordsY[cords.y];*/
+		return window.game.controller.coordinatesToNotation(cords, y);
 	},
 
 	// opt.owner = 1/2 = owner of current turn
