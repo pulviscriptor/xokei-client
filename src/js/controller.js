@@ -191,10 +191,11 @@ function Controller(board, view) {
 						x: this.board.puck.x,
 						y: this.board.puck.y
 					};
-					
+
+					var trajectory = this.puckTrajectory.slice(0);
+
 					this.kickPuck(this.board.tiles[pos.x][pos.y], function () {
-						this.currentTurn.recordMove(this.board.puck, 
-							oldPos, pos);
+						this.currentTurn.recordMove(this.board.puck, oldPos, pos, trajectory);
 					}.bind(this));
 					
 					this.clearUIState();
@@ -457,6 +458,7 @@ Controller.prototype = {
 	projectKickTrajectory: function () {
 		this.puckTrajectory = this.board.puck.calculateTrajectory(
 			this.kickDirection);
+		var trajectory = this.puckTrajectory.slice(0);
 
 		// if we have only one available move on selected trajectory
 		// then don't show single dot, just move there
@@ -467,7 +469,7 @@ Controller.prototype = {
 			};
 			var finish = this.puckTrajectory[0];
 			this.kickPuck(this.puckTrajectory[0], function () {
-				this.currentTurn.recordMove(this.board.puck, oldPos, finish);
+				this.currentTurn.recordMove(this.board.puck, oldPos, finish, trajectory);
 			}.bind(this));
 			return;
 		}
@@ -514,6 +516,10 @@ Controller.prototype = {
 		scores[Player.One] = '0';
 		scores[Player.Two] = '0';
 		this.view.updateScore(scores);
+
+		// notate game meta
+		this.view.notate( 'p1name', '1[' + Player.name[Player.One] + ']', true);
+		this.view.notate( 'p2name', '2[' + Player.name[Player.Two] + ']', true);
 
 		// new round for new clean game
 		this.reset();

@@ -12,6 +12,7 @@ function Turn(controller, owner) {
 	// the index of the current move in this turn
 	this.future = [];
 	this.history = [];
+	this.trajectory = [];
 	
 	// the owner of this turn
 	this.owner = owner;
@@ -72,7 +73,7 @@ Turn.prototype = {
 	},
 	
 	// record a move in this turn
-	recordMove: function (target, start, finish) {
+	recordMove: function (target, start, finish, trajectory) {
 		var finishTile,
 			score,
 			scored;
@@ -107,7 +108,8 @@ Turn.prototype = {
 			finish: finish,
 			score: score,
 			start: start,
-			target: target
+			target: target,
+			trajectory: trajectory
 		});
 				
 		if (this.history.length == 2 || scored) {
@@ -161,46 +163,29 @@ Turn.prototype = {
 
 	// string for notation box
 	notation: function (scored) {
-		/*var ret = '';
-		for(var i=0;i<this.history.length;i++) {
-			var turn = this.history[i];
-			console.log(turn);
-
-			if(turn.target == 'Begin round') {
-				//ret += "";
-			}else if(turn.target instanceof window.game.puck) {
-				if(!turn.start) {
-					ret += "p" + (this.controller.coordinatesToNotation(turn.target)) + " ";
-				}else{
-					ret += (this.controller.coordinatesToNotation(turn.start)  + this.controller.coordinatesToNotation(turn.finish)) + " ";
-				}
-			}else if(turn.target.owner) {
-				//ret += (turn.target.owner + " moved from " + turn.start.x + ',' + turn.start.y + " to " + turn.target.x + ',' + turn.target.y);
-				ret += (this.controller.coordinatesToNotation(turn.start)  + this.controller.coordinatesToNotation(turn.finish)) + " ";
-			}else{
-				ret += ("Unknown turn(" + i + "): " + JSON.stringify(this.serialize()));
-			}
-		}*/
-
 		var turn = this.history[0];
 		var next = this.history[1];
-
+		var owner = (this.owner=="player1" ? '1' : '2');
 		//console.log(this);
+		//var owner = '';
 
 		if(turn.target == 'Begin round') {
-			this.controller.view.notate( this.controller.turns.length, this.notateSingle(next) );
+			this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(next) );
 		}else if(turn.target instanceof window.game.puck) {
-			if(!next || next.target instanceof window.game.puck) {
-				//console.log(turn);
-				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) );
+			if(!next) {
+				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn, scored) );
+			}else if(next.target instanceof window.game.puck) {
+				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn) + this.notatePuckTrajectory(next, true) );
+			// next is about player actor
 			}else{
-				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) + " " + this.notateSingle(next) );
+				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn) + ' ' + owner + this.notateSingle(next) );
 			}
 		}else{
+			//todo check if second move is puck
 			if(turn.finish.x == next.start.x && turn.finish.y == next.start.y) {
-				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) );
+				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn, scored) + this.controller.coordinatesToNotation(turn.target) );
 			}else{
-				this.controller.view.notate( this.controller.turns.length, this.notateSingle(turn, scored) + " " + this.notateSingle(next, scored) );
+				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn, scored) + " " + owner + this.notateSingle(next, scored) );
 			}
 		}
 
@@ -212,11 +197,49 @@ Turn.prototype = {
 			if(!turn.start) {
 				return "p" + (this.controller.coordinatesToNotation(turn.target));
 			}else{
-				return "p" + (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.target)) + (scored?'+':'');
+				//return "p" + (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.target)) + (scored?'+':'');
+				return "p" + (this.notatePuckTrajectory(turn)) + (scored?'+':'');
 			}
 		}else{
-			return (turn.target.owner=="player1" ? '1' : '2') + (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.target));
+			return (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.finish));
 		}
+	},
+
+	notatePuckTrajectory: function (turn, skipFirst) {
+		var lastTile = turn.start;
+		var lastDeltaX = lastTile.x - turn.trajectory[0].x;
+		var lastDeltaY = lastTile.y - turn.trajectory[0].y;
+		var checkpoints = [ ];
+		var ret = '';
+
+		if(!skipFirst) checkpoints.push(lastTile);
+
+		for(var i=0;i<turn.trajectory.length;i++) {
+			var tile = turn.trajectory[i];
+			var deltaX =  lastTile.x - turn.trajectory[i].x;
+			var deltaY = lastTile.y - turn.trajectory[i].y;
+
+			// we need to find place where puck finished on trajectory
+			if(tile.x == turn.finish.x && tile.y == turn.finish.y) {
+				checkpoints.push(tile);
+				// puck is ended here so this is our last checkpoint
+				break;
+			}
+
+			if(deltaX != lastDeltaX || deltaY != lastDeltaY) {
+				checkpoints.push(lastTile);
+				lastDeltaX = deltaX;
+				lastDeltaY = deltaY;
+			}
+
+			lastTile = tile;
+		}
+
+		for(i=0;i<checkpoints.length;i++) {
+			ret += this.controller.coordinatesToNotation(checkpoints[i]);
+		}
+
+		return ret;
 	},
 	
 	undoMove: function () {
