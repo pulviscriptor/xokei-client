@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 					keepalive: false
 				}
 			},
-			demo: {
+			webserver: {
 				options: {
 					port: 8000,
 					base: "build",
@@ -263,7 +263,7 @@ module.exports = function(grunt) {
 			grunt.log.writeln('');
 			grunt.log.writeln('Next commands are available for you:'['yellow']);
 			grunt.log.writeln('Run ' + '`grunt release`'['green'] + ' to build source codes to ' + './build/'['magenta'] + ' folder that you can host on your server');
-			grunt.log.writeln('Run ' + '`grunt demo`'['green'] + ' to launch demo web server hosting ' + './build/'['magenta'] + ' folder');
+			grunt.log.writeln('Run ' + '`grunt webserver`'['green'] + ' to launch demo web server hosting ' + './build/'['magenta'] + ' folder');
 			grunt.log.writeln('');
 			grunt.log.writeln('Commands for developers:'['yellow']);
 			grunt.log.writeln('Run ' + '`grunt dev`'['green'] + ' to build source codes, start web server and watch for file changes');
@@ -341,9 +341,9 @@ module.exports = function(grunt) {
 		]);
 
 	grunt.registerTask(
-		"demo",
+		"webserver",
 		[
-			"connect:demo"
+			"connect:webserver"
 		]);
 
 	grunt.registerTask(
