@@ -90,11 +90,9 @@ function Controller(board, view) {
 				this.validPuckPositions = this.board.getValidPuckPositions();
 				this.view.display.disableActorMouseEvents();
 
-				var owner_name = (this.board.settings.owner == Player.One) ? 'Player 1' : 'Player 2';
-
 				this.emit("message", {
 					life: "placed puck",
-					message: owner_name + ": place the puck."
+					message: this.view.escapeHtml(Player.name[this.board.settings.owner]) + ": place the puck."
 				});
 				
 				this.currentTurn = new Turn(this, this.board.settings.owner);
@@ -343,10 +341,23 @@ function Controller(board, view) {
 			
 			"click mode 2p local": function () {
 				this.view.hideWelcomeWindow();
-				this.resetGame();
+				this.view.showNames2pWindow();
+				//this.resetGame();
 				/*setTimeout(function () {
 					this.setUIState("placing puck");
 				}.bind(this));*/
+			},
+
+			"click let's go 2p names": function () {
+				var p1name = $('#names-2p-input-p1').val() || 'Player 1';
+				var p2name = $('#names-2p-input-p2').val() || 'Player 2';
+
+				Player.name[Player.One] = p1name;
+				Player.name[Player.Two] = p2name;
+
+				this.view.updateNames(p1name, p2name);
+				this.view.hideNames2pWindow();
+				this.resetGame();
 			}
 		}
 	};

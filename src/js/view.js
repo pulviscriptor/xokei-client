@@ -31,6 +31,23 @@ function View(board) {
 /// public functions
 // display a closable message over the board to the player
 View.prototype = {
+	escapeHtml: function (string) {
+		var entityMap = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#39;',
+			'/': '&#x2F;',
+			'`': '&#x60;',
+			'=': '&#x3D;'
+		};
+
+		return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+			return entityMap[s];
+		});
+	},
+
 	closeMessage: function () {
 		if (this.hideMessageTimer) {
 			clearTimeout(this.hideMessageTimer);
@@ -146,6 +163,7 @@ View.prototype = {
 	// initialize our dialog windows
 	initDialogsWindows: function () {
 		$('#game-won-window').draggable({ containment: "window" });
+		$('#names-2p-window').draggable({ containment: "window" });
 		$('#game-select-window').draggable({ containment: "window" }).removeClass('hidden');
 		this.resizeDialogsWindows();
 	},
@@ -165,16 +183,23 @@ View.prototype = {
 				of: $('#board')
 			});
 		}
+
+		var $names2pDialog = $('#names-2p-window');
+		if(!$names2pDialog.hasClass('hidden')) {
+			$names2pDialog.position({
+				of: $('#board')
+			});
+		}
 	},
 
 	// display window with won message and button to start new game
 	gameWon: function (scores) {
 		if(scores.player1 > scores.player2) {
-			$('#game-won-winner-name').text('Player1');
+			$('#game-won-winner-name').text(Player.name[Player.One]);
 			$('#game-won-winner-score').text(scores.player1);
 			$('#game-won-looser-score').text(scores.player2);
 		}else{
-			$('#game-won-winner-name').text('Player2');
+			$('#game-won-winner-name').text(Player.name[Player.Two]);
 			$('#game-won-winner-score').text(scores.player2);
 			$('#game-won-looser-score').text(scores.player1);
 		}
@@ -199,14 +224,29 @@ View.prototype = {
 		$('#game-select-window').addClass('hidden');
 	},
 
+	showNames2pWindow: function () {
+		$('#names-2p-window').removeClass('hidden').position({
+			of: $('#board')
+		});
+	},
+
+	hideNames2pWindow: function () {
+		$('#names-2p-window').addClass('hidden');
+	},
+
 	// add turn to notation box
-	notate: function (id, str) {
-		$('#moves').append('<span class="move-notation" id="move-notation-' + id + '">' + str + ' </span>');
+	notate: function (id, str, newLine) {
+		$('#moves').append('<span class="move-notation" id="move-notation-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : ''));
 	},
 
 	// remove all text from moves box
 	clearNotations: function () {
 		$('#moves').html('');
+	},
+
+	updateNames: function(p1name, p2name) {
+		$('.player-1-name').text(p1name);
+		$('.player-2-name').text(p2name);
 	}
 };
 

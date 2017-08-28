@@ -1,3 +1,8 @@
+var testValues = {
+	player1Name: 'ᖫ✧ΔWΞSƟΜΞ✧ᖭ',
+	player2Name: '<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫'
+};
+
 describe('Testing game', function () {
 	this.timeout(5000);
 
@@ -18,6 +23,17 @@ describe('Testing game', function () {
 		it('should close welcome window after starting 2P game', function () {
 			$('#game-select-mode-2p-local').click();
 			expect($('#game-select-window').is(':visible')).to.equal(false);
+		});
+
+		it('should show enter names dialog', function () {
+			expect($('#names-2p-message').is(':visible')).to.equal(true);
+		});
+
+		it('should accept values and start game', function () {
+			$('#names-2p-input-p1').val(testValues.player1Name);
+			$('#names-2p-input-p2').val(testValues.player2Name);
+			$('#names-2p-submit-btn').click();
+			expect($('#names-2p-message').is(':visible')).to.equal(false);
 		});
 
 		it('should show message container', function (done) {
@@ -163,7 +179,7 @@ describe('Testing game', function () {
 
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 	describe('Blocking puck', function () {
@@ -256,7 +272,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('g4');
 			simulate.clickTile('[4');
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 
@@ -278,7 +294,7 @@ describe('Testing game', function () {
 
 		it('should make goal to player2 side and display message "place puck"', function (done) {
 			simulate.clickTile(']4');
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 
@@ -309,7 +325,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 	describe('Move puck without displaying valid points if there is only 1 move available', function () {
@@ -338,7 +354,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 	describe('Goal from 1 tile away', function () {
@@ -411,7 +427,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 	describe('Shoot puck backwards from wall', function () {
@@ -455,7 +471,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 
 	});
@@ -606,7 +622,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('i5');
 			simulate.clickTile('[5');
-			wait.message('Player 1: place the puck.', done);
+			wait.message(testValues.player1Name + ': place the puck.', done);
 		});
 	});
 	describe('Infinite puck bouncing', function () {
@@ -640,7 +656,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('d5');
 			simulate.clickTile('[5');
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 	describe('Skip round to 5:5', function () {
@@ -660,7 +676,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('f5');
 			simulate.clickTile('[5');
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 	});
 	describe('Skip round to win', function () {
@@ -703,8 +719,8 @@ describe('Testing game', function () {
 			expect(newOffset.top == offset.top || newOffset.left == offset.left).to.equal(false);
 		});
 
-		it('should say Player2 won the game', function () {
-			expect($('#game-won-winner-name').text()).to.be.equal('Player2');
+		it('should say Player 2 won the game', function () {
+			expect($('#game-won-winner-name').text()).to.be.equal(testValues.player2Name);
 		});
 
 		it('should say score is 6:5', function () {
@@ -734,6 +750,15 @@ describe('Testing game', function () {
 		it('should close welcome window after starting 2P game', function () {
 			$('#game-select-mode-2p-local').click();
 			expect($('#game-select-window').is(':visible')).to.equal(false);
+		});
+
+		it('should show enter names dialog', function () {
+			expect($('#names-2p-message').is(':visible')).to.equal(true);
+		});
+
+		it('should accept values and start game', function () {
+			$('#names-2p-submit-btn').click();
+			expect($('#names-2p-message').is(':visible')).to.equal(false);
 		});
 
 		it('should show message container', function (done) {
@@ -879,11 +904,11 @@ describe('Testing game', function () {
 
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
-			wait.message('Player 2: place the puck.', done);
+			wait.message(testValues.player2Name + ': place the puck.', done);
 		});
 
 		it('should display correct notation', function () {
-			expect($('#moves').text()).to.be.equal("pd5 2g1i3 1f6e5 pd5[5+ ");
+			expect($('#moves').text()).to.be.equal("1[ᖫ✧ΔWΞSƟΜΞ✧ᖭ] 2[<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫] 1pd5 2g1h2i3 1f6e5 1pd5[5+ ");
 		});
 	});
 	describe('Done!', function () {
