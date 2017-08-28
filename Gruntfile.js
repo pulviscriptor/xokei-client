@@ -172,7 +172,7 @@ module.exports = function(grunt) {
 			//},
 			html: {
 				files: ["src/index.html"],
-				tasks: ["copy:build"]
+				tasks: ["copy:build", "htmlbuild:build", "htmlbuild:phantom"]
 			},
 			test: {
 				files: ["test/*.js"],
