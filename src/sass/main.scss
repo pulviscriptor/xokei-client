@@ -18,7 +18,8 @@ body, html {
 
 .container {
 	position: absolute;
-	top: $space;
+	/*top: $space;*/
+	top: 70px;
 	left: $space;
 	bottom: $space;
 	width: 100vw - ($space * 2);
@@ -58,7 +59,8 @@ body, html {
 		}
 	}
 	
-	.score-container {
+	/* this container was placed right of board but after we added nicknames in became too small */
+	/*.score-container {
 		clear: left;
 		height: 120px;
 		position: relative;
@@ -97,13 +99,14 @@ body, html {
 				vertical-align: middle;
 			}
 		}
-	}
-	
+	}*/
+
 	.move-container {
 		width: 100%;
 		border: 1px solid gray;
 		position: relative;
 		padding: $move-container-padding;
+		margin-top: 15px;
 		
 		.move-label {
 			float: left;
@@ -379,4 +382,54 @@ body, html {
 	max-width: 300px;
 	border-radius: 5px;
 	color: #FFF;
+}
+
+.score-container {
+	clear: left;
+	position: absolute;
+	white-space: nowrap;
+	display: inline-block;
+	
+	.score {
+		line-height: $scoreboard-size;
+		text-align: center;
+		
+		/*position: absolute;*/
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 50%;
+		margin: auto;
+		
+		.player-name {
+			font-size: 1.3em;
+			display: inline-block;
+			vertical-align: middle;
+			font-weight: bold;
+		}
+
+		.player-1-name {
+			text-align: right;
+		}
+
+		.player-2-name {
+			text-align: left;
+		}
+		
+		.player-score {
+			font-size: $scoreboard-size;
+			margin: 0 5px;
+			display: inline-block;
+			vertical-align: middle;
+		}
+		
+		.divider-vertical {
+			height: $scoreboard-size;
+			width: 0px;
+			border: 2px solid black;
+			display: inline-block;
+			vertical-align: middle;
+		}
+	}
 }

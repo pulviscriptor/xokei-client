@@ -17,7 +17,7 @@
   </head>
 
   <body>
-    <div class="container">
+      <div class="container">
         <div class="board-container" id="board-container">
             <div class="board" id="board">
                 <div class="message-container">
@@ -32,7 +32,8 @@
                 <i class="fa fa-question-circle"></i>
                 <i class="fa fa-cog"></i>
             </div>
-            <div class="score-container">
+            <!-- this container was placed right of board but after we added nicknames in became too small -->
+            <!-- <div class="score-container">
                 <div class="score">
                     <div class="player-name player-1-name">Player 1</div>
                     <div class="player-score player-1-score">0</div>
@@ -40,7 +41,7 @@
                     <div class="player-score player-2-score">0</div>
                     <div class="player-name player-2-name">Player 2</div>
                 </div>
-            </div>
+            </div>-->
             <div class="move-container">
                 <p class="move-label">Moves</p>
                 <i class="fa fa-clipboard" id="copy-moves"></i>
@@ -53,6 +54,18 @@
                     <i class="fa fa-facebook"></i>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- container that displays player names and scores -->
+    <!-- this container was placed right of board but after we added nicknames in became too small -->
+    <div class="score-container hidden">
+        <div class="score">
+            <div class="player-name player-1-name">Player 1</div>
+            <div class="player-score player-1-score">0</div>
+            <div class="divider-vertical"></div>
+            <div class="player-score player-2-score">0</div>
+            <div class="player-name player-2-name">Player 2</div>
         </div>
     </div>
 

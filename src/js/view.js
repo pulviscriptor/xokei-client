@@ -170,26 +170,41 @@ View.prototype = {
 
 	// resize our dialog windows
 	resizeDialogsWindows: function () {
+		var $board = $('#board');
 		var $wonDialog = $('#game-won-window');
 		if(!$wonDialog.hasClass('hidden')) {
 			$wonDialog.position({
-				of: $('#board')
+				of: $board
 			});
 		}
 
 		var $gameSelectDialog = $('#game-select-window');
 		if(!$gameSelectDialog.hasClass('hidden')) {
 			$gameSelectDialog.position({
-				of: $('#board')
+				of: $board
 			});
 		}
 
 		var $names2pDialog = $('#names-2p-window');
 		if(!$names2pDialog.hasClass('hidden')) {
 			$names2pDialog.position({
-				of: $('#board')
+				of: $board
 			});
 		}
+
+		// not dialogs but we need to resize it
+		var width = ($board.width() / 2.8) + "px";
+		$('.score-container .player-name').css('width', width);
+
+		setTimeout(function () {
+			$('.score-container').removeClass('hidden')
+			.position({
+				my: "center bottom",
+				at: "top-10px",
+				of: $board,
+				collision: "none"
+			});
+		}, 1);
 	},
 
 	// display window with won message and button to start new game
