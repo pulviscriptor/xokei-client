@@ -333,6 +333,8 @@ function Controller(board, view) {
 		// for example game finished or not started
 		"game inactive": {
 			"game won": function (scores) {
+				this.view.notate( 'gamewon', scores.player1 + '-' + scores.player2, true);
+				this.view.notate( 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]');
 				this.view.gameWon(scores);
 			},
 			
