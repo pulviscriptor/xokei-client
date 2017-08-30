@@ -728,12 +728,12 @@ describe('Testing game', function () {
 		});
 
 		it('should display correct notation', function () {
-			expect($('#moves').text()).to.be.equal('1[ᖫ✧ΔWΞSƟΜΞ✧ᖭ] 2[<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫] 1pd5 2g1h2i3 1f6e5 1pd5[5+ 2ph4 1f3g4 1f6g5 2g1h2i3 ' +
+			expect($('#moves').text()).to.contain('1pd5 2g1h2i3 1f6e5 1pd5[5+ 2ph4 1f3g4 1f6g5 2g1h2i3 ' +
 				'1f1g2h3 2g6h6i5 1f8g7h6 2]5l5k5 1h6h5 1[4[5 2k5j5i4 1g4f3 1ph4[4+ 2pg4 1pg4j1]4+ 2pg5 ' +
 				'1pg5f4]4 2pg5 1pg5g4]4 2pj4 1f6g5h4 2g6g7h7 1h4i4 1pj4l4 2h7h6h5 1i4j4k4 2h5h4h3 1pl4]4+ ' +
 				'2pi8 1f8g7h7 2g8f8e8 1h7i7 1pi8]4+ 2pj5 1[4[5[4 2g8h7i6 1[4[5[4 2i6j6k6 1[4[5[4 2k6l5 2g6h6 ' +
 				'1[4[5[4 2h6i5j4 1[4[5[4 2j4k4l4 1[4[5[4 2g3h3i3 1[4[5[4 2i3j3 2l5k5 1[4[5[4 2pj5[5+ 1pe5 ' +
-				'2g1g2 2]5]4 1pe5[5+ 2pg4 1pg4c8[5+ 2pg4 1f1f2 1[4[5 2pg4[4+ ');
+				'2g1g2 2]5]4 1pe5[5+ 2pg4 1pg4c8[5+ 2pg4 1f1f2 1[4[5 2pg4[4+');
 		});
 
 		it('should start new 2P game', function () {
@@ -907,7 +907,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display correct notation', function () {
-			expect($('#moves').text()).to.be.equal("1[ᖫ✧ΔWΞSƟΜΞ✧ᖭ] 2[<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫] 1pd5 2g1h2i3 1f6e5 1pd5[5+ ");
+			expect($('#moves').text()).to.contain("1pd5 2g1h2i3 1f6e5 1pd5[5+");
 		});
 	});
 	describe('Done!', function () {
