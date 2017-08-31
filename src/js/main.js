@@ -76,7 +76,7 @@ function init() {
 		layout: settings.boardLayout.map(function (row) {
 			return row.split("");
 		}),
-		owner: Player.One
+		owner: settings.game.playerStartingGame==1 ? Player.One : Player.Two
 	});
 
 	// initialize the display of the game and pass in the board so it can render

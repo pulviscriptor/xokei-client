@@ -277,7 +277,10 @@ module.exports = (function (settings) {
 		inactivePlayerOpacity: 0.4,
 
 		// max characters player can use in his nickname
-		playerNameMaxLength: 15
+		playerNameMaxLength: 15,
+
+		// which player will start new game, 1 or 2
+		playerStartingGame: 1
 	},
 
 	// position of score points
