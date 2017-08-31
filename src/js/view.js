@@ -26,6 +26,7 @@ function View(board) {
 	this.events = events;
 	
 	this.initMessages();
+	this.initSettings();
 }
 
 /// public functions
@@ -46,6 +47,10 @@ View.prototype = {
 		return String(string).replace(/[&<>"'`=\/]/g, function (s) {
 			return entityMap[s];
 		});
+	},
+
+	initSettings: function () {
+		$('.name-input').attr('maxlength', settings.game.playerNameMaxLength);
 	},
 
 	closeMessage: function () {
