@@ -520,27 +520,7 @@ Controller.prototype = {
 		this.view.updateScore(scores);
 
 		// notate game meta
-		var pad = function(number) {
-			if (number < 10) {
-				return '0' + number;
-			}
-			return number;
-		};
-		var date = new Date();
-		var UTCDate = date.getUTCFullYear() +
-			'-' + pad(date.getUTCMonth() + 1) +
-			'-' + pad(date.getUTCDate()) +
-			' ' + pad(date.getUTCHours()) +
-			':' + pad(date.getUTCMinutes()) +
-			':' + pad(date.getUTCSeconds()) +
-			'+' + '00:00';
-		//[Date: 2017-08-28 14:33:28+00:00]
-
-		this.view.notate( 'date', '[Date "' + UTCDate + '"]', true);
-		this.view.notate( 'gamenumber', '[Game "1"]', true);
-		this.view.notate( 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
-		this.view.notate( 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
-		this.view.notate( 'postmeta', '', true);
+		this.view.notateMeta();
 
 		// new round for new clean game
 		this.reset();

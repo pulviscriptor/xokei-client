@@ -262,6 +262,44 @@ View.prototype = {
 	updateNames: function(p1name, p2name) {
 		$('.player-1-name').text(p1name);
 		$('.player-2-name').text(p2name);
+	},
+
+	notateMeta: function () {
+		var pad = function(number) {
+			if (number < 10) {
+				return '0' + number;
+			}
+			return number;
+		};
+		var offset = function (date) {
+			var timezoneOffset = date.getTimezoneOffset();
+			var hours = Math.floor(Math.abs(date.getTimezoneOffset())/60);
+			var minutes = date.getTimezoneOffset()%60;
+			var format = pad(hours) + ((minutes > 0) ? (':' + pad(minutes)) : '');
+			//var format = pad(hours) + ':' + pad(minutes);
+
+			if(timezoneOffset === 0) return '';
+			if(timezoneOffset > 0) {
+				return '-' + format;
+			}else{
+				return '+' + format;
+			}
+		};
+		var date = new Date();
+		var ISO8601Date = date.getFullYear() +
+			'-' + pad(date.getMonth() + 1) +
+			'-' + pad(date.getDate()) +
+			' ' + pad(date.getHours()) +
+			':' + pad(date.getMinutes()) +
+			':' + pad(date.getSeconds()) +
+			offset(date);
+		//[Date: 2017-08-28 14:33:28+00:00]
+
+		this.notate( 'date', '[Date "' + ISO8601Date + '"]', true);
+		this.notate( 'gamenumber', '[Game "1"]', true);
+		this.notate( 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
+		this.notate( 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
+		this.notate( 'postmeta', '', true);
 	}
 };
 
