@@ -92,7 +92,7 @@ function Controller(board, view) {
 
 				this.emit("message", {
 					life: "placed puck",
-					message: this.view.escapeHtml(Player.name[this.board.settings.owner]) + ": place the puck."
+					message: this.view.escapeHtml(Player.name[this.board.settings.owner]) + ": place the puck on your side"
 				});
 				
 				this.currentTurn = new Turn(this, this.board.settings.owner);
