@@ -179,7 +179,7 @@ describe('Testing game', function () {
 
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 	describe('Blocking puck', function () {
@@ -272,7 +272,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('g4');
 			simulate.clickTile('[4');
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 
@@ -294,7 +294,7 @@ describe('Testing game', function () {
 
 		it('should make goal to player2 side and display message "place puck"', function (done) {
 			simulate.clickTile(']4');
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 
@@ -325,7 +325,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 	describe('Move puck without displaying valid points if there is only 1 move available', function () {
@@ -354,7 +354,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 	describe('Goal from 1 tile away', function () {
@@ -427,7 +427,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 	describe('Shoot puck backwards from wall', function () {
@@ -471,7 +471,7 @@ describe('Testing game', function () {
 		});
 
 		it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 
 	});
@@ -622,7 +622,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('i5');
 			simulate.clickTile('[5');
-			wait.message(testValues.player1Name + ': place the puck on your side', done);
+			wait.message(testValues.player1Name + ':Place the puck on your side (left)', done);
 		});
 	});
 	describe('Infinite puck bouncing', function () {
@@ -656,7 +656,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('d5');
 			simulate.clickTile('[5');
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 	describe('Skip round to 5:5', function () {
@@ -676,7 +676,7 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('f5');
 			simulate.clickTile('[5');
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 	describe('Skip round to win', function () {
@@ -903,7 +903,7 @@ describe('Testing game', function () {
 
 		it('should show "Place the puck" message when we make goal to [5 and start new round', function (done) {
 			simulate.clickTile('[5');
-			wait.message(testValues.player2Name + ': place the puck on your side', done);
+			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 
 		it('should display correct notation', function () {
