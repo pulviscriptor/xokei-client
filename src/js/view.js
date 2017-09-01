@@ -284,7 +284,12 @@ View.prototype = {
 
 	// add turn to notation box
 	notate: function (id, str, newLine) {
-		$('#moves').append('<span class="move-notation" id="move-notation-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : ''));
+		var html = '<span class="move-notation" id="move-notation-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : '');
+		if(id == 'gameresult') {
+			$('#move-notation-postmeta').before(html);
+		}else{
+			$('#moves').append(html);
+		}
 	},
 
 	// remove all text from moves box
