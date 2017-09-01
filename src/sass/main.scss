@@ -404,6 +404,7 @@ body, html {
 		margin: auto;
 		
 		.player-name {
+			/* Will be re-calculated in view.js by reCalculatePlayerNamesFontSize() */
 			font-size: 1.3em;
 			display: inline-block;
 			vertical-align: middle;

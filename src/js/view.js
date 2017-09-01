@@ -197,7 +197,7 @@ View.prototype = {
 			});
 		}
 
-		// not dialogs but we need to resize it
+		// TODO move this code into some onResize function
 		var width = ($board.width() / 2.8) + "px";
 		$('.score-container .player-name').css('width', width);
 
@@ -210,6 +210,34 @@ View.prototype = {
 				collision: "none"
 			});
 		}, 1);
+
+		this.reCalculatePlayerNamesFontSize();
+	},
+
+	// fit player names on top of board if they are too big
+	// https://stackoverflow.com/questions/1582534/calculating-text-width
+	reCalculatePlayerNamesFontSize: function () {
+		var getTextSize = function (text, fontSize) {
+			var $el = $('<span style="font-family:\'Helvetica Neue\', Helvetica, Arial, sans-serif;font-size: ' + (fontSize || '1.3') + 'em;font-weight:bold"></span>').text(text).hide().appendTo('body');
+			var ret = $el.width();
+			$el.remove();
+			return ret;
+		};
+		var calculateAllowedSize = function ($el, nickname) {
+			var allowedMaxSize = $el.width();
+			for(var candidate = 1.3; candidate >= 0.5; candidate = parseFloat((candidate-0.1).toFixed(1))) {
+				var candidateSize = getTextSize(nickname, candidate);
+				if(candidateSize < allowedMaxSize) return candidate;
+			}
+			return 0.5;
+		};
+
+		var $p1name = $('.score-container .player-1-name');
+		var $p2name = $('.score-container .player-2-name');
+		var p1size = calculateAllowedSize($p1name, $p1name.text());
+		var p2size = calculateAllowedSize($p2name, $p2name.text());
+		$p1name.css('font-size', p1size + 'em');
+		$p2name.css('font-size', p2size + 'em');
 	},
 
 	// display window with won message and button to start new game
@@ -267,6 +295,8 @@ View.prototype = {
 	updateNames: function(p1name, p2name) {
 		$('.player-1-name').text(p1name);
 		$('.player-2-name').text(p2name);
+
+		this.reCalculatePlayerNamesFontSize();
 	},
 
 	notateMeta: function () {
