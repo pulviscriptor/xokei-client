@@ -90,9 +90,10 @@ function Controller(board, view) {
 				this.validPuckPositions = this.board.getValidPuckPositions();
 				this.view.display.disableActorMouseEvents();
 
+				var side = (this.board.settings.owner == Player.One) ? 'left' : 'right';
 				this.emit("message", {
 					life: "placed puck",
-					message: this.view.escapeHtml(Player.name[this.board.settings.owner]) + ": place the puck on your side"
+					message: this.view.escapeHtml(Player.name[this.board.settings.owner]) + ":<br>Place the puck on your side (" + side + ")"
 				});
 				
 				this.currentTurn = new Turn(this, this.board.settings.owner);
