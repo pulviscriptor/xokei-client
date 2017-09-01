@@ -198,7 +198,7 @@ View.prototype = {
 		}
 
 		// TODO move this code into some onResize function
-		var width = ($board.width() / 2.8) + "px";
+		var width = ($board.width() / 2.6) + "px";
 		$('.score-container .player-name').css('width', width);
 
 		setTimeout(function () {
@@ -225,7 +225,7 @@ View.prototype = {
 		};
 		var calculateAllowedSize = function ($el, nickname) {
 			var allowedMaxSize = $el.width();
-			for(var candidate = 1.3; candidate >= 0.5; candidate = parseFloat((candidate-0.1).toFixed(1))) {
+			for(var candidate = 1.3; candidate >= 0.5; candidate = parseFloat((candidate-0.01).toFixed(2))) {
 				var candidateSize = getTextSize(nickname, candidate);
 				if(candidateSize < allowedMaxSize) return candidate;
 			}
