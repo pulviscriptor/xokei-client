@@ -182,7 +182,8 @@ body, html {
 	display: none !important;
 }
 
-#game-won-window {
+
+.window {
 	border-radius: 10px;
 	border: 3px solid #000000;
 	text-align: center;
@@ -196,7 +197,7 @@ body, html {
 	cursor: move;
 	z-index: 2;
 
-	#game-won-new-game-button {
+	.button {
 		display: inline-block;
 		border-radius: 5px;
 		color: #fff;
@@ -209,10 +210,15 @@ body, html {
 		user-select: none;
 	}
 
-	#game-won-new-game-button:hover {
+	.button:hover {
 		background: #4a4a4a;
 		text-decoration: none;
 	}
+}
+
+
+#game-won-window {
+	z-index: 2;
 
 	#game-won-scores {
 		font-weight: bold;
@@ -225,23 +231,8 @@ body, html {
 }
 
 #game-select-window {
-	border-radius: 10px;
-	border: 3px solid #000000;
-	text-align: center;
-	display: inline-block;
-	padding-top: 10px;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-bottom: 10px;
-	position: absolute;
-	background-color: #f1f0f0;
-	color: #333;
-	/*font-size: 1.5em;*/
-	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
-	z-index: 3;
-	white-space: nowrap;
-	cursor: move;
-
+	font-size: 1em;
+	
 	#game-select-table {
 		border: 0px;
 	}
@@ -295,22 +286,12 @@ body, html {
 }
 
 #names-2p-window {
-	border-radius: 10px;
-	border: 3px solid #000000;
-	text-align: center;
-	display: inline-block;
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 10px;
-	position: absolute;
-	background-color: #f1f0f0;
-	color: #333;
-	/*font-size: 1.5em;*/
-	box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.5);
+	font-size: 1em;
 	z-index: 3;
-	white-space: nowrap;
-	cursor: move;
 
 	#names-2p-message {
 		font-size: 1.5em;
@@ -328,24 +309,6 @@ body, html {
 
 	#names-2p-input-p2 {
 		margin-left: 0px;
-	}
-
-	#names-2p-submit-btn {
-		display: inline-block;
-		border-radius: 5px;
-		color: #fff;
-		font-size: 1.2em;
-		background: #707070;
-		padding: 4px 14px;
-		text-decoration: none;
-		margin-top: 11px;
-		cursor: pointer;
-		user-select: none;
-	}
-
-	#names-2p-submit-btn {
-		background: #4a4a4a;
-		text-decoration: none;
 	}
 
 	#names-2p-error {

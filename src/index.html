@@ -70,16 +70,17 @@
     </div>
 
 	<!-- Game Won window -->
-	<div id="game-won-window" class="hidden">
+	<div id="game-won-window" class="window hidden">
 		<span id="game-won-win-message">
 			<span id="game-won-winner-name">Player1</span> won the game with score <span id="game-won-scores"><span id="game-won-winner-score">6</span>:<span id="game-won-looser-score">4</span></span>
 		</span>
 		<br>
-		<div id="game-won-new-game-button" class="tlp" data-tooltip="Start new game">New game</div>
+        <div id="game-won-another-game-button" class="button tlp" data-tooltip="Play another game with same opponent">Another game</div>
+		<div id="game-won-new-game-button" class="button tlp" data-tooltip="Start new game">New game</div>
 	</div>
 
 	<!-- Game select (welcome) window -->
-	<div id="game-select-window" class="hidden">
+	<div id="game-select-window" class="window hidden">
 		<span id="game-select-welcome-message">Welcome to χόκεϊ</span>
 		<br>
 		<span id="game-select-skip-tutorial-message"><input id="game-select-skip-tutorial-checkbox" type="checkbox" checked disabled> Skip the tutrorial. I know what I am doing.</span><br>
@@ -122,7 +123,7 @@
 	</div>
 
     <!-- 2P game player names dialog -->
-    <div id="names-2p-window" class="hidden">
+    <div id="names-2p-window" class="window hidden">
         <span id="names-2p-message">Enter your names</span>
         <br><br>
         <table border="0">
@@ -136,7 +137,7 @@
                 <td><input type="text" placeholder="Player 2" id="names-2p-input-p2" class="names-2p-input name-input"></td>
             </tr>
         </table>
-        <span id="names-2p-submit-btn" class="tlp" data-tooltip="Start the game">Let's Go!</span>
+        <span id="names-2p-submit-btn" class="button tlp" data-tooltip="Start the game">Let's Go!</span>
     </div>
 
     <!-- Include JavaScript at the bottom for faster loading time !-->
