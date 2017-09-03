@@ -277,9 +277,6 @@ Display.prototype = {
 		var $el;
 		var i;
 
-		// we need jquery's tooltip, but its in conflict with bootstrap
-		$.fn.tooltip.noConflict();
-
 		for (i in settings.scorePoints.player1) {
 			$el = $('<span class="score-point score-point-player1 hidden tlp" data-score="' + i +
 				'" id="score-point-player1-' + i +
@@ -295,18 +292,6 @@ Display.prototype = {
 				'" data-tooltip="Score point">&nbsp;</span>');
 			$body.prepend($el);
 		}
-
-		$('.score-point').tooltip({
-			items: '.score-point',
-			content: function () {
-				return $(this).data('tooltip');
-			},
-			/*classes: {
-				'ui-tooltip': 'score-tooltip-content'
-			},*/
-			tooltipClass: 'score-tooltip-content'
-			//extraClass: 'score-tooltip-content'
-		});
 	},
 
 	// resize and move score points on sizes of board

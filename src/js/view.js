@@ -24,9 +24,8 @@ function View(board) {
 	this.controller = null;
 	this.display = new Display(board);
 	this.events = events;
-	
-	this.initMessages();
-	this.initSettings();
+
+	this.init();
 }
 
 /// public functions
@@ -46,6 +45,30 @@ View.prototype = {
 
 		return String(string).replace(/[&<>"'`=\/]/g, function (s) {
 			return entityMap[s];
+		});
+	},
+
+	init: function () {
+		this.initMessages();
+		this.initSettings();
+		this.initTooltips();
+	},
+
+	initTooltips: function () {
+		// we need jquery's tooltip, but its in conflict with bootstrap
+		$.fn.tooltip.noConflict();
+
+
+		$(window).tooltip({
+			items: '.tlp',
+			content: function () {
+				return $(this).data('tooltip');
+			},
+			/*classes: {
+			 'ui-tooltip': 'score-tooltip-content'
+			 },*/
+			tooltipClass: 'tooltip-content'
+			//extraClass: 'score-tooltip-content'
 		});
 	},
 
