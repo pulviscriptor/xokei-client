@@ -386,7 +386,14 @@ function Controller(board, view) {
 				this.view.gameWon(scores);
 			},
 			
+			"click another game": function () {
+				$('#game-won-window').addClass('hidden');
+				this.resetGame();
+			},
+
 			"click new game": function () {
+				// reset first move owner
+				this.board.settings.owner = settings.game.playerStartingGame==1 ? Player.One : Player.Two;
 				this.view.newGameClicked();
 			},
 			
@@ -408,6 +415,8 @@ function Controller(board, view) {
 
 				this.view.updateNames(p1name, p2name);
 				this.view.hideNames2pWindow();
+				this.view.clearNotations();
+				this.view.notateMeta();
 				this.resetGame();
 			}
 		}
@@ -559,16 +568,12 @@ Controller.prototype = {
 	resetGame: function () {
 		// clear turns of previous game
 		this.turns = [];
-		this.view.clearNotations();
 
 		// clear displayed score
 		var scores = {};
 		scores[Player.One] = '0';
 		scores[Player.Two] = '0';
 		this.view.updateScore(scores);
-
-		// notate game meta
-		this.view.notateMeta();
 
 		// new round for new clean game
 		this.reset();

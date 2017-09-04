@@ -58,6 +58,7 @@ function listen(_controller, _display) {
 	});
 
 	// events for dialog windows
+	$('#game-won-another-game-button'). click(emit.bind(controller, "click another game"));
 	$('#game-won-new-game-button').		click(emit.bind(controller, "click new game"));
 	$('#game-select-mode-1p-human').	click(emit.bind(controller, "click mode 1p human"));
 	$('#game-select-mode-1p-ai').		click(emit.bind(controller, "click mode 1p ai"));
