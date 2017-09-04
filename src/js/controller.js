@@ -415,9 +415,8 @@ function Controller(board, view) {
 
 				this.view.updateNames(p1name, p2name);
 				this.view.hideNames2pWindow();
-				this.view.clearNotations();
-				this.view.notateMeta();
-				this.resetGame();
+
+				this.resetGame(true);
 			}
 		}
 	};
@@ -565,7 +564,7 @@ Controller.prototype = {
 	},
 
 	// reset the game after one of player won
-	resetGame: function () {
+	resetGame: function (anotherGame) {
 		// clear turns of previous game
 		this.turns = [];
 
@@ -577,6 +576,15 @@ Controller.prototype = {
 
 		// new round for new clean game
 		this.reset();
+
+		if(anotherGame) {
+			this.view.clearNotations();
+			this.view.notateMeta();
+			this.board.settings.gameID = 1;
+		}else{
+			this.board.settings.gameID++;
+			this.view.notateMeta(true);
+		}
 	},
 	
 	// select an actor and cause the available positions to move to be shown

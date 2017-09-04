@@ -31,7 +31,8 @@ function Board(settings) {
 	this.settings = {
 		actors: null,
 		layout: null,
-		goals: null
+		goals: null,
+		gameID: 1
 	};
 	
 	for (setting in settings) {

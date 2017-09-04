@@ -307,9 +307,9 @@ View.prototype = {
 
 	// add turn to notation box
 	notate: function (id, str, newLine) {
-		var html = '<span class="move-notation" id="move-notation-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : '');
+		var html = '<span class="move-notation" id="move-notation-game' + this.board.settings.gameID + '-' + id + '" class="move-notation-game-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : '');
 		if(id == 'gameresult') {
-			$('#move-notation-postmeta').before(html);
+			$('#move-notation-game' + this.board.settings.gameID + '-postmeta').before(html);
 		}else{
 			$('#moves').append(html);
 		}
@@ -327,7 +327,7 @@ View.prototype = {
 		this.reCalculatePlayerNamesFontSize();
 	},
 
-	notateMeta: function () {
+	notateMeta: function (anotherGame) {
 		var pad = function(number) {
 			if (number < 10) {
 				return '0' + number;
@@ -358,10 +358,15 @@ View.prototype = {
 			offset(date);
 		//[Date: 2017-08-28 14:33:28+00:00]
 
+		if(anotherGame) {
+			this.notate( 'anothergame', '', true);
+		}
 		this.notate( 'date', '[Date "' + ISO8601Date + '"]', true);
-		this.notate( 'gamenumber', '[Game "1"]', true);
-		this.notate( 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
-		this.notate( 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
+		this.notate( 'gamenumber', '[Game "' + this.board.settings.gameID + '"]', true);
+		if(!anotherGame) {
+			this.notate( 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
+			this.notate( 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
+		}
 		this.notate( 'postmeta', '', true);
 	}
 };
