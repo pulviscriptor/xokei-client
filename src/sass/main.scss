@@ -58,6 +58,10 @@ body, html {
 			clear: left;			
 		}
 	}
+
+	#copy-moves {
+		cursor: pointer;
+	}
 	
 	/* this container was placed right of board but after we added nicknames in became too small */
 	/*.score-container {
