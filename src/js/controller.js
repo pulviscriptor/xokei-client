@@ -55,6 +55,53 @@ function Controller(board, view) {
 				
 				// resize dialog windows
 				this.view.resizeDialogsWindows();
+			},
+			
+			// copy notation to clipboard
+			"save game": function () {
+				/*var copyTextarea = window.document.querySelector('#moves');
+				copyTextarea.select();*/
+
+				// https://stackoverflow.com/questions/1173194/select-all-div-text-with-single-mouse-click
+				var node = window.document.getElementById( 'moves' );
+				var range;
+
+				if ( window.document.selection ) {
+					range = window.document.body.createTextRange();
+					range.moveToElementText( node  );
+					range.select();
+				} else if ( window.getSelection ) {
+					range = window.document.createRange();
+					range.selectNodeContents( node );
+					window.getSelection().removeAllRanges();
+					window.getSelection().addRange( range );
+				}
+
+				// https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+				var success = false;
+				try {
+					success = window.document.execCommand('copy');
+				} catch (err) {
+					success = false;
+				}
+				if(!$('.message-container').is(':visible')) {
+					if(success) {
+						this.view.message('Notation copied to clipboard', 2000);
+					}else{
+						this.view.message('Failed to copy notation<br>Please copy it manually from box on the right', 2000);
+					}
+				}
+
+				// https://stackoverflow.com/questions/3169786/clear-text-selection-with-javascript
+				if (window.getSelection) {
+					if (window.getSelection().empty) {  // Chrome
+						window.getSelection().empty();
+					} else if (window.getSelection().removeAllRanges) {  // Firefox
+						window.getSelection().removeAllRanges();
+					}
+				} else if (window.document.selection) {  // IE?
+					window.document.selection.empty();
+				}
 			}
 		},
 		

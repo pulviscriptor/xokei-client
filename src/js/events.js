@@ -64,6 +64,7 @@ function listen(_controller, _display) {
 	$('#game-select-mode-2p-local').	click(emit.bind(controller, "click mode 2p local"));
 	$('#names-2p-submit-btn').	        click(emit.bind(controller, "click let's go 2p names"));
 	$('#game-select-mode-raplay-saved').click(emit.bind(controller, "click mode replay saved"));
+	$('#game-won-save-game-button').	click(emit.bind(controller, "save game"));
 }
 
 function listenToActorEvents() {
