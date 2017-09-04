@@ -1,6 +1,7 @@
 /// requires
 var Actor = require("./actor"),
 	Player = require("./players"),
+	settings = require("./settings"),
 	Puck = require("./puck");
 
 /// object
@@ -181,7 +182,6 @@ Turn.prototype = {
 				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn) + ' ' + owner + this.notateSingle(next) );
 			}
 		}else{
-			//todo check if second move is puck
 			if(turn.finish.x == next.start.x && turn.finish.y == next.start.y) {
 				this.controller.view.notate( this.controller.turns.length, owner + this.notateSingle(turn, scored) + this.controller.coordinatesToNotation(turn.target) );
 			}else{
@@ -197,8 +197,11 @@ Turn.prototype = {
 			if(!turn.start) {
 				return "p" + (this.controller.coordinatesToNotation(turn.target));
 			}else{
-				//return "p" + (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.target)) + (scored?'+':'');
-				return "p" + (this.notatePuckTrajectory(turn)) + (scored?'+':'');
+				if(scored && Math.max(turn.score[Player.One], turn.score[Player.Two]) == settings.game.scoreToWin) {
+					return "p" + (this.notatePuckTrajectory(turn)) + '++';
+				}else{
+					return "p" + (this.notatePuckTrajectory(turn)) + (scored?'+':'');
+				}
 			}
 		}else{
 			return (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.finish));
