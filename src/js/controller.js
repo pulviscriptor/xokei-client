@@ -411,7 +411,7 @@ function Controller(board, view) {
 
 			"click new game": function () {
 				// reset first move owner
-				this.board.settings.owner = settings.game.playerStartingGame==1 ? Player.One : Player.Two;
+				this.board.settings.owner = Player.One;
 				this.view.newGameClicked();
 			},
 			
