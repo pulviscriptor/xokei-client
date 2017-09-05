@@ -425,8 +425,8 @@ function Controller(board, view) {
 			},
 
 			"click let's go 2p names": function () {
-				var p1name = $('#names-2p-input-p1').val() || 'Player 1';
-				var p2name = $('#names-2p-input-p2').val() || 'Player 2';
+				var p1name = $('#names-2p-input-p1').val().trim() || 'Player 1';
+				var p2name = $('#names-2p-input-p2').val().trim() || 'Player 2';
 
 				Player.name[Player.One] = p1name;
 				Player.name[Player.Two] = p2name;
