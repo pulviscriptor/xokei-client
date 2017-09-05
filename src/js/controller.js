@@ -272,8 +272,6 @@ function Controller(board, view) {
 				// player
 				this.currentTurn = new Turn(this, Player.Two);
 
-				console.log(turn);
-
 				// this is check for settings.game.looserStartsNewRound
 				if(scored && settings.game.looserStartsNewRound &&
 					turn.history[turn.history.length-1].target.x == settings.zones[Player.One].goal[0].x) {
