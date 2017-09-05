@@ -271,8 +271,18 @@ function Controller(board, view) {
 				// create a new one and pass control of the board to the other 
 				// player
 				this.currentTurn = new Turn(this, Player.Two);
-				this.board.settings.owner = Player.Two;
-				this.view.showTurnState(Player.Two);
+
+				console.log(turn);
+
+				// this is check for settings.game.looserStartsNewRound
+				if(scored && settings.game.looserStartsNewRound &&
+					turn.history[turn.history.length-1].target.x == settings.zones[Player.One].goal[0].x) {
+					this.board.settings.owner = Player.One;
+					this.view.showTurnState(Player.One);
+				}else{
+					this.board.settings.owner = Player.Two;
+					this.view.showTurnState(Player.Two);
+				}
 				
 				// if this turn ended by a player scoring, we need to reset the
 				// board to allow for a new round to start, and we need to 
@@ -317,8 +327,16 @@ function Controller(board, view) {
 
 				// create a new turn and allow the other player to move
 				this.currentTurn = new Turn(this, Player.One);
-				this.board.settings.owner = Player.One;
-				this.view.showTurnState(Player.One);
+
+				// this is check for settings.game.looserStartsNewRound
+				if(scored && settings.game.looserStartsNewRound &&
+					turn.history[turn.history.length-1].target.x == settings.zones[Player.Two].goal[0].x) {
+					this.board.settings.owner = Player.Two;
+					this.view.showTurnState(Player.Two);
+				}else{
+					this.board.settings.owner = Player.One;
+					this.view.showTurnState(Player.One);
+				}
 
 				// if this turn ended by a player scoring, we need to reset the
 				// board to allow for a new round to start, and we need to

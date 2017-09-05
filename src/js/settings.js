@@ -280,7 +280,11 @@ module.exports = (function (settings) {
 		playerNameMaxLength: 15,
 
 		// which player will start new game, 1 or 2
-		playerStartingGame: 1
+		playerStartingGame: 1,
+
+		// false = player who made goal starts new round
+		// true = looser starts new round
+		looserStartsNewRound: true
 	},
 
 	// position of score points
