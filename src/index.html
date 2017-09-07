@@ -156,7 +156,9 @@
     expect = chai.expect;
     </script>
     <script src="../misc.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../test.js" type="text/javascript" charset="utf-8"></script>
+    <!-- build:process -->
+    <script src="../<%= testfile %>" type="text/javascript" charset="utf-8"></script>
+    <!-- /build -->
     <script type="text/javascript" charset="utf-8">
     mocha.run();
     </script>
