@@ -281,7 +281,7 @@ module.exports = (function (settings) {
 
 		// false = player who made goal starts new round
 		// true = looser starts new round
-		looserStartsNewRound: false
+		looserStartsNewRound: true
 	},
 
 	// position of score points
