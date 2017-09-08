@@ -595,8 +595,8 @@ Controller.prototype = {
 
 		if(anotherGame) {
 			this.view.clearNotations();
-			this.view.notateMeta();
 			this.board.settings.gameID = 1;
+			this.view.notateMeta();
 		}else{
 			this.board.settings.gameID++;
 			this.view.notateMeta(true);
