@@ -172,7 +172,7 @@ module.exports = function(grunt) {
 			//},
 			html: {
 				files: ["src/index.html"],
-				tasks: ["copy:build", "htmlbuild:build", "htmlbuild:phantom1"]
+				tasks: ["copy:build", "htmlbuild:build", "htmlbuild:phantom1", "htmlbuild:phantom2"]
 			},
 			test: {
 				files: ["test/*.js"],
@@ -212,12 +212,21 @@ module.exports = function(grunt) {
 				src: 'src/index.html',
 				dest: 'build/'
 			},
-			phantom1: {
+			phantom01: {
 				src: 'src/index.html',
-				dest: 'phantom/build/playFullGame.html',
+				dest: 'phantom/build/test.01.playFullGame.html',
 				options: {
 					data: {
-						testfile: 'test.playFullGame.js'
+						testfile: 'test.01.playFullGame.js'
+					}
+				}
+			},
+			phantom02: {
+				src: 'src/index.html',
+				dest: 'phantom/build/test.02.anotherGame.html',
+				options: {
+					data: {
+						testfile: 'test.02.anotherGame.js'
 					}
 				}
 			}
@@ -294,7 +303,8 @@ module.exports = function(grunt) {
 		[
 			"clean:phantom",
 			"copy:phantom",
-			"htmlbuild:phantom1",
+			"htmlbuild:phantom01",
+			"htmlbuild:phantom02",
 			"mocha_phantomjs",
 		]);
 	

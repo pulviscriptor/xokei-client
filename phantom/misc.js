@@ -21,6 +21,7 @@ var wait = {
 
 	// repeat test() function until we get result that we exect
 	repeat: function (done, expectation, test, attempt) {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
 		if(!attempt) attempt = 1;
 
 		if(test() == expectation) {
@@ -37,6 +38,7 @@ var wait = {
 
 	// repeat getValue() function until it returns same result for %stable% times
 	finish: function (done, $el, attempt, stable, lastValue, getValue) {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
 		attempt++;
 		if(attempt > this.attempts) {
 			return done('Finish failed to wait until result');
@@ -56,6 +58,7 @@ var wait = {
 
 	// repeat getValue() until it changes from currentValue
 	change: function (currentValue, getValue, done, attempt) {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
 		/*if(!attempt) attempt = 1;
 
 		 if(getValue() != currentValue) {
@@ -68,47 +71,48 @@ var wait = {
 		 setTimeout(this.change.bind(this, currentValue, getValue, done, attempt));
 		 }
 		 }*/
-		this.repeat(done, false, function () {
+		this.repeat(done, false, function (err) {
+			if(err) return done(err);
 			return currentValue == getValue();
 		});
 	},
 
 	appear: function (el, done) {
-		this.repeat(done, true, function () {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
+		this.repeat(done, true, function (err) {
+			if(err) return done(err);
 			return $(el).is(':visible');
 		});
 	},
 
 	disappear: function (el, done) {
-		this.repeat(done, false, function () {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
+		this.repeat(done, false, function (err) {
+			if(err) return done(err);
 			return $(el).is(':visible');
 		});
 	},
 
-	/*finishActorMove: function (id, done) {
-	 var $el = $('circle[data-actor=' + id + ']');
-	 this.finish(done, $el, 0, 0, 0, function () {
-	 var pos = $el[0].getBoundingClientRect();;
-	 return pos.top + ':' + pos.left;
-	 });
-	 },*/
-
 	finishPuckMove: function (done) {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
 		/*var $el = $('.puck-actor');
 		this.finish(done, $el, 0, 0, 0, function () {
 			var pos = $el[0].getBoundingClientRect();
 			return pos.top + ':' + pos.left;
 		});*/
 		var turn = game.controller.currentTurn;
-		wait.change(turn.history.length, function () {
+		wait.change(turn.history.length, function (err) {
+			if(err) return done(err);
 			return turn.history.length;
 		}, done);
 	},
 
 	message: function (text, done) {
-		this.appear('.message-container', function () {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
+		this.appear('.message-container', function (err) {
+			if(err) return done(err);
 			var currentText = $('.message-container .message').text();
-			if(currentText.indexOf(text) < 0) throw new Error('Expected message to contain "' + text + '" but it was "' + currentText + '"');
+			if(currentText.indexOf(text) < 0) return done('Expected message to contain "' + text + '" but it was "' + currentText + '"');
 			$('i.fa.fa-times-circle.fa-lg.close-message').click();
 			wait.disappear('.message-container', done);
 		});
@@ -193,28 +197,34 @@ var util = {
 	// opt.score1 = score of player 1
 	// opt.score2 = score of player 2
 	validateNewRound: function (opt) {
-		if(game.board.tile(0, 4).actor.owner != 'player1') throw new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4));
-		if(game.board.tile(6, 0).actor.owner != 'player1') throw new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0));
-		if(game.board.tile(6, 2).actor.owner != 'player1') throw new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2));
-		if(game.board.tile(6, 5).actor.owner != 'player1') throw new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5));
-		if(game.board.tile(6, 7).actor.owner != 'player1') throw new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7));
+		if(!opt.done) throw new Error('Forgot to pass `done` callback?');
+		wait.message('Place the puck on your side (' + (opt.owner == 1?'left':'right') + ')', function (err) {
+			if(err) return opt.done(err);
+			if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4));
+			if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0));
+			if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2));
+			if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5));
+			if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7));
 
-		if(game.board.tile(13,3).actor.owner != 'player2') throw new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3));
-		if(game.board.tile(7, 0).actor.owner != 'player2') throw new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0));
-		if(game.board.tile(7, 2).actor.owner != 'player2') throw new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2));
-		if(game.board.tile(7, 5).actor.owner != 'player2') throw new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5));
-		if(game.board.tile(7, 7).actor.owner != 'player2') throw new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7));
+			if(game.board.tile(13,3).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3));
+			if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0));
+			if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2));
+			if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5));
+			if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7));
 
-		if(game.board.settings.owner != 'player' + opt.owner) throw new Error('Expected owner of turn to be player' + opt.owner + ' but it was ' + game.board.settings.owner);
-		if($('.player-' + opt.owner + '-name').css('text-decoration').indexOf('underline') < 0) throw new Error('Expected player' + opt.owner + ' name to be underlined');
+			if(game.board.settings.owner != 'player' + opt.owner)return opt.done('Expected owner of turn to be player' + opt.owner + ' but it was ' + game.board.settings.owner);
+			if($('.player-' + opt.owner + '-name').css('text-decoration').indexOf('underline') < 0) return opt.done('Expected player' + opt.owner + ' name to be underlined');
 
-		var scores = $('.player-1-score').text() + ':' + $('.player-2-score').text();
-		var validScores = opt.score1 + ':' + opt.score2;
-		if(scores != validScores) throw new Error('Expected scores to be ' + validScores + ' but it was ' + scores);
+			var scores = $('.player-1-score').text() + ':' + $('.player-2-score').text();
+			var validScores = opt.score1 + ':' + opt.score2;
+			if(scores != validScores) return opt.done('Expected scores to be ' + validScores + ' but it was ' + scores);
 
-		if($('.score-point:visible').length != opt.score1+opt.score2) throw new Error('Expected to see ' + opt.score1+opt.score2 + ' score points, but it was ' + $('.score-point:visible').length);
-		if($('.score-point-player1:visible').length != opt.score1) throw new Error('Expected to see ' + opt.score1 + ' score points of player1, but it was ' + $('.score-point-player1:visible').length);
-		if($('.score-point-player2:visible').length != opt.score2) throw new Error('Expected to see ' + opt.score2 + ' score points of player2, but it was ' + $('.score-point-player2:visible').length);
+			if($('.score-point:visible').length != opt.score1+opt.score2) return opt.done('Expected to see ' + opt.score1+opt.score2 + ' score points, but it was ' + $('.score-point:visible').length);
+			if($('.score-point-player1:visible').length != opt.score1) return opt.done('Expected to see ' + opt.score1 + ' score points of player1, but it was ' + $('.score-point-player1:visible').length);
+			if($('.score-point-player2:visible').length != opt.score2) return opt.done('Expected to see ' + opt.score2 + ' score points of player2, but it was ' + $('.score-point-player2:visible').length);
+
+			opt.done();
+		});
 	},
 
 	tile: function (x, y) {
@@ -224,6 +234,10 @@ var util = {
 			y = cords.y;
 		}
 		return game.board.tile(x, y);
+	},
+	
+	notationToText: function () {
+		return $('#moves').text().replace(/\[Date "([0-9\-:+ ]*)"] /g, '');
 	}
 };
 
@@ -238,6 +252,7 @@ function Actor(id) {
 			var diffX = Math.abs(cords.x - actor.x);
 			var diffY = Math.abs(cords.y - actor.y);
 
+			if(!done) throw new Error('Forgot to pass `done` callback?');
 			if(diffX > 1) throw new Error('Actor should be not more than 1 tile away from target on X and it was ' + diffX);
 			if(diffY > 1) throw new Error('Actor should be not more than 1 tile away from target on Y and it was ' + diffY);
 			if(diffY == 0 && diffX == 0) throw new Error('Actor should move somewhere, but his current position is his destination');
@@ -245,9 +260,11 @@ function Actor(id) {
 
 			simulate.clickActor(id);
 			simulate.clickTile(cords.x, cords.y);
-			wait.change(game.controller.currentTurn.history.length, function () {
+			wait.change(game.controller.currentTurn.history.length, function (err) {
+				if(err) return done(err);
 				return game.controller.currentTurn.history.length;
-			}, function () {
+			}, function (err) {
+				if(err) return done(err);
 				var currentActor = game.board.actors[id];
 				if( currentActor.x != cords.x || currentActor.y != cords.y ) throw new Error('Expected to see actor in ' + notation + ' but it moved to ' + util.coordinatesToNotation(currentActor));
 				done();
