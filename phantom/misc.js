@@ -238,6 +238,35 @@ var util = {
 	
 	notationToText: function () {
 		return $('#moves').text().replace(/\[Date "([0-9\-:+ ]*)"] /g, '');
+	},
+
+	skipRound: function (owner, target, done) {
+		if($('.puck-actor').length !== 0) throw new Error('Puck is already placed');
+
+		if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4)));
+		if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0)));
+		if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2)));
+		if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5)));
+		if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7)));
+
+		if(game.board.tile(13,3).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3)));
+		if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0)));
+		if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2)));
+		if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5)));
+		if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7)));
+
+		simulate.placePuck(owner==1 ? 'f5' : 'g4');
+		simulate.clickPuck();
+		//console.log('CLICK: ' + (target==1 ? ( owner==1 ? 'e6' : 'g4' ) : ( owner==1 ? 'f5' : 'h4' ) ));
+		simulate.clickTile(target==1 ? ( owner==1 ? 'e5' : 'f5' ) : ( owner==1 ? 'g4' : 'h4' ) );
+		simulate.clickTile(target==1 ? '[5' : ']4');
+		wait.finishPuckMove(done);
+	},
+
+	skipRoundAndValidate: function (owner, target, validate) {
+		this.skipRound(owner, target, function () {
+			util.validateNewRound(validate);
+		});
 	}
 };
 
