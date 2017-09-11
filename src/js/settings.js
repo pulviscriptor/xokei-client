@@ -277,11 +277,7 @@ module.exports = (function (settings) {
 		inactivePlayerOpacity: 0.4,
 
 		// max characters player can use in his nickname
-		playerNameMaxLength: 15,
-
-		// false = player who made goal starts new round
-		// true = looser starts new round
-		looserStartsNewRound: true
+		playerNameMaxLength: 15
 	},
 
 	// position of score points

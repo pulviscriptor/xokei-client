@@ -272,8 +272,8 @@ function Controller(board, view) {
 				// player
 				this.currentTurn = new Turn(this, Player.Two);
 
-				// this is check for settings.game.looserStartsNewRound
-				if(scored && settings.game.looserStartsNewRound &&
+				// this is check for looser starts new round
+				if(scored &&
 					turn.history[turn.history.length-1].target.x == settings.zones[Player.One].goal[0].x) {
 					this.board.settings.owner = Player.One;
 					this.view.showTurnState(Player.One);
@@ -326,8 +326,8 @@ function Controller(board, view) {
 				// create a new turn and allow the other player to move
 				this.currentTurn = new Turn(this, Player.One);
 
-				// this is check for settings.game.looserStartsNewRound
-				if(scored && settings.game.looserStartsNewRound &&
+				// this is check for looser starts new round
+				if(scored && 
 					turn.history[turn.history.length-1].target.x == settings.zones[Player.Two].goal[0].x) {
 					this.board.settings.owner = Player.Two;
 					this.view.showTurnState(Player.Two);
