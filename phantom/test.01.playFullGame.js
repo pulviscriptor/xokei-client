@@ -47,11 +47,6 @@ describe('Testing game', function () {
 			expect($('.message-container .message').text()).to.contain('puck');
 		});
 
-		/*it('should hide message when we close it', function (done) {
-			$('i.fa.fa-times-circle.fa-lg.close-message').click();
-			wait.disappear('.message-container', done);
-		});*/
-
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 1,
@@ -176,22 +171,30 @@ describe('Testing game', function () {
 			expect($('.kick-direction-arrow').length).to.be.equal(5);
 		});
 
-		it('should display valid moves when we click on arrow at c5', function () {
-			simulate.clickTile('c5');
-			expect($('.valid-puck-move-circle').length).to.be.equal(4);
+		it('should display valid moves when we click on arrow at c4', function () {
+			simulate.clickTile('c4');
+			expect($('.valid-puck-move-circle').length).to.be.equal(8);
 		});
 
-		it('make goal to [5 and start new round', function () {
-			simulate.clickTile('[5');
-			//wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
+		it('should kick puck to f5', function (done) {
+			simulate.clickTile('f5');
+			wait.finishPuckMove(done);
 		});
+
+		it('should make goal', function () {
+			simulate.clickPuck();
+			simulate.clickTile('g4');
+			simulate.clickTile(']4');
+		});
+
+
 	});
 	describe('Blocking puck', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 0,
-				score2: 1,
+				score1: 1,
+				score2: 0,
 				done: done
 			});
 		});
@@ -273,11 +276,18 @@ describe('Testing game', function () {
 			Actor(3).moveTo('f3', done);
 		});
 
+		it('should move actor(3) to e2', function (done) {
+			Actor(3).moveTo('e2', done);
+		});
+
+		it('should move actor(5) to j3', function (done) {
+			Actor(5).moveTo('j3', done);
+		});
+
 		it('should make goal', function () {
 			simulate.clickPuck();
-			simulate.clickTile('g4');
-			simulate.clickTile('[4');
-			//wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
+			simulate.clickTile('i4');
+			simulate.clickTile(']4');
 		});
 	});
 
@@ -285,8 +295,8 @@ describe('Testing game', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 0,
-				score2: 2,
+				score1: 2,
+				score2: 0,
 				done: done
 			});
 		});
@@ -298,9 +308,8 @@ describe('Testing game', function () {
 			expect($('.valid-puck-move-circle').length).to.be.equal(6);
 		});
 
-		it('should make goal to player2 side', function () {
+		it('should make goal to player1 side', function () {
 			simulate.clickTile(']4');
-			//wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
 
@@ -308,8 +317,8 @@ describe('Testing game', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 1,
-				score2: 2,
+				score1: 3,
+				score2: 0,
 				done: done
 			});
 		});
@@ -330,17 +339,13 @@ describe('Testing game', function () {
 				wait.finishPuckMove(done);
 			});
 		});
-
-		/*it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
-		});*/
 	});
 	describe('Move puck without displaying valid points if there is only 1 move available', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 2,
-				score2: 2,
+				score1: 4,
+				score2: 0,
 				done: done
 			});
 		});
@@ -360,17 +365,13 @@ describe('Testing game', function () {
 			simulate.clickTile('h4');
 			simulate.clickTile(']4');
 		});
-
-		/*it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
-		});*/
 	});
 	describe('Goal from 1 tile away', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 3,
-				score2: 2,
+				score1: 5,
+				score2: 0,
 				done: done
 			});
 		});
@@ -430,21 +431,61 @@ describe('Testing game', function () {
 			Actor(7).moveTo('h3', done);
 		});
 
-		it('should make goal without showing valid moves dots', function () {
+		it('should make goal without showing valid moves dots', function (done) {
 			simulate.clickPuck();
 			simulate.clickTile(']4');
+			wait.finishPuckMove(done);
 		});
 
-		/*it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
-		});*/
+		it('should display correct notation', function () {
+			expect(util.notationToText()).to.be.equal('[Game "1"] [White "ᖫ✧ΔWΞSƟΜΞ✧ᖭ"] ' +
+				'[Black "<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫"] [Result "6-0"]  1pd5 2g1h2i3 1f6e5 1pd5a2b1f5 ' +
+				'2pf5j1]4+ 2ph4 1f3g4 1f6g5 2g1h2i3 1f1g2h3 2g6h6i5 1f8g7h6 2]5l5k5 1h6h5 1[4[5 ' +
+				'2k5j5i4 1g4f3e2 2i4j3 2ph4]4+ 2pg4 1pg4j1]4+ 2pg5 1pg5f4]4 2pg5 1pg5g4]4 2pj4 ' +
+				'1f6g5h4 2g6g7h7 1h4i4 1pj4l4 2h7h6h5 1i4j4k4 2h5h4h3 1pl4]4++ 6-0 ');
+		});
 	});
+
+	describe('Starting another game', function () {
+		it('should display won window', function (done) {
+			$('#game-won-another-game-button').click();
+			wait.disappear('#game-won-window', done);
+		});
+
+		it('should display place puck message', function (done) {
+			wait.appear('.message-container', done);
+		});
+
+		it('should display correct notation', function () {
+			expect(util.notationToText()).to.be.equal('[Game "1"] [White "ᖫ✧ΔWΞSƟΜΞ✧ᖭ"] ' +
+				'[Black "<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫"] [Result "6-0"]  1pd5 2g1h2i3 1f6e5 1pd5a2b1f5 ' +
+				'2pf5j1]4+ 2ph4 1f3g4 1f6g5 2g1h2i3 1f1g2h3 2g6h6i5 1f8g7h6 2]5l5k5 1h6h5 ' +
+				'1[4[5 2k5j5i4 1g4f3e2 2i4j3 2ph4]4+ 2pg4 1pg4j1]4+ 2pg5 1pg5f4]4 2pg5 1pg5g4]4 ' +
+				'2pj4 1f6g5h4 2g6g7h7 1h4i4 1pj4l4 2h7h6h5 1i4j4k4 2h5h4h3 1pl4]4++ 6-0  [Game "2"]  ');
+		});
+	});
+
+	describe('Skip round', function () {
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 1,
+				score1: 0,
+				score2: 0,
+				done: done
+			});
+		});
+
+		it('should make goal by player1 to player2', function (done) {
+			util.skipRound(1, 2, done);
+		});
+	});
+
 	describe('Shoot puck backwards from wall', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 4,
-				score2: 2,
+				score1: 1,
+				score2: 0,
 				done: done
 			});
 		});
@@ -479,18 +520,13 @@ describe('Testing game', function () {
 			simulate.clickTile('j7');
 			simulate.clickTile(']4');
 		});
-
-		/*it('should display message "place puck"', function (done) {
-			wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
-		});*/
-
 	});
 	describe('Players blocking goal zone', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 2,
-				score1: 5,
-				score2: 2,
+				score1: 2,
+				score2: 0,
 				done: done
 			});
 		});
@@ -633,15 +669,14 @@ describe('Testing game', function () {
 			simulate.clickPuck();
 			simulate.clickTile('i5');
 			simulate.clickTile('[5');
-			//wait.message(testValues.player1Name + ':Place the puck on your side (left)', done);
 		});
 	});
 	describe('Infinite puck bouncing', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
 				owner: 1,
-				score1: 5,
-				score2: 3,
+				score1: 2,
+				score2: 1,
 				done: done
 			});
 		});
@@ -671,55 +706,73 @@ describe('Testing game', function () {
 			//wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 	});
-	describe('Skip round to 5:5', function () {
+	describe('Skip game to 5:6', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
-				owner: 2,
-				score1: 5,
-				score2: 4,
+				owner: 1,
+				score1: 2,
+				score2: 2,
 				done: done
 			});
 		});
 
-		it('should place puck at g4', function () {
-			simulate.placePuck('g4');
+		it('should make goal by player1 to player2', function (done) {
+			util.skipRound(1, 2, done);
 		});
 
-		it('should make goal', function () {
-			simulate.clickPuck();
-			simulate.clickTile('f5');
-			simulate.clickTile('[5');
-			//wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 2,
+				score1: 3,
+				score2: 2,
+				done: done
+			});
+		});
+
+		it('should make goal by player2 to player1', function (done) {
+			util.skipRound(2, 1, done);
+		});
+
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 1,
+				score1: 3,
+				score2: 3,
+				done: done
+			});
+		});
+
+		it('should make goal by player1 to player2', function (done) {
+			util.skipRound(1, 2, done);
+		});
+
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 2,
+				score1: 4,
+				score2: 3,
+				done: done
+			});
+		});
+
+		it('should make goal by player2 to player2', function (done) {
+			util.skipRound(2, 2, done);
+		});
+
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 2,
+				score1: 5,
+				score2: 3,
+				done: done
+			});
+		});
+
+		it('should make goal by player2 to player2', function (done) {
+			util.skipRound(2, 2, done);
 		});
 	});
-	describe('Skip round to win', function () {
-		it('should start new round', function (done) {
-			util.validateNewRound({
-				owner: 2,
-				score1: 5,
-				score2: 5,
-				done: done
-			});
-		});
-
-		it('should place puck at g4', function () {
-			simulate.placePuck('g4');
-		});
-
-		it('should move actor(4) to f2', function (done) {
-			Actor(4).moveTo('f2', done);
-		});
-
-		it('should move actor(0) to [5', function (done) {
-			Actor(0).moveTo('[5', done);
-		});
-
-		it('should make goal', function () {
-			simulate.clickPuck();
-			simulate.clickTile('f4');
-			simulate.clickTile('[4');
-		});
-
+	describe('Starting new game', function () {
 		it('should show game won message', function (done) {
 			wait.appear('#game-won-win-message', done);
 		});
@@ -733,21 +786,22 @@ describe('Testing game', function () {
 			expect(newOffset.top == offset.top || newOffset.left == offset.left).to.equal(false);
 		});
 
-		it('should say Player 2 won the game', function () {
-			expect($('#game-won-winner-name').text()).to.be.equal(testValues.player2Name);
+		it('should say Player 1 won the game', function () {
+			expect($('#game-won-winner-name').text()).to.be.equal(testValues.player1Name);
 		});
 
-		it('should say score is 6:5', function () {
-			expect($('#game-won-scores').text()).to.be.equal('6:5');
+		it('should say score is 6:3', function () {
+			expect($('#game-won-scores').text()).to.be.equal('6:3');
 		});
 
 		it('should display correct notation', function () {
-			expect(util.notationToText()).to.be.equal('[Game "1"] [White "ᖫ✧ΔWΞSƟΜΞ✧ᖭ"] [Black "<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫"]' +
-				' [Result "5-6"]  1pd5 2g1h2i3 1f6e5 1pd5[5+ 2ph4 1f3g4 1f6g5 2g1h2i3 1f1g2h3 2g6h6i5 1f8g7h6 2]5l5k5 ' +
-				'1h6h5 1[4[5 2k5j5i4 1g4f3 1ph4[4+ 2pg4 1pg4j1]4+ 2pg5 1pg5f4]4 2pg5 1pg5g4]4 2pj4 1f6g5h4 2g6g7h7 ' +
-				'1h4i4 1pj4l4 2h7h6h5 1i4j4k4 2h5h4h3 1pl4]4+ 2pi8 1f8g7h7 2g8f8e8 1h7i7 1pi8]4+ 2pj5 1[4[5[4 2g8h7i6 ' +
-				'1[4[5[4 2i6j6k6 1[4[5[4 2k6l5 2g6h6 1[4[5[4 2h6i5j4 1[4[5[4 2j4k4l4 1[4[5[4 2g3h3i3 1[4[5[4 2i3j3 ' +
-				'2l5k5 1[4[5[4 2pj5[5+ 1pe5 2g1g2 2]5]4 1pe5[5+ 2pg4 1pg4c8[5+ 2pg4 1f1f2 1[4[5 2pg4[4++ 5-6 ');
+			expect(util.notationToText()).to.be.equal('[Game "1"] [White "ᖫ✧ΔWΞSƟΜΞ✧ᖭ"] [Black "<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫"] ' +
+				'[Result "6-0"]  1pd5 2g1h2i3 1f6e5 1pd5a2b1f5 2pf5j1]4+ 2ph4 1f3g4 1f6g5 2g1h2i3 1f1g2h3 2g6h6i5 ' +
+				'1f8g7h6 2]5l5k5 1h6h5 1[4[5 2k5j5i4 1g4f3e2 2i4j3 2ph4]4+ 2pg4 1pg4j1]4+ 2pg5 1pg5f4]4 2pg5 1pg5g4]4 ' +
+				'2pj4 1f6g5h4 2g6g7h7 1h4i4 1pj4l4 2h7h6h5 1i4j4k4 2h5h4h3 1pl4]4++ 6-0  [Game "2"] [Result "6-3"]  ' +
+				'1pf5 2pf5j1]4+ 2pi8 1f8g7h7 2g8f8e8 1h7i7 1pi8]4+ 2pj5 1[4[5[4 2g8h7i6 1[4[5[4 2i6j6k6 1[4[5[4 2k6l5 ' +
+				'2g6h6 1[4[5[4 2h6i5j4 1[4[5[4 2j4k4l4 1[4[5[4 2g3h3i3 1[4[5[4 2i3j3 2l5k5 1[4[5[4 2pj5[5+ 1pe5 2g1g2 ' +
+				'2]5]4 1pe5[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4c8[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-3 ');
 		});
 
 		it('should start new 2P game', function () {
@@ -773,19 +827,6 @@ describe('Testing game', function () {
 			$('#names-2p-submit-btn').click();
 			expect($('#names-2p-message').is(':visible')).to.equal(false);
 		});
-
-		/*it('should show message container', function (done) {
-			wait.appear('.message-container', done);
-		});
-
-		it('should show message with place puck message', function () {
-			expect($('.message-container .message').text()).to.contain('puck');
-		});
-
-		it('should hide message when we close it', function (done) {
-			$('i.fa.fa-times-circle.fa-lg.close-message').click();
-			wait.disappear('.message-container', done);
-		});*/
 
 		it('should start new round', function (done) {
 			util.validateNewRound({
@@ -918,7 +959,6 @@ describe('Testing game', function () {
 
 		it('make goal to [5 and start new round', function () {
 			simulate.clickTile('[5');
-			//wait.message(testValues.player2Name + ':Place the puck on your side (right)', done);
 		});
 
 		it('should display correct notation', function () {
