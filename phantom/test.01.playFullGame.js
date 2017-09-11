@@ -476,20 +476,16 @@ describe('Testing game', function () {
 		});
 
 		it('should make goal by player1 to player2', function (done) {
-			util.skipRound(1, 2, done);
-		});
-	});
-
-	describe('Shoot puck backwards from wall', function () {
-		it('should start new round', function (done) {
-			util.validateNewRound({
+			util.skipRoundAndValidate(1, 2, {
 				owner: 2,
 				score1: 1,
 				score2: 0,
 				done: done
 			});
 		});
+	});
 
+	describe('Shoot puck backwards from wall', function () {
 		it('should place puck at i8', function () {
 			simulate.placePuck('i8');
 		});
@@ -717,11 +713,7 @@ describe('Testing game', function () {
 		});
 
 		it('should make goal by player1 to player2', function (done) {
-			util.skipRound(1, 2, done);
-		});
-
-		it('should start new round', function (done) {
-			util.validateNewRound({
+			util.skipRoundAndValidate(1, 2, {
 				owner: 2,
 				score1: 3,
 				score2: 2,
@@ -730,11 +722,7 @@ describe('Testing game', function () {
 		});
 
 		it('should make goal by player2 to player1', function (done) {
-			util.skipRound(2, 1, done);
-		});
-
-		it('should start new round', function (done) {
-			util.validateNewRound({
+			util.skipRoundAndValidate(2, 1, {
 				owner: 1,
 				score1: 3,
 				score2: 3,
@@ -743,11 +731,7 @@ describe('Testing game', function () {
 		});
 
 		it('should make goal by player1 to player2', function (done) {
-			util.skipRound(1, 2, done);
-		});
-
-		it('should start new round', function (done) {
-			util.validateNewRound({
+			util.skipRoundAndValidate(1, 2, {
 				owner: 2,
 				score1: 4,
 				score2: 3,
@@ -756,11 +740,7 @@ describe('Testing game', function () {
 		});
 
 		it('should make goal by player2 to player2', function (done) {
-			util.skipRound(2, 2, done);
-		});
-
-		it('should start new round', function (done) {
-			util.validateNewRound({
+			util.skipRoundAndValidate(2, 2, {
 				owner: 2,
 				score1: 5,
 				score2: 3,
