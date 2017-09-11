@@ -29,7 +29,7 @@ var wait = {
 		}else{
 			attempt++;
 			if(attempt > this.attempts) {
-				done('Timeout inside wait.repeat');
+				done(new Error('Timeout inside wait.repeat'));
 			}else{
 				setTimeout(this.repeat.bind(this, done, expectation, test, attempt), this.interval);
 			}
@@ -41,7 +41,7 @@ var wait = {
 		if(!done) throw new Error('Forgot to pass `done` callback?');
 		attempt++;
 		if(attempt > this.attempts) {
-			return done('Finish failed to wait until result');
+			return done(new Error('Finish failed to wait until result'));
 		}
 
 		var currentValue = getValue();
@@ -112,7 +112,7 @@ var wait = {
 		this.appear('.message-container', function (err) {
 			if(err) return done(err);
 			var currentText = $('.message-container .message').text();
-			if(currentText.indexOf(text) < 0) return done('Expected message to contain "' + text + '" but it was "' + currentText + '"');
+			if(currentText.indexOf(text) < 0) return done(new Error('Expected message to contain "' + text + '" but it was "' + currentText + '"'));
 			$('i.fa.fa-times-circle.fa-lg.close-message').click();
 			wait.disappear('.message-container', done);
 		});
@@ -200,28 +200,28 @@ var util = {
 		if(!opt.done) throw new Error('Forgot to pass `done` callback?');
 		wait.message('Place the puck on your side (' + (opt.owner == 1?'left':'right') + ')', function (err) {
 			if(err) return opt.done(err);
-			if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4));
-			if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0));
-			if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2));
-			if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5));
-			if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7));
+			if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4)));
+			if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0)));
+			if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2)));
+			if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5)));
+			if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7)));
 
-			if(game.board.tile(13,3).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3));
-			if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0));
-			if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2));
-			if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5));
-			if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7));
+			if(game.board.tile(13,3).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3)));
+			if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0)));
+			if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2)));
+			if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5)));
+			if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7)));
 
-			if(game.board.settings.owner != 'player' + opt.owner)return opt.done('Expected owner of turn to be player' + opt.owner + ' but it was ' + game.board.settings.owner);
-			if($('.player-' + opt.owner + '-name').css('text-decoration').indexOf('underline') < 0) return opt.done('Expected player' + opt.owner + ' name to be underlined');
+			if(game.board.settings.owner != 'player' + opt.owner)return opt.done(new Error('Expected owner of turn to be player' + opt.owner + ' but it was ' + game.board.settings.owner));
+			if($('.player-' + opt.owner + '-name').css('text-decoration').indexOf('underline') < 0) return opt.done(new Error('Expected player' + opt.owner + ' name to be underlined'));
 
 			var scores = $('.player-1-score').text() + ':' + $('.player-2-score').text();
 			var validScores = opt.score1 + ':' + opt.score2;
-			if(scores != validScores) return opt.done('Expected scores to be ' + validScores + ' but it was ' + scores);
+			if(scores != validScores) return opt.done(new Error('Expected scores to be ' + validScores + ' but it was ' + scores));
 
-			if($('.score-point:visible').length != opt.score1+opt.score2) return opt.done('Expected to see ' + opt.score1+opt.score2 + ' score points, but it was ' + $('.score-point:visible').length);
-			if($('.score-point-player1:visible').length != opt.score1) return opt.done('Expected to see ' + opt.score1 + ' score points of player1, but it was ' + $('.score-point-player1:visible').length);
-			if($('.score-point-player2:visible').length != opt.score2) return opt.done('Expected to see ' + opt.score2 + ' score points of player2, but it was ' + $('.score-point-player2:visible').length);
+			if($('.score-point:visible').length != opt.score1+opt.score2) return opt.done(new Error('Expected to see ' + opt.score1+opt.score2 + ' score points, but it was ' + $('.score-point:visible').length));
+			if($('.score-point-player1:visible').length != opt.score1) return opt.done(new Error('Expected to see ' + opt.score1 + ' score points of player1, but it was ' + $('.score-point-player1:visible').length));
+			if($('.score-point-player2:visible').length != opt.score2) return opt.done(new Error('Expected to see ' + opt.score2 + ' score points of player2, but it was ' + $('.score-point-player2:visible').length));
 
 			opt.done();
 		});
