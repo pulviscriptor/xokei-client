@@ -403,6 +403,9 @@ function Controller(board, view) {
 			},
 			
 			"click another game": function () {
+				if(!settings.game.looserStartsAnotherGame) {
+					this.board.settings.owner = Player.One;
+				}
 				$('#game-won-window').addClass('hidden');
 				this.resetGame();
 			},

@@ -277,7 +277,11 @@ module.exports = (function (settings) {
 		inactivePlayerOpacity: 0.4,
 
 		// max characters player can use in his nickname
-		playerNameMaxLength: 15
+		playerNameMaxLength: 15,
+
+		// true = looser starts another game
+		// false = first player starts another game
+		looserStartsAnotherGame: false
 	},
 
 	// position of score points

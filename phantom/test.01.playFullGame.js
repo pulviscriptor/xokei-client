@@ -4,7 +4,7 @@ var testValues = {
 };
 
 // set game config for this test
-window.game.settings.game.looserStartsNewRound = false;
+window.game.settings.game.looserStartsAnotherGame = false;
 
 describe('Testing game', function () {
 	this.timeout(5000);

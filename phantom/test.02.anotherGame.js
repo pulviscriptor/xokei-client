@@ -1,5 +1,5 @@
 // set game config for this test
-window.game.settings.game.looserStartsNewRound = true;
+window.game.settings.game.looserStartsAnotherGame = true;
 
 describe('Testing game', function () {
 	this.timeout(5000);
