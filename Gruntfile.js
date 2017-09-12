@@ -172,7 +172,7 @@ module.exports = function(grunt) {
 			//},
 			html: {
 				files: ["src/index.html"],
-				tasks: ["copy:build", "htmlbuild:build", "htmlbuild:phantom01", "htmlbuild:phantom02"]
+				tasks: ["copy:build", "htmlbuild"]
 			},
 			test: {
 				files: ["test/*.js"],
@@ -227,6 +227,15 @@ module.exports = function(grunt) {
 				options: {
 					data: {
 						testfile: '<script src="../test.02.anotherGame.js" type="text/javascript" charset="utf-8"></script>'
+					}
+				}
+			},
+			phantom03: {
+				src: 'src/index.html',
+				dest: 'phantom/build/test.03.validateP2names.html',
+				options: {
+					data: {
+						testfile: '<script src="../test.03.validateP2names.js" type="text/javascript" charset="utf-8"></script>'
 					}
 				}
 			}
@@ -305,6 +314,7 @@ module.exports = function(grunt) {
 			"copy:phantom",
 			"htmlbuild:phantom01",
 			"htmlbuild:phantom02",
+			"htmlbuild:phantom03",
 			"mocha_phantomjs",
 		]);
 	

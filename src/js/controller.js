@@ -426,13 +426,24 @@ function Controller(board, view) {
 			},
 
 			"click let's go 2p names": function () {
-				var p1name = $('#names-2p-input-p1').val().trim() || 'Player 1';
-				var p2name = $('#names-2p-input-p2').val().trim() || 'Player 2';
+				var err = false;
+				var p1name = $('#names-2p-input-p1').val() || 'Player 1';
+				var p2name = $('#names-2p-input-p2').val() || 'Player 2';
 
-				Player.name[Player.One] = p1name;
-				Player.name[Player.Two] = p2name;
+				if(!p1name.trim() && p1name) {
+					err = true;
+					this.view.showErrorNames2P(Player.One, 'Enter non-empty name');
+				}
+				if(!p2name.trim() && p2name) {
+					err = true;
+					this.view.showErrorNames2P(Player.Two, 'Enter non-empty name');
+				}
+				if(err) return;
 
-				this.view.updateNames(p1name, p2name);
+				Player.name[Player.One] = p1name.trim();
+				Player.name[Player.Two] = p2name.trim();
+
+				this.view.updateNames(Player.name[Player.One], Player.name[Player.Two]);
 				this.view.hideNames2pWindow();
 
 				this.resetGame(true);

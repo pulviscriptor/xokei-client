@@ -320,6 +320,15 @@ View.prototype = {
 		$('#moves').html('');
 	},
 
+	showErrorNames2P: function (player, msg) {
+		var $el = $(player == Player.One ? '#names-2p-error-p1' : '#names-2p-error-p2');
+		if($el.text().trim()) return;
+		$el.text(msg);
+		setTimeout(function () {
+			$el.html('&nbsp;');
+		}, 2000);
+	},
+
 	updateNames: function(p1name, p2name) {
 		$('.player-1-name').text(p1name);
 		$('.player-2-name').text(p2name);
