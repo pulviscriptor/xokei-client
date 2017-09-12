@@ -217,7 +217,7 @@ module.exports = function(grunt) {
 				dest: 'phantom/build/test.01.playFullGame.html',
 				options: {
 					data: {
-						testfile: 'test.01.playFullGame.js'
+						testfile: '<script src="../test.01.playFullGame.js" type="text/javascript" charset="utf-8"></script>'
 					}
 				}
 			},
@@ -226,7 +226,7 @@ module.exports = function(grunt) {
 				dest: 'phantom/build/test.02.anotherGame.html',
 				options: {
 					data: {
-						testfile: 'test.02.anotherGame.js'
+						testfile: '<script src="../test.02.anotherGame.js" type="text/javascript" charset="utf-8"></script>'
 					}
 				}
 			}

@@ -156,13 +156,14 @@
     expect = chai.expect;
     </script>
     <script src="../misc.js" type="text/javascript" charset="utf-8"></script>
-    <!-- build:process -->
-    <script src="../<%= testfile %>" type="text/javascript" charset="utf-8"></script>
     <!-- /build -->
+    <!-- build:process -->
+    <%= testfile %>
+    <!-- /build -->
+    <!-- build:remove build -->
     <script type="text/javascript" charset="utf-8">
     mocha.run();
     </script>
     <!-- /build -->
-
   </body>
 </html>
