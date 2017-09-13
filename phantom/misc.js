@@ -213,7 +213,7 @@ var util = {
 			if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7)));
 
 			if(game.board.settings.owner != 'player' + opt.owner)return opt.done(new Error('Expected owner of turn to be player' + opt.owner + ' but it was ' + game.board.settings.owner));
-			if($('.player-' + opt.owner + '-name').css('text-decoration').indexOf('underline') < 0) return opt.done(new Error('Expected player' + opt.owner + ' name to be underlined'));
+			if(!$('.player-name-text.turn-owner').hasClass('player-' + opt.owner + '-name-text')) return opt.done(new Error('Expected player' + opt.owner + ' name to have class turn-owner'));
 
 			var scores = $('.player-1-score').text() + ':' + $('.player-2-score').text();
 			var validScores = opt.score1 + ':' + opt.score2;

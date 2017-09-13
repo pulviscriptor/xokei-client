@@ -73,12 +73,12 @@ describe('Testing game', function () {
 			expect(game.board.settings.owner).to.be.equal('player2');
 		});
 
-		it('should remove underline from player1 name', function () {
-			expect($('.player-1-name').css('text-decoration')).to.contain('none');
+		it('should remove highlight from player1 name', function () {
+			expect($('.player-1-name-text').hasClass('turn-owner')).to.be.false;
 		});
 
-		it('should underline player2 name', function () {
-			expect($('.player-2-name').css('text-decoration')).to.contain('underline');
+		it('should add highlight to player2 name', function () {
+			expect($('.player-2-name-text').hasClass('turn-owner')).to.be.true;
 		});
 
 		it('should show message when player2 tries to click puck', function (done) {
@@ -834,12 +834,12 @@ describe('Testing game', function () {
 			expect(game.board.settings.owner).to.be.equal('player2');
 		});
 
-		it('should remove underline from player1 name', function () {
-			expect($('.player-1-name').css('text-decoration')).to.contain('none');
+		it('should remove highlight from player1 name', function () {
+			expect($('.player-1-name-text').hasClass('turn-owner')).to.be.false;
 		});
 
-		it('should underline player2 name', function () {
-			expect($('.player-2-name').css('text-decoration')).to.contain('underline');
+		it('should highlight player2 name', function () {
+			expect($('.player-2-name-text').hasClass('turn-owner')).to.be.true;
 		});
 
 		it('should show message when player2 tries to click puck', function (done) {
