@@ -67,7 +67,7 @@ describe('Testing nicknames validation', function () {
 	});
 
 	describe('Accept valid names', function () {
-		it('should accept values and start game', function () {
+		it('should not accept values and start game', function () {
 			$('#names-2p-input-p1').val('');
 			$('#names-2p-input-p2').val('Mega Player');
 			$('#names-2p-submit-btn').click();
