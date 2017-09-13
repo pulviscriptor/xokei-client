@@ -14,10 +14,10 @@ function View(board) {
 	this.$message = $(".message");
 	this.$messageContainer = $(".message-container");
 	
-	this.$playerOneName = $(".player-1-name");
+	this.$playerOneName = $(".player-1-name-text");
 	this.$playerOneScore = $(".player-1-score");
 	
-	this.$playerTwoName = $(".player-2-name");
+	this.$playerTwoName = $(".player-2-name-text");
 	this.$playerTwoScore = $(".player-2-score");
 	
 	this.board = board;
@@ -145,16 +145,18 @@ View.prototype = {
 	
 	// display who's turn it is
 	showTurnState: function (player) {
-		$(".player-name").css("text-decoration", "none");
+		$(".player-name-text").removeClass("turn-owner");
 		$(".actor-player").stop(true).fadeTo(200, "1");
 
 		if (player === Player.One) {
-			this.$playerOneName.css("text-decoration", "underline");
+			this.$playerOneName.addClass("turn-owner");
 			$(".actor-player2").stop(true).fadeTo(200, settings.game.inactivePlayerOpacity);
 		} else {
-			this.$playerTwoName.css("text-decoration", "underline");
+			this.$playerTwoName.addClass("turn-owner");
 			$(".actor-player1").stop(true).fadeTo(200, settings.game.inactivePlayerOpacity);
 		}
+
+		this.updatePlayerNamesTooltips();
 	},
 	
 	// update the scores of the players on the screen
@@ -186,6 +188,35 @@ View.prototype = {
 		}).data('tooltip', 'You scored <b>' + score[Player.Two] + '</b>' + ' goal' + (score[Player.Two]>1?'s':'') +
 			'<br>Your opponent scored <b>' + score[Player.One] + '</b>' +
 			'<br>Game ends at <b>' + settings.game.scoreToWin + '</b> goals');
+	},
+
+	updatePlayerNamesTooltips: function () {
+		var score = {};
+		if(!this.controller.turns.length) {
+			score[Player.One] = 0;
+			score[Player.Two] = 0;
+		}else{
+			score = this.controller.turns.slice(-1)[0].score();
+		}
+
+		var scoreIs = 'The score is ' + score[Player.One] + '-' + score[Player.Two] + '.<br>';
+		var tooltipP1 = scoreIs;
+		var tooltipP2 = scoreIs;
+		if(score[Player.One] > score[Player.Two]) {
+			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is currently winning.<br>';
+			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is currently losing.<br>';
+		}else if(score[Player.One] < score[Player.Two]) {
+			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is currently losing.<br>';
+			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is currently winning.<br>';
+		}else{
+			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is neither winning nor losing.<br>';
+			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is neither winning nor losing.<br>';
+		}
+		tooltipP1 += 'It is the turn of ' + this.escapeHtml(Player.name[this.board.settings.owner]) + '.';
+		tooltipP2 += 'It is the turn of ' + this.escapeHtml(Player.name[this.board.settings.owner]) + '.';
+
+		$('.player-1-name-text,.player-1-score').data('tooltip', tooltipP1);
+		$('.player-2-name-text,.player-2-score').data('tooltip', tooltipP2);
 	},
 
 	// initialize our dialog windows
@@ -330,8 +361,8 @@ View.prototype = {
 	},
 
 	updateNames: function(p1name, p2name) {
-		$('.player-1-name').text(p1name);
-		$('.player-2-name').text(p2name);
+		$('.player-1-name-text').text(p1name);
+		$('.player-2-name-text').text(p2name);
 
 		this.reCalculatePlayerNamesFontSize();
 	},

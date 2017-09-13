@@ -409,5 +409,11 @@ body, html {
 			display: inline-block;
 			vertical-align: middle;
 		}
+
+		.turn-owner {
+			text-decoration: underline;
+		    color: #fff;
+		    text-shadow: 0px 0px 25px #000000,0 0 30px #000000,0px 0px 7px #000000;
+		}
 	}
 }
