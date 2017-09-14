@@ -397,6 +397,8 @@ function Controller(board, view) {
 		// for example game finished or not started
 		"game inactive": {
 			"game won": function (scores) {
+				this.board.history.push({ gameID: this.board.settings.gameID, scores: scores, winner: (scores[Player.One] > scores[Player.Two] ? Player.One : Player.Two) });
+
 				this.view.notate( 'gamewon', scores.player1 + '-' + scores.player2, true);
 				this.view.notate( 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]', true);
 				this.view.gameWon(scores);
@@ -413,6 +415,7 @@ function Controller(board, view) {
 			"click new game": function () {
 				// reset first move owner
 				this.board.settings.owner = Player.One;
+				this.board.history = [];
 				this.view.newGameClicked();
 			},
 			

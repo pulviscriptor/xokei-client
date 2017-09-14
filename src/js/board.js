@@ -45,6 +45,9 @@ function Board(settings) {
 	
 	// all the tiles on the board
 	this.tiles = [];
+
+	// history of previous games if this is another game
+	this.history = [];
 	
 	this.width = this.settings.layout.length;
 	this.height = this.settings.layout[0].length;

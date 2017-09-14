@@ -202,6 +202,13 @@ View.prototype = {
 		var scoreIs = 'The score is ' + score[Player.One] + '-' + score[Player.Two] + '.<br>';
 		var tooltipP1 = scoreIs;
 		var tooltipP2 = scoreIs;
+		var lastGame = this.board.history.slice(-1)[0];
+
+		if(lastGame) {
+			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' ' + (lastGame.winner == Player.One ? 'won' : 'lost') + ' Game ' + lastGame.gameID + '.<br>';
+			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' ' + (lastGame.winner == Player.Two ? 'won' : 'lost') + ' Game ' + lastGame.gameID + '.<br>';
+		}
+
 		if(score[Player.One] > score[Player.Two]) {
 			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is currently winning.<br>';
 			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is currently losing.<br>';
