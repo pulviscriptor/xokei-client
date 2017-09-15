@@ -180,6 +180,10 @@ describe('Testing game', function () {
 		it('should display tooltip on save game button', function (done) {
 			util.testTooltip('#game-won-save-game-button', 'Copy game notation to clipboard', done);
 		});
+
+		it('should display tooltip on save game icon', function (done) {
+			util.testTooltip('#copy-moves', 'Copy game notation to clipboard', done);
+		});
 	});
 
 	describe('Starting new game', function () {
