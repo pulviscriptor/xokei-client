@@ -85,6 +85,14 @@ var wait = {
 		});
 	},
 
+	fullyAppear: function (el, done) {
+		if(!done) throw new Error('Forgot to pass `done` callback?');
+		this.repeat(done, 1, function (err) {
+			if(err) return done(err);
+			return $(el).css('opacity');
+		});
+	},
+
 	disappear: function (el, done) {
 		if(!done) throw new Error('Forgot to pass `done` callback?');
 		this.repeat(done, false, function (err) {
@@ -266,6 +274,21 @@ var util = {
 	skipRoundAndValidate: function (owner, target, validate) {
 		this.skipRound(owner, target, function () {
 			util.validateNewRound(validate);
+		});
+	},
+	
+	testTooltip: function (el, text, done) {
+		if(!done) throw new Error('Forgot to pass callback to testTooltip?');
+		if($('.ui-tooltip').length) return done(new Error('Old tooltip box detected'));
+		$el = $(el);
+		$el.mouseenter();
+		wait.fullyAppear('.ui-tooltip', function () {
+			var tooltipText = $('.ui-tooltip').text();
+			$el.mouseleave();
+			wait.disappear('.ui-tooltip', function () {
+				if(tooltipText != text) return done(new Error('Expected tooltip text "' + tooltipText + '" to equal "' + text + '"'));
+				done();
+			});
 		});
 	}
 };
