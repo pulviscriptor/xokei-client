@@ -281,7 +281,7 @@ module.exports = (function (settings) {
 
 		// true = looser starts another game
 		// false = first player starts another game
-		looserStartsAnotherGame: false
+		looserStartsAnotherGame: true
 	},
 
 	// position of score points

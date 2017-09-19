@@ -231,6 +231,7 @@ View.prototype = {
 		$('#game-won-window').draggable({ containment: "window" });
 		$('#names-2p-window').draggable({ containment: "window" });
 		$('#game-select-window').draggable({ containment: "window" }).removeClass('hidden');
+		$('#settings-window').draggable({ containment: "window" });
 		this.resizeDialogsWindows();
 	},
 
@@ -254,6 +255,13 @@ View.prototype = {
 		var $names2pDialog = $('#names-2p-window');
 		if(!$names2pDialog.hasClass('hidden')) {
 			$names2pDialog.position({
+				of: $board
+			});
+		}
+
+		var $settingsDialog = $('#settings-window');
+		if(!$settingsDialog.hasClass('hidden')) {
+			$settingsDialog.position({
 				of: $board
 			});
 		}

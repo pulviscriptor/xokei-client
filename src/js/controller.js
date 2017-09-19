@@ -4,6 +4,7 @@
 /// requires
 var Player = require("./players"),
 	settings = require("./settings"),
+	settingsManager = require("./settingsManager"),
 	Turn = require("./turn");
 
 /// object
@@ -102,6 +103,22 @@ function Controller(board, view) {
 				} else if (window.document.selection) {  // IE?
 					window.document.selection.empty();
 				}
+			},
+			
+			// click setting button above notation box
+			"click settings button": function () {
+				var $table = $('#settings-table');
+				$table.html(settingsManager.getHTMLTableRows());
+
+				$('#settings-window').removeClass('hidden').position({
+					of: $('#board')
+				});
+			},
+
+			"click settings save button": function () {
+				settingsManager.saveFromHTML();
+
+				$('#settings-window').addClass('hidden');
 			}
 		},
 		
@@ -449,6 +466,7 @@ function Controller(board, view) {
 				this.view.updateNames(Player.name[Player.One], Player.name[Player.Two]);
 				this.view.hideNames2pWindow();
 
+				settingsManager.applyLocalSettings();
 				this.resetGame(true);
 			}
 		}

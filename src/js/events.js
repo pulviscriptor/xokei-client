@@ -67,6 +67,8 @@ function listen(_controller, _display) {
 	$('#game-select-mode-raplay-saved').click(emit.bind(controller, "click mode replay saved"));
 	$('#game-won-save-game-button').	click(emit.bind(controller, "save game"));
 	$('#copy-moves').					click(emit.bind(controller, "save game"));
+	$('#settings-btn').					click(emit.bind(controller, "click settings button"));
+	$('#settings-save-btn').			click(emit.bind(controller, "click settings save button"));
 }
 
 function listenToActorEvents() {

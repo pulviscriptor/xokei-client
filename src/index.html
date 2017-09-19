@@ -30,7 +30,7 @@
             <h1 class="logo">χόκεϊ</h1>
             <div class="settings-and-help-container">
                 <i class="fa fa-question-circle"></i>
-                <i class="fa fa-cog"></i>
+                <i class="fa fa-cog" id="settings-btn"></i>
             </div>
             <!-- this container was placed right of board but after we added nicknames in became too small -->
             <!-- <div class="score-container">
@@ -138,6 +138,24 @@
             </tr>
         </table>
         <span id="names-2p-submit-btn" class="button tlp" data-tooltip="Start the game">Let's Go!</span>
+    </div>
+
+    <!-- settings window -->
+    <div id="settings-window" class="window hidden">
+        <span id="settings-title">Settings</span>
+        <table border="0" id="settings-table" align="center">
+            <tr>
+                <td>Setting</td>
+                <td>Value</td>
+            </tr>
+            <tr>
+                <!-- set maxlength in settings.js -->
+                <td>111111111</td>
+                <td><input type="checkbox"></td>
+            </tr>
+        </table>
+        <span id="settings-save-btn" class="button tlp" data-tooltip="Save settings<br>Will be applied in new game">Save</span><br>
+        <span id="settings-save-warn-message">Will be applied in new game</span>
     </div>
 
     <!-- Include JavaScript at the bottom for faster loading time !-->
