@@ -18,5 +18,11 @@ module.exports = {
 	name: {
 		"player1": "Player 1",
 		"player2": "Player 2"
+	},
+
+	// will be set after calculateAllowedSize()
+	basicFontSize: {
+		"player1": 1,
+		"player2": 1
 	}
 };

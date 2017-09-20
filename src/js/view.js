@@ -305,6 +305,8 @@ View.prototype = {
 		var $p2name = $('.score-container .player-2-name');
 		var p1size = calculateAllowedSize($p1name, $p1name.text());
 		var p2size = calculateAllowedSize($p2name, $p2name.text());
+		Player.basicFontSize[Player.One] = p1size;
+		Player.basicFontSize[Player.Two] = p2size;
 		$p1name.css('font-size', p1size + 'em');
 		$p2name.css('font-size', p2size + 'em');
 	},
@@ -312,11 +314,11 @@ View.prototype = {
 	// display window with won message and button to start new game
 	gameWon: function (scores) {
 		if(scores.player1 > scores.player2) {
-			$('#game-won-winner-name').text(Player.name[Player.One]);
+			$('#game-won-winner-name').text(Player.name[Player.One]).css('font-size', Player.basicFontSize[Player.One] + 'em');
 			$('#game-won-winner-score').text(scores.player1);
 			$('#game-won-looser-score').text(scores.player2);
 		}else{
-			$('#game-won-winner-name').text(Player.name[Player.Two]);
+			$('#game-won-winner-name').text(Player.name[Player.Two]).css('font-size', Player.basicFontSize[Player.Two] + 'em');
 			$('#game-won-winner-score').text(scores.player2);
 			$('#game-won-looser-score').text(scores.player1);
 		}
