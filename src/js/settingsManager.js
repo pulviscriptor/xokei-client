@@ -62,7 +62,7 @@ var settingsManager = {
 		for(var i in this.settings) {
 			var setting = this.settings[i];
 			ret += '<tr>';
-			ret += '<td>' + setting.description + '</td>';
+			ret += '<td><i class="fa fa-question-circle tlp" aria-hidden="true" data-tooltip="' + setting.tooltip + '"></i> ' + setting.description + '</td>';
 			ret += '<td>' + this.getHTMLInput(setting) + '</td>';
 			ret += '</tr>';
 		}
@@ -111,6 +111,7 @@ var settingsManager = {
 settingsManager.addSetting({
 	name: 'looserStartsAnotherGame',
 	description: 'Looser starts another game',
+	tooltip: 'If this setting is false, then whites always start the new game by placing the puck on their side.<br>If it is set to true, then whichever side lost the previous game will start the new one.',
 	path: ['game','looserStartsAnotherGame'],
 	type: 'boolean'
 });

@@ -422,6 +422,7 @@ function Controller(board, view) {
 			},
 			
 			"click another game": function () {
+				settingsManager.applyLocalSettings();
 				if(!settings.game.looserStartsAnotherGame) {
 					this.board.settings.owner = Player.One;
 				}
