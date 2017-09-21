@@ -789,6 +789,22 @@ Display.prototype = {
 		this.tiles[x][y].element
 			.size(this.tileSize, this.tileSize)
 			.move(x * this.tileSize, y * this.tileSize);
+	},
+	
+	// expand or collapse meta
+	metaExpandCollapse: function ($el) {
+		var parent = $el.parent();
+		if(parent.hasClass('notation-expanded')) {
+			parent.removeClass('notation-expanded');
+			parent.addClass('notation-collapsed');
+			$el.addClass('fa-chevron-right');
+			$el.removeClass('fa-chevron-down');
+		}else{
+			parent.addClass('notation-expanded');
+			parent.removeClass('notation-collapsed');
+			$el.removeClass('fa-chevron-right');
+			$el.addClass('fa-chevron-down');
+		}
 	}
 };
 

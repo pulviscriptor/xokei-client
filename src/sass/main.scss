@@ -1,6 +1,6 @@
 // variables
 $menu-width: 330px;
-$move-container-padding: 15px;
+$move-container-padding: 19px;
 $scoreboard-size: 3.6em;
 $social-media-padding: 10px;
 $space: 3vw;
@@ -134,6 +134,24 @@ body, html {
 			width: 100%;
 			overflow-y: scroll;
 			font-family: "Lucida Console", monospace;
+		}
+
+		.notation-expand-collapse-icon {
+			margin-left: -16px;
+		    /* z-index: 99999; */
+		    position: absolute;
+		}
+
+		.notation-expanded {
+
+		}
+
+		.notation-collapsed {
+			width: 260px;
+		    text-overflow: ellipsis;
+		    overflow: hidden;
+		    white-space: nowrap;
+		    display: inline-block;
 		}
 	}
 	

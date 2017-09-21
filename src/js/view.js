@@ -354,12 +354,21 @@ View.prototype = {
 	},
 
 	// add turn to notation box
-	notate: function (id, str, newLine) {
+	notate: function (type, id, str, newLine) {
 		var html = '<span class="move-notation" id="move-notation-game' + this.board.settings.gameID + '-' + id + '" class="move-notation-game-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : '');
-		if(id == 'gameresult') {
+		/*if(id == 'gameresult') {
 			$('#move-notation-game' + this.board.settings.gameID + '-postmeta').before(html);
 		}else{
 			$('#moves').append(html);
+		}*/
+		if(type == 'meta') {
+			$('.notation-area-meta-' + this.board.settings.gameID).append(html);
+		}else{
+			var $area = $('.notation-area-moves-' + this.board.settings.gameID);
+			$area.append(html);
+			if(id == 1) {
+				$area.removeClass('hidden');
+			}
 		}
 	},
 
@@ -384,6 +393,7 @@ View.prototype = {
 		this.reCalculatePlayerNamesFontSize();
 	},
 
+	// when we start new/another game we call this
 	notateMeta: function (anotherGame) {
 		var pad = function(number) {
 			if (number < 10) {
@@ -413,18 +423,26 @@ View.prototype = {
 			':' + pad(date.getMinutes()) +
 			':' + pad(date.getSeconds()) +
 			offset(date);
-		//[Date: 2017-08-28 14:33:28+00:00]
 
+		// setup areas for notations
+		var $moves = $('#moves');
 		if(anotherGame) {
-			this.notate( 'anothergame', '', true);
+			$moves.append('<br>');
 		}
-		this.notate( 'date', '[Date "' + ISO8601Date + '"]', true);
-		this.notate( 'gamenumber', '[Game "' + this.board.settings.gameID + '"]', true);
+		$moves.append('<span class="notation-area-meta notation-area-meta-' + this.board.settings.gameID + ' notation-expanded"><i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameID="' + this.board.settings.gameID + '" data-type="meta"></i></span>');
+		$moves.append('<br>');
+		$moves.append('<span class="notation-area-moves notation-area-moves-' + this.board.settings.gameID + ' hidden notation-expanded"><i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameID="' + this.board.settings.gameID + '" data-type="moves"></i></span>');
+
+		// notate
+		/*if(anotherGame) {
+			this.notate( 'meta', 'anothergame', '', true);
+		}*/
+		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]', true);
+		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]', true);
 		if(!anotherGame) {
-			this.notate( 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
-			this.notate( 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
+			this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
+			this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
 		}
-		this.notate( 'postmeta', '', true);
 	}
 };
 

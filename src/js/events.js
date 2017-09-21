@@ -69,6 +69,11 @@ function listen(_controller, _display) {
 	$('#copy-moves').					click(emit.bind(controller, "save game"));
 	$('#settings-btn').					click(emit.bind(controller, "click settings button"));
 	$('#settings-save-btn').			click(emit.bind(controller, "click settings save button"));
+
+	// listeners to expand/collapse notation
+	$('.move-container').on('click', '.notation-expand-collapse-icon', function() {
+		display.metaExpandCollapse($(this));
+	});
 }
 
 function listenToActorEvents() {

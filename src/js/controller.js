@@ -416,8 +416,8 @@ function Controller(board, view) {
 			"game won": function (scores) {
 				this.board.history.push({ gameID: this.board.settings.gameID, scores: scores, winner: (scores[Player.One] > scores[Player.Two] ? Player.One : Player.Two) });
 
-				this.view.notate( 'gamewon', scores.player1 + '-' + scores.player2, true);
-				this.view.notate( 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]', true);
+				this.view.notate( 'move', 'gamewon', scores.player1 + '-' + scores.player2, true);
+				this.view.notate( 'meta', 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]', true);
 				this.view.gameWon(scores);
 			},
 			
