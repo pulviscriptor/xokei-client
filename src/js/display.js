@@ -6,6 +6,7 @@
 /// requires
 var Player = require("./players"),
 	SVG = require("svg.js"),
+	utils = require("./utils"),
 	settings = require("./settings");
 
 /// object
@@ -791,19 +792,30 @@ Display.prototype = {
 			.move(x * this.tileSize, y * this.tileSize);
 	},
 	
-	// expand or collapse meta
-	metaExpandCollapse: function ($el) {
-		var parent = $el.parent();
-		if(parent.hasClass('notation-expanded')) {
-			parent.removeClass('notation-expanded');
-			parent.addClass('notation-collapsed');
+	// expand or collapse notations
+	notationsExpandCollapse: function ($el) {
+		var type = $el.data('type');
+		var gameID = $el.data('gameid');
+		var $table = $el.closest('table');
+
+		if($table.hasClass('notation-expanded')) {
+			var html = utils.notation["collapsedHTML" + type](this.board.gamesHistory[gameID]["notation_" + type]);
+			// if there is not enough text to collapse
+			if(!html) return;
+
+			$table.removeClass('notation-expanded');
+			$table.addClass('notation-collapsed');
 			$el.addClass('fa-chevron-right');
 			$el.removeClass('fa-chevron-down');
+
+			$('.notation-area-' + type + '-' + gameID).html(html);
 		}else{
-			parent.addClass('notation-expanded');
-			parent.removeClass('notation-collapsed');
+			$table.addClass('notation-expanded');
+			$table.removeClass('notation-collapsed');
 			$el.removeClass('fa-chevron-right');
 			$el.addClass('fa-chevron-down');
+
+			$('.notation-area-' + type + '-' + gameID).html(utils.notation["expandedHTML" + type](this.board.gamesHistory[gameID]["notation_" + type]));
 		}
 	}
 };

@@ -1,6 +1,6 @@
 // variables
 $menu-width: 330px;
-$move-container-padding: 19px;
+$move-container-padding: 5px;
 $scoreboard-size: 3.6em;
 $social-media-padding: 10px;
 $space: 3vw;
@@ -136,13 +136,23 @@ body, html {
 			font-family: "Lucida Console", monospace;
 		}
 
-		.notation-expand-collapse-icon {
-			margin-left: -16px;
-		    /* z-index: 99999; */
-		    position: absolute;
+		table {
+			tr {
+				vertical-align: top;
+			}
 		}
 
-		.notation-expanded {
+
+		.notation-expand-collapse-td {
+			width: 18px;
+		}
+
+		/*.notation-expand-collapse-icon {
+			margin-left: -16px;
+		    position: absolute;
+		}*/
+
+		/*.notation-expanded {
 
 		}
 
@@ -152,7 +162,11 @@ body, html {
 		    overflow: hidden;
 		    white-space: nowrap;
 		    display: inline-block;
-		}
+		}*/
+
+		/*.notation-meta {
+			 display: block;
+		}*/
 	}
 	
 	.social-media-container {

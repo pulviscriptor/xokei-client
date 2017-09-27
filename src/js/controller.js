@@ -5,6 +5,7 @@
 var Player = require("./players"),
 	settings = require("./settings"),
 	settingsManager = require("./settingsManager"),
+	utils = require("./utils"),
 	Turn = require("./turn");
 
 /// object
@@ -60,26 +61,7 @@ function Controller(board, view) {
 			
 			// copy notation to clipboard
 			"save game": function () {
-				/*var copyTextarea = window.document.querySelector('#moves');
-				copyTextarea.select();*/
-
-				// https://stackoverflow.com/questions/1173194/select-all-div-text-with-single-mouse-click
-				var node = window.document.getElementById( 'moves' );
-				var range;
-
-				if ( window.document.selection ) {
-					range = window.document.body.createTextRange();
-					range.moveToElementText( node  );
-					range.select();
-				} else if ( window.getSelection ) {
-					range = window.document.createRange();
-					range.selectNodeContents( node );
-					window.getSelection().removeAllRanges();
-					window.getSelection().addRange( range );
-				}
-
-				// https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
-				var success = false;
+				var success = utils.copyTextToClipboard(utils.notation.export(this.board.gamesHistory));
 				try {
 					success = window.document.execCommand('copy');
 				} catch (err) {
@@ -91,17 +73,6 @@ function Controller(board, view) {
 					}else{
 						this.view.message('Failed to copy notation<br>Please copy it manually from box on the right', 2000);
 					}
-				}
-
-				// https://stackoverflow.com/questions/3169786/clear-text-selection-with-javascript
-				if (window.getSelection) {
-					if (window.getSelection().empty) {  // Chrome
-						window.getSelection().empty();
-					} else if (window.getSelection().removeAllRanges) {  // Firefox
-						window.getSelection().removeAllRanges();
-					}
-				} else if (window.document.selection) {  // IE?
-					window.document.selection.empty();
 				}
 			},
 			
@@ -414,10 +385,12 @@ function Controller(board, view) {
 		// for example game finished or not started
 		"game inactive": {
 			"game won": function (scores) {
-				this.board.history.push({ gameID: this.board.settings.gameID, scores: scores, winner: (scores[Player.One] > scores[Player.Two] ? Player.One : Player.Two) });
+				this.board.gamesHistory[this.board.settings.gameID].gameID = this.board.settings.gameID;
+				this.board.gamesHistory[this.board.settings.gameID].scores = scores;
+				this.board.gamesHistory[this.board.settings.gameID].winner = (scores[Player.One] > scores[Player.Two] ? Player.One : Player.Two);
 
-				this.view.notate( 'move', 'gamewon', scores.player1 + '-' + scores.player2, true);
-				this.view.notate( 'meta', 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]', true);
+				this.view.notate( 'move', 'gamewon', scores.player1 + '-' + scores.player2);
+				this.view.notate( 'meta', 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]');
 				this.view.gameWon(scores);
 			},
 			
@@ -433,7 +406,6 @@ function Controller(board, view) {
 			"click new game": function () {
 				// reset first move owner
 				this.board.settings.owner = Player.One;
-				this.board.history = [];
 				this.view.newGameClicked();
 			},
 			
@@ -632,11 +604,14 @@ Controller.prototype = {
 		if(anotherGame) {
 			this.view.clearNotations();
 			this.board.settings.gameID = 1;
+			this.board.gamesHistory[this.board.settings.gameID] = { notation_meta: [], notation_move: [] };
 			this.view.notateMeta();
 		}else{
 			this.board.settings.gameID++;
+			this.board.gamesHistory[this.board.settings.gameID] = { notation_meta: [], notation_move: [] };
 			this.view.notateMeta(true);
 		}
+		
 	},
 	
 	// select an actor and cause the available positions to move to be shown

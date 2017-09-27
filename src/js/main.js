@@ -99,7 +99,8 @@ function init() {
 		settings: settings,
 		view: view,
 		puck: require('./puck.js'),
-		display: require('./display.js')
+		display: require('./display.js'),
+		utils: require('./utils.js')
 	};
 
 	// initialize dialogs (like make it draggable for example)

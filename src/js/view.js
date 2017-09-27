@@ -6,6 +6,7 @@
 var Display = require("./display"),
 	events = require("./events"),
 	Player = require("./players"),
+	utils = require("./utils"),
 	settings = require("./settings");
 	
 /// object
@@ -31,21 +32,9 @@ function View(board) {
 /// public functions
 // display a closable message over the board to the player
 View.prototype = {
+	//todo move this to utils
 	escapeHtml: function (string) {
-		var entityMap = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-			'/': '&#x2F;',
-			'`': '&#x60;',
-			'=': '&#x3D;'
-		};
-
-		return String(string).replace(/[&<>"'`=\/]/g, function (s) {
-			return entityMap[s];
-		});
+		return utils.escapeHtml(string);
 	},
 
 	init: function () {
@@ -202,11 +191,11 @@ View.prototype = {
 		var scoreIs = 'The score is ' + score[Player.One] + '-' + score[Player.Two] + '.<br>';
 		var tooltipP1 = scoreIs;
 		var tooltipP2 = scoreIs;
-		var lastGame = this.board.history.slice(-1)[0];
+		var lastGame = this.board.gamesHistory[this.board.settings.gameID-1];
 
 		if(lastGame) {
-			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' ' + (lastGame.winner == Player.One ? 'won' : 'lost') + ' Game ' + lastGame.gameID + '.<br>';
-			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' ' + (lastGame.winner == Player.Two ? 'won' : 'lost') + ' Game ' + lastGame.gameID + '.<br>';
+			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' ' + (lastGame.winner == Player.One ? 'won' : 'lost') + ' Game ' + (this.board.settings.gameID-1) + '.<br>';
+			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' ' + (lastGame.winner == Player.Two ? 'won' : 'lost') + ' Game ' + (this.board.settings.gameID-1) + '.<br>';
 		}
 
 		if(score[Player.One] > score[Player.Two]) {
@@ -354,21 +343,31 @@ View.prototype = {
 	},
 
 	// add turn to notation box
-	notate: function (type, id, str, newLine) {
-		var html = '<span class="move-notation" id="move-notation-game' + this.board.settings.gameID + '-' + id + '" class="move-notation-game-' + id + '">' + this.escapeHtml(str) + ' </span>' + (newLine ? '<br>' : '');
-		/*if(id == 'gameresult') {
-			$('#move-notation-game' + this.board.settings.gameID + '-postmeta').before(html);
-		}else{
-			$('#moves').append(html);
-		}*/
-		if(type == 'meta') {
+	notate: function (type, id, str) {
+		var notation = {id: id, str: str};
+		this.board.gamesHistory[this.board.settings.gameID]['notation_' + type].push(notation);
+
+		//var html = '<span class="' + type + '-notation" id="' + type + '-notation-game' + this.board.settings.gameID + '-' + id + '" class="' + type + '-notation-game-' + id + '">' + this.escapeHtml(str) + ' </span>';
+		//var html = ' ' + utils.notation['generateHTML' + type](notation);
+
+		/*if(type == 'meta') {
 			$('.notation-area-meta-' + this.board.settings.gameID).append(html);
-		}else{
-			var $area = $('.notation-area-moves-' + this.board.settings.gameID);
+		}else if(type == 'move') {
+			var $area = $('.notation-area-move-' + this.board.settings.gameID);
 			$area.append(html);
 			if(id == 1) {
-				$area.removeClass('hidden');
+				$('.notation-move-table' + this.board.settings.gameID).removeClass('hidden');
 			}
+		}else{
+			throw new Error("Unknown notate type: " + type);
+		}*/
+
+		if(!$('.notation-' + type + '-table' + this.board.settings.gameID).hasClass('notation-collapsed')) {
+			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['expandedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]));
+		}
+
+		if(type == 'move' && id == 1) {
+			$('.notation-move-table' + this.board.settings.gameID).removeClass('hidden');
 		}
 	},
 
@@ -395,53 +394,46 @@ View.prototype = {
 
 	// when we start new/another game we call this
 	notateMeta: function (anotherGame) {
-		var pad = function(number) {
-			if (number < 10) {
-				return '0' + number;
-			}
-			return number;
-		};
-		var offset = function (date) {
-			var timezoneOffset = date.getTimezoneOffset();
-			var hours = Math.floor(Math.abs(date.getTimezoneOffset())/60);
-			var minutes = date.getTimezoneOffset()%60;
-			var format = pad(hours) + ((minutes > 0) ? (':' + pad(minutes)) : '');
-			//var format = pad(hours) + ':' + pad(minutes);
-
-			if(timezoneOffset === 0) return '';
-			if(timezoneOffset > 0) {
-				return '-' + format;
-			}else{
-				return '+' + format;
-			}
-		};
-		var date = new Date();
-		var ISO8601Date = date.getFullYear() +
-			'-' + pad(date.getMonth() + 1) +
-			'-' + pad(date.getDate()) +
-			' ' + pad(date.getHours()) +
-			':' + pad(date.getMinutes()) +
-			':' + pad(date.getSeconds()) +
-			offset(date);
+		var ISO8601Date = utils.notation.ISO8601Date();
 
 		// setup areas for notations
 		var $moves = $('#moves');
-		if(anotherGame) {
+		/*if(anotherGame) {
 			$moves.append('<br>');
-		}
-		$moves.append('<span class="notation-area-meta notation-area-meta-' + this.board.settings.gameID + ' notation-expanded"><i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameID="' + this.board.settings.gameID + '" data-type="meta"></i></span>');
+		}*/
+		$moves.append('<table class="notation-meta-table notation-meta-table' + this.board.settings.gameID + ' notation-expanded" data-type="meta">' +
+			'<tr>' +
+				'<td class="notation-expand-collapse-td">' +
+					'<i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="meta"></i>' +
+				'</td>' +
+				'<td>' +
+					'<span class="notation-area-meta notation-area-meta-' + this.board.settings.gameID + '"></span>' +
+				'</td>' +
+			'</tr>' +
+			'</table>');
 		$moves.append('<br>');
-		$moves.append('<span class="notation-area-moves notation-area-moves-' + this.board.settings.gameID + ' hidden notation-expanded"><i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameID="' + this.board.settings.gameID + '" data-type="moves"></i></span>');
+
+		$moves.append('<table class="hidden notation-move-table notation-move-table' + this.board.settings.gameID + ' notation-expanded" data-type="move">' +
+			'<tr>' +
+				'<td class="notation-expand-collapse-td">' +
+				'	<i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="move"></i>' +
+				'</td>' +
+				'<td>' +
+					'<span class="notation-area-move notation-area-move-' + this.board.settings.gameID + '"></span>' +
+				'</td>' +
+			'</tr>' +
+			'</table>');
+		$moves.append('<br>');
 
 		// notate
 		/*if(anotherGame) {
-			this.notate( 'meta', 'anothergame', '', true);
+			this.notate( 'meta', 'anothergame', '');
 		}*/
-		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]', true);
-		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]', true);
+		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]');
+		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]');
 		if(!anotherGame) {
-			this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]', true);
-			this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]', true);
+			this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]');
+			this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]');
 		}
 	}
 };

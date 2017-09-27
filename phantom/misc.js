@@ -245,7 +245,7 @@ var util = {
 	},
 	
 	notationToText: function () {
-		return $('#moves').text().replace(/\[Date "([0-9\-:+ ]*)"] /g, '');
+		return $('#moves').text().replace(/\[Date "([0-9\-:+ ]*)"]/g, '');
 	},
 
 	skipRound: function (owner, target, done) {

@@ -171,21 +171,21 @@ Turn.prototype = {
 		//var owner = '';
 
 		if(turn.target == 'Begin round') {
-			this.controller.view.notate( 'turn', this.controller.turns.length, owner + this.notateSingle(next) );
+			this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(next) );
 		}else if(turn.target instanceof window.game.puck) {
 			if(!next) {
-				this.controller.view.notate( 'turn', this.controller.turns.length, owner + this.notateSingle(turn, scored) );
+				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) );
 			}else if(next.target instanceof window.game.puck) {
-				this.controller.view.notate( 'turn', this.controller.turns.length, owner + this.notateSingle(turn) + this.notatePuckTrajectory(next, true) );
+				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn) + this.notatePuckTrajectory(next, true) );
 			// next is about player actor
 			}else{
-				this.controller.view.notate( 'turn', this.controller.turns.length, owner + this.notateSingle(turn) + ' ' + owner + this.notateSingle(next) );
+				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn) + ' ' + owner + this.notateSingle(next) );
 			}
 		}else{
 			if(turn.finish.x == next.start.x && turn.finish.y == next.start.y) {
-				this.controller.view.notate( 'turn', this.controller.turns.length, owner + this.notateSingle(turn, scored) + this.controller.coordinatesToNotation(turn.target) );
+				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) + this.controller.coordinatesToNotation(turn.target) );
 			}else{
-				this.controller.view.notate( 'turn', this.controller.turns.length, owner + this.notateSingle(turn, scored) + " " + owner + this.notateSingle(next, scored) );
+				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) + " " + owner + this.notateSingle(next, scored) );
 			}
 		}
 
