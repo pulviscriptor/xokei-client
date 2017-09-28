@@ -393,7 +393,7 @@ View.prototype = {
 	},
 
 	// when we start new/another game we call this
-	notateMeta: function (anotherGame) {
+	notateMeta: function (/*anotherGame*/) {
 		var ISO8601Date = utils.notation.ISO8601Date();
 
 		// setup areas for notations
@@ -431,10 +431,8 @@ View.prototype = {
 		}*/
 		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]');
 		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]');
-		if(!anotherGame) {
-			this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]');
-			this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]');
-		}
+		this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]');
+		this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]');
 	}
 };
 
