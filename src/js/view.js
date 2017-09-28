@@ -347,22 +347,9 @@ View.prototype = {
 		var notation = {id: id, str: str};
 		this.board.gamesHistory[this.board.settings.gameID]['notation_' + type].push(notation);
 
-		//var html = '<span class="' + type + '-notation" id="' + type + '-notation-game' + this.board.settings.gameID + '-' + id + '" class="' + type + '-notation-game-' + id + '">' + this.escapeHtml(str) + ' </span>';
-		//var html = ' ' + utils.notation['generateHTML' + type](notation);
-
-		/*if(type == 'meta') {
-			$('.notation-area-meta-' + this.board.settings.gameID).append(html);
-		}else if(type == 'move') {
-			var $area = $('.notation-area-move-' + this.board.settings.gameID);
-			$area.append(html);
-			if(id == 1) {
-				$('.notation-move-table' + this.board.settings.gameID).removeClass('hidden');
-			}
+		if($('.notation-' + type + '-table' + this.board.settings.gameID).hasClass('notation-collapsed')) {
+			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['collapsedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]));
 		}else{
-			throw new Error("Unknown notate type: " + type);
-		}*/
-
-		if(!$('.notation-' + type + '-table' + this.board.settings.gameID).hasClass('notation-collapsed')) {
 			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['expandedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]));
 		}
 

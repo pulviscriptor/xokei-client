@@ -13,7 +13,7 @@ var utils = {
 			var ret = this.mapMove(notations);
 			var amount = this.calculateCollapsedElementsAmount(notations);
 			// if there is not enough text to collapse
-			if(!amount) return false;
+			//if(!amount) return false;
 
 			if(!amount) {
 				return ret.join(' ');
