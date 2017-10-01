@@ -2,7 +2,8 @@ var utils = {
 	notation: {
 		collapsedHTMLmeta: function (notations) {
 			var date = notations.slice(0, 1);
-			return this.mapMeta(date)[0];
+			return this.mapMeta(date)[0] +
+				'<span class="notation-hidden"><br>' + this.mapMeta(notations.slice(1)).join('<br>') + '</span>';
 		},
 
 		expandedHTMLmeta: function (notations) {
@@ -18,7 +19,10 @@ var utils = {
 			if(!amount) {
 				return ret.join(' ');
 			}else{
-				return ret.slice(0, amount).join(' ') + '...';
+				// dirty hack to disable text selection by creating fake HTML dots that looks like text
+				return ret.slice(0, amount).join(' ') +
+					'<span class="notation-hidden">&nbsp;' + ret.slice(amount).join(' ') + '</span>' +
+					'<span class="notation-dot"></span><span class="notation-dot"></span><span class="notation-dot"></span>';
 			}
 		},
 

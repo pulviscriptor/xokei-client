@@ -388,7 +388,7 @@ View.prototype = {
 		/*if(anotherGame) {
 			$moves.append('<br>');
 		}*/
-		$moves.append('<table class="notation-meta-table notation-meta-table' + this.board.settings.gameID + ' notation-expanded" data-type="meta">' +
+		$moves.append('<table class="notation-table notation-meta-table notation-meta-table' + this.board.settings.gameID + ' notation-expanded" data-type="meta">' +
 			'<tr>' +
 				'<td class="notation-expand-collapse-td">' +
 					'<i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="meta"></i>' +
@@ -399,8 +399,9 @@ View.prototype = {
 			'</tr>' +
 			'</table>');
 		$moves.append('<br>');
+		//$moves.append('<p class="notation-spacer"></p>');
 
-		$moves.append('<table class="hidden notation-move-table notation-move-table' + this.board.settings.gameID + ' notation-expanded" data-type="move">' +
+		$moves.append('<table class="hidden notation-table notation-move-table notation-move-table' + this.board.settings.gameID + ' notation-expanded" data-type="move">' +
 			'<tr>' +
 				'<td class="notation-expand-collapse-td">' +
 				'	<i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="move"></i>' +
@@ -411,13 +412,14 @@ View.prototype = {
 			'</tr>' +
 			'</table>');
 		$moves.append('<br>');
+		//$moves.append('<p class="notation-spacer"></p>');
 
 		// notate
 		/*if(anotherGame) {
 			this.notate( 'meta', 'anothergame', '');
 		}*/
-		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]');
 		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]');
+		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]');
 		this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]');
 		this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]');
 	}

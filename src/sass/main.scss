@@ -136,6 +136,7 @@ body, html {
 			width: 100%;
 			overflow-y: scroll;
 			font-family: "Lucida Console", monospace;
+			line-height: 8px;
 		}
 
 		table {
@@ -144,9 +145,37 @@ body, html {
 			}
 		}
 
+		br {
+       		display: block;
+   			margin-top: 10px;
+     	}
+
+		/*.notation-spacer {
+			height: 20px;
+		}*/
+
+		.notation-table {
+			/*margin-bottom: 5px;*/
+			line-height: 18px;
+		}
 
 		.notation-expand-collapse-td {
 			width: 18px;
+		}
+
+		.notation-hidden {
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			display: inline-block
+		}
+
+		.notation-dot {
+			background-color: black;
+			width: 2px;
+			height: 2px;
+			display: inline-block;
+			margin-right: 3px;
 		}
 
 		/*.notation-expand-collapse-icon {
