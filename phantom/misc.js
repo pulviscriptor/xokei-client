@@ -245,7 +245,11 @@ var util = {
 	},
 	
 	notationToText: function () {
-		return $('#moves').text().replace(/\[Date "([0-9\-:+ ]*)"]/g, '');
+		return $('#moves').text()
+			// remove date since it is dynamic
+			.replace(/\[Date "([0-9\-:+ ]*)"]/g, '')
+			// replace $nbsp; with space or tests will fail
+			.replace(new RegExp(String.fromCharCode(160),"g")," ");
 	},
 
 	skipRound: function (owner, target, done) {

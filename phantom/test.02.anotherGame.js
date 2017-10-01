@@ -155,7 +155,9 @@ describe('Testing game', function () {
 
 		it('should collapse meta of game 1', function () {
 			$('.notation-meta-table1 .notation-expand-collapse-icon').click();
-			expect(util.notationToText()).to.be.equal('\t1pf5 2pf5[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4c8[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-2');
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"]' +
+				'[Result "6-2"]\t1pf5 2pf5[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4c8[5+ 1pf5 ' +
+				'2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-2');
 		});
 
 		it('should display collapsed icon of notation of game 1', function () {
@@ -345,7 +347,9 @@ describe('Testing game', function () {
 			$('.notation-move-table1 .notation-expand-collapse-icon').click();
 			$('.notation-meta-table2 .notation-expand-collapse-icon').click();
 			$('.notation-move-table2 .notation-expand-collapse-icon').click();
-			expect(util.notationToText()).to.be.equal('\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+...\t2pg4 1pg4]4+');
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]' +
+				'\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"]' +
+				'[White "Player 1"][Black "Player 2"]\t2pg4 1pg4]4+');
 		});
 
 		it('should display collapsed icon of notation of game 1', function () {
@@ -380,7 +384,9 @@ describe('Testing game', function () {
 
 		it('should display correct notation for collapsed game2 moves', function () {
 			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 move have wrong collapsed icon');
-			expect(util.notationToText()).to.be.equal('\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+...\t2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4...');
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]\t' +
+				'1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"]' +
+				'[White "Player 1"][Black "Player 2"]\t2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+');
 		});
 
 		it('should make goal by player2 to player2', function (done) {
@@ -406,7 +412,10 @@ describe('Testing game', function () {
 		});
 
 		it('should display correct notation', function () {
-			expect(util.notationToText()).to.be.equal('\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+...\t2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4...');
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]' +
+				'\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"]' +
+				'[White "Player 1"][Black "Player 2"][Result "6-0"]\t2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 ' +
+				'1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0');
 		});
 
 		it('should expand all notations', function () {
