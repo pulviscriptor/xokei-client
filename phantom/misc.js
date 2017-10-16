@@ -294,6 +294,11 @@ var util = {
 				done();
 			});
 		});
+	},
+
+	testNotationTooltip: function (game, turn, move, text, done) {
+		var $el = $('.notation-area-move-' + game + ' .notation-move-' + turn + ' span:' + (move == 1 ? 'first' : 'last'));
+		this.testTooltip($el, text, done);
 	}
 };
 

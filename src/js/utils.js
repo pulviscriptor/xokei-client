@@ -45,11 +45,64 @@ var utils = {
 		},
 
 		generateHTMLmove: function (move) {
-			return '<span class="notation-move notation-move-' + move.id + '">' + utils.escapeHtml(move.str) + '</span>';
+			return '<span class="notation-move notation-move-' + move.id + '">' + this.wrapMovesInTooltips(move.str) + '</span>';
 		},
 
 		generateHTMLmeta: function (meta) {
 			return '<span class="notation-meta notation-meta-' + meta.id + '">' + utils.escapeHtml(meta.str) + '</span>';
+		},
+
+		wrapMovesInTooltips: function (moves) {
+			var single = moves.split(' ');
+			var ret = [];
+			for(var i=0;i<single.length;i++) {
+				ret.push(this.wrapSingleMoveInTooltip(single[i]));
+			}
+			return ret.join(' ');
+		},
+
+		wrapSingleMoveInTooltip: function (move) {
+			var ret = '';
+			if(move.match(/^\d-\d$/i)) {
+				return this.generateTooltipHTML(move, 'Game finished with score ' + move);
+			}
+			ret += (move[0] == '1') ? 'Player 1 ' : 'Player 2 ';
+			if(move[1] == 'p' && move.length == 4) {
+				ret += 'placed puck at ' + move.substr(2);
+				return this.generateTooltipHTML(move, ret);
+			}else{
+				ret += 'moved ';
+			}
+			if(move[1] == 'p') {
+				ret += 'puck ';
+				ret += this.movesNotationCoordinatesToTooltip(move.substr(2));
+			}else{
+				ret += this.movesNotationCoordinatesToTooltip(move.substr(1));
+			}
+
+			if(move.substr(-2) == '++') {
+				ret += 'and won the game';
+			}else if(move.substr(-1) == '+') {
+				ret += 'and scored';
+			}
+
+			return this.generateTooltipHTML(move, ret);
+		},
+
+		movesNotationCoordinatesToTooltip: function (str) {
+			var moves = str.match(/.{2}/g);
+			var ret = 'from ' + moves[0] + ' ';
+			for(var i=1;i<moves.length;i++) {
+				var move = moves[i];
+				if(move == '++') continue;
+				ret += 'to ' + move + ' ';
+			}
+
+			return ret;
+		},
+
+		generateTooltipHTML: function (move, tooltip) {
+			return '<span class="notation-move-tooltip tlp" data-tooltip="' + tooltip + '">' + move + '</span>';
 		},
 
 		calculateCollapsedElementsAmount: function (arr) {
