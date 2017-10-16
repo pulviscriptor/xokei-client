@@ -705,6 +705,76 @@ describe('Testing game', function () {
 		});
 	});
 
+	describe('Testing notation tooltips', function () {
+		it('should display tooltip game 1 move 1', function (done) {
+			util.testNotationTooltip(1, 1, 1, 'Player 1 placed puck at f5', done);
+		});
+
+		it('should display tooltip game 1 move 2', function (done) {
+			util.testNotationTooltip(1, 2, 1, 'Player 2 moved puck from f5 to [5 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 3', function (done) {
+			util.testNotationTooltip(1, 3, 1, 'Player 1 placed puck at f5', done);
+		});
+
+		it('should display tooltip game 1 move 4', function (done) {
+			util.testNotationTooltip(1, 4, 1, 'Player 2 moved puck from f5 to j1 to ]4 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 5', function (done) {
+			util.testNotationTooltip(1, 5, 1, 'Player 2 placed puck at g4', done);
+		});
+
+		it('should display tooltip game 1 move 6', function (done) {
+			util.testNotationTooltip(1, 6, 1, 'Player 1 moved puck from g4 to ]4 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 7', function (done) {
+			util.testNotationTooltip(1, 7, 1, 'Player 2 placed puck at g4', done);
+		});
+
+		it('should display tooltip game 1 move 8', function (done) {
+			util.testNotationTooltip(1, 8, 1, 'Player 1 moved puck from g4 to c8 to [5 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 9', function (done) {
+			util.testNotationTooltip(1, 9, 1, 'Player 1 placed puck at f5', done);
+		});
+
+		it('should display tooltip game 1 move 10', function (done) {
+			util.testNotationTooltip(1, 10, 1, 'Player 2 moved puck from f5 to [5 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 11', function (done) {
+			util.testNotationTooltip(1, 11, 1, 'Player 1 placed puck at f5', done);
+		});
+
+		it('should display tooltip game 1 move 12', function (done) {
+			util.testNotationTooltip(1, 12, 1, 'Player 2 moved puck from f5 to [5 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 13', function (done) {
+			util.testNotationTooltip(1, 13, 1, 'Player 1 placed puck at f5', done);
+		});
+
+		it('should display tooltip game 1 move 14', function (done) {
+			util.testNotationTooltip(1, 14, 1, 'Player 2 moved puck from f5 to [5 and scored', done);
+		});
+
+		it('should display tooltip game 1 move 15', function (done) {
+			util.testNotationTooltip(1, 15, 1, 'Player 1 placed puck at f5', done);
+		});
+
+		it('should display tooltip game 1 move 16', function (done) {
+			util.testNotationTooltip(1, 16, 1, 'Player 2 moved puck from f5 to [5 and won the game', done);
+		});
+
+		it('should display tooltip game 1 move gamewon', function (done) {
+			util.testNotationTooltip(1, 'gamewon', 1, 'Game finished with score 2-6', done);
+		});
+	});
+
 	describe('Starting another game', function () {
 		it('should display won window', function (done) {
 			$('#game-won-another-game-button').click();
