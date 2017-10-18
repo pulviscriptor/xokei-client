@@ -73,7 +73,10 @@ function listen(_controller, _display) {
 	// listeners to expand/collapse notation
 	$('.move-container').on('click', '.notation-expand-collapse-icon', function() {
 		display.notationsExpandCollapse($(this));
+		display.notationRecalculateExpandAllIcon();
 	});
+
+	$('.move-expand-all').on('click', display.notationExpandAll.bind(_display));
 }
 
 function listenToActorEvents() {

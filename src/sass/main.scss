@@ -116,9 +116,17 @@ body, html {
 			float: left;
 			margin: 0;
 			padding: 0;
-			padding-left: 21px;
+			padding-left: 0px;
 			user-select: none;
 			font-weight: bold;
+
+			.fa-rotate-45 {
+				transform: rotate(45deg);
+			}
+
+			.move-expand-all {
+				width: 20px;
+			}
 		}
 		
 		#copy-moves {

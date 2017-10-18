@@ -354,7 +354,11 @@ View.prototype = {
 		}
 
 		if(type == 'move' && id == 1) {
-			$('.notation-move-table' + this.board.settings.gameID).removeClass('hidden');
+			var $table = $('.notation-move-table' + this.board.settings.gameID);
+			$table.removeClass('hidden');
+			if($('.move-expand-all').data('state') == '3') {
+				$table.find('.notation-expand-collapse-icon').click();
+			}
 		}
 	},
 
@@ -399,6 +403,9 @@ View.prototype = {
 			'</tr>' +
 			'</table>');
 		$moves.append('<br>');
+		if($('.move-expand-all').data('state') == '3') {
+			$('.notation-meta-table' + this.board.settings.gameID).find('.notation-expand-collapse-icon').click();
+		}
 		//$moves.append('<p class="notation-spacer"></p>');
 
 		$moves.append('<table class="hidden notation-table notation-move-table notation-move-table' + this.board.settings.gameID + ' notation-expanded" data-type="move">' +
