@@ -588,7 +588,7 @@ Controller.prototype = {
 	},
 
 	// reset the game after one of player won
-	resetGame: function (anotherGame) {
+	resetGame: function (newGame) {
 		// clear turns of previous game
 		this.turns = [];
 
@@ -601,12 +601,14 @@ Controller.prototype = {
 		// new round for new clean game
 		this.reset();
 
-		if(anotherGame) {
+		if(newGame) {
+			// new game
 			this.view.clearNotations();
 			this.board.settings.gameID = 1;
 			this.board.gamesHistory[this.board.settings.gameID] = { notation_meta: [], notation_move: [] };
 			this.view.notateMeta();
 		}else{
+			// another game
 			this.board.settings.gameID++;
 			this.board.gamesHistory[this.board.settings.gameID] = { notation_meta: [], notation_move: [] };
 			this.view.notateMeta(true);
