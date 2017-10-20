@@ -36,6 +36,10 @@ describe('Testing game', function () {
 			});
 		});
 
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
+		});
+
 		it('should display tooltip on player1 name', function (done) {
 			util.testTooltip('.player-1-name-text', 'The score is 0-0.Player 1 is neither winning nor losing.It is the turn of Player 1.', done);
 		});
@@ -147,6 +151,10 @@ describe('Testing game', function () {
 			util.skipRound(2, 2, done);
 		});
 
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
+		});
+
 		it('should display correct notation', function () {
 			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"]' +
 				'[Result "6-2"]\t1pf5 2pf5[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4c8[5+ 1pf5 ' +
@@ -158,6 +166,10 @@ describe('Testing game', function () {
 			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"]' +
 				'[Result "6-2"]\t1pf5 2pf5[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4c8[5+ 1pf5 ' +
 				'2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-2');
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(2);
 		});
 
 		it('should display collapsed icon of notation of game 1', function () {
@@ -219,6 +231,10 @@ describe('Testing game', function () {
 		it('should accept values and start game', function (done) {
 			$('#names-2p-submit-btn').click();
 			wait.disappear('#names-2p-message', done);
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
 		});
 
 		it('should display correct notation', function () {
@@ -317,6 +333,10 @@ describe('Testing game', function () {
 			wait.disappear('#game-won-window', done);
 		});
 
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
+		});
+
 		it('should display correct notation', function () {
 			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]\t' +
 				'1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"][White "Player 1"][Black "Player 2"]\t');
@@ -346,7 +366,6 @@ describe('Testing game', function () {
 			$('.notation-meta-table1 .notation-expand-collapse-icon').click();
 			$('.notation-move-table1 .notation-expand-collapse-icon').click();
 			$('.notation-meta-table2 .notation-expand-collapse-icon').click();
-			$('.notation-move-table2 .notation-expand-collapse-icon').click();
 			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]' +
 				'\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"]' +
 				'[White "Player 1"][Black "Player 2"]\t2pg4 1pg4]4+');
@@ -356,12 +375,32 @@ describe('Testing game', function () {
 			if(!$('.notation-meta-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game1 meta have wrong collapsed icon');
 			if(!$('.notation-move-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game1 move have wrong collapsed icon');
 			if(!$('.notation-meta-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game2 meta have wrong collapsed icon');
-			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game2 move have wrong collapsed icon');
+			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-right'))  throw new Error('Game2 move have wrong collapsed icon');
 
 			if($('.notation-meta-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game1 meta have wrong additional icon');
 			if($('.notation-move-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game1 move have wrong additional icon');
 			if($('.notation-meta-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 meta have wrong additional icon');
-			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 move have wrong additional icon');
+			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down'))throw new Error('Game2 move have wrong additional icon');
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(2);
+		});
+
+		it('should collapse game2 moves', function () {
+			$('.notation-move-table2 .notation-expand-collapse-icon').click();
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]' +
+				'\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"]' +
+				'[White "Player 1"][Black "Player 2"]\t2pg4 1pg4]4+');
+		});
+
+		it('should display collapsed icon of moves of game 2', function () {
+			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game2 move have wrong collapsed icon');
+			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down'))   throw new Error('Game2 move have wrong additional icon');
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(3);
 		});
 
 		it('should make goal by player2 to player2', function (done) {
@@ -419,10 +458,7 @@ describe('Testing game', function () {
 		});
 
 		it('should expand all notations', function () {
-			$('.notation-meta-table1 .notation-expand-collapse-icon').click();
-			$('.notation-move-table1 .notation-expand-collapse-icon').click();
-			$('.notation-meta-table2 .notation-expand-collapse-icon').click();
-			$('.notation-move-table2 .notation-expand-collapse-icon').click();
+			$('.move-expand-all').click();
 
 			if($('.notation-meta-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game1 meta have wrong collapsed icon');
 			if($('.notation-move-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game1 move have wrong collapsed icon');
@@ -433,6 +469,10 @@ describe('Testing game', function () {
 			if(!$('.notation-move-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game1 move have wrong additional icon');
 			if(!$('.notation-meta-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 meta have wrong additional icon');
 			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 move have wrong additional icon');
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
 		});
 
 		it('should display correct notation', function () {
@@ -451,6 +491,14 @@ describe('Testing game', function () {
 
 		it('should display tooltip on player1 score', function (done) {
 			util.testTooltip('#score-point-player1-6', 'You scored 6 goalsYour opponent scored 0Game ends at 6 goals', done);
+		});
+
+		it('should collapse all notations', function () {
+			$('.move-expand-all').click();
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(3);
 		});
 	});
 
@@ -476,6 +524,10 @@ describe('Testing game', function () {
 		it('should accept values and start game', function (done) {
 			$('#names-2p-submit-btn').click();
 			wait.disappear('#names-2p-message', done);
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
 		});
 
 		it('should display correct notation', function () {
@@ -581,6 +633,14 @@ describe('Testing game', function () {
 		it('should display tooltip on player2 score', function (done) {
 			util.testTooltip('#score-point-player2-5', 'You scored 6 goalsYour opponent scored 2Game ends at 6 goals', done);
 		});
+
+		it('should collapse all notations', function () {
+			$('.move-expand-all').click();
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(3);
+		});
 	});
 
 	describe('Starting another game', function () {
@@ -596,6 +656,18 @@ describe('Testing game', function () {
 				score2: 0,
 				done: done
 			});
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(3);
+		});
+
+		it('should expand all notations', function () {
+			$('.move-expand-all').click();
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
 		});
 
 		it('should display correct notation', function () {
@@ -773,12 +845,41 @@ describe('Testing game', function () {
 		it('should display tooltip game 1 move gamewon', function (done) {
 			util.testNotationTooltip(1, 'gamewon', 1, 'Game finished with score 2-6', done);
 		});
+
+		it('should collapse game2 moves', function () {
+			$('.notation-move-table2 .notation-expand-collapse-icon').click();
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "2-6"]\t' +
+				'1pf5 2pf5[5+ 1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4c8[5+ 1pf5 2pf5[5+ 1pf5 2pf5[5+ 1pf5 2pf5[5+ 1pf5 ' +
+				'2pf5[5++ 2-6[Game "2"][White "Player 1"][Black "Player 2"][Result "2-6"]\t1pf5 2pf5[5+ 1pf5 2pf5j1]4+ ' +
+				'2pg4 1pg4]4+ 2pg4 1pg4c8[5+ 1pf5 2pf5[5+ 1pf5 2pf5[5+ 1pf5 2pf5[5+ 1pf5 2pf5[5++ 2-6');
+		});
+
+		it('should display correct collapsed icons', function () {
+			if($('.notation-meta-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game1 meta have wrong collapsed icon');
+			if($('.notation-move-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game1 move have wrong collapsed icon');
+			if($('.notation-meta-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-right')) throw new Error('Game2 meta have wrong collapsed icon');
+			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-right'))  throw new Error('Game2 move have wrong collapsed icon');
+
+			if(!$('.notation-meta-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game1 meta have wrong additional icon');
+			if(!$('.notation-move-table1 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game1 move have wrong additional icon');
+			if(!$('.notation-meta-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 meta have wrong additional icon');
+			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down'))throw new Error('Game2 move have wrong additional icon');
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(2);
+		});
+
 	});
 
 	describe('Starting another game', function () {
 		it('should display won window', function (done) {
 			$('#game-won-another-game-button').click();
 			wait.disappear('#game-won-window', done);
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(2);
 		});
 
 		it('should start new round', function (done) {
@@ -812,6 +913,14 @@ describe('Testing game', function () {
 
 		it('should display tooltip on player2 name', function (done) {
 			util.testTooltip('.player-2-name-text', 'The score is 1-0.Player 2 won Game 2.Player 2 is currently losing.It is the turn of Player 2.', done);
+		});
+
+		it('should expand all notations', function () {
+			$('.move-expand-all').click();
+		});
+
+		it('should display correct expand all icon', function () {
+			util.validateCollapseAllNotationsIconState(1);
 		});
 	});
 
