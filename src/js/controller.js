@@ -604,6 +604,10 @@ Controller.prototype = {
 		if(newGame) {
 			// new game
 			this.view.clearNotations();
+
+			// reset expand-all icon in new game
+			this.view.display.notationResetExpandAllIcon();
+
 			this.board.settings.gameID = 1;
 			this.board.gamesHistory[this.board.settings.gameID] = { notation_meta: [], notation_move: [] };
 			this.view.notateMeta();

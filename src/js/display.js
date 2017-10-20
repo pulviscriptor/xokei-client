@@ -854,6 +854,15 @@ Display.prototype = {
 			$('.notation-collapsed:visible .notation-expand-collapse-icon').click();
 			this.notationRecalculateExpandAllIcon();
 		}
+	},
+
+	notationResetExpandAllIcon: function () {
+		var $expandAllIcon = $('.move-expand-all');
+		var state = $expandAllIcon.data('state');
+		if(state != '1') {
+			// set it back to 1 from 2 or 3
+			$expandAllIcon.click();
+		}
 	}
 };
 
