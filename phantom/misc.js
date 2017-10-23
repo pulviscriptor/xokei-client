@@ -144,7 +144,7 @@ var simulate = {
 
 	clickTile: function (x, y) {
 		if(typeof x == 'string') {
-			var cords = util.notationToCoordinates(x);
+			var cords = window.game.utils.notationToCoordinates(x);
 			x = cords.x;
 			y = cords.y;
 		}
@@ -154,14 +154,14 @@ var simulate = {
 
 	placePuck: function (x, y) {
 		if(typeof x == 'string') {
-			var cords = util.notationToCoordinates(x);
+			var cords = window.game.utils.notationToCoordinates(x);
 			x = cords.x;
 			y = cords.y;
 		}
 
 		if(game.board.tile(x, y).actor) throw new Error('Tile ' + notation + ' is already occupied');
 		this.clickTile(x, y);
-		if(!game.board.tile(x, y).actor) throw new Error('Attempted to place puck at ' + util.coordinatesToNotation(x, y) + ' but did not found it there');
+		if(!game.board.tile(x, y).actor) throw new Error('Attempted to place puck at ' + window.game.utils.coordinatesToNotation(x, y) + ' but did not found it there');
 		if($('.puck-actor').length != 1) throw new Error('Expected to find 1 puck on board but found ' + $('.puck-actor').length);
 	},
 
@@ -175,32 +175,6 @@ var simulate = {
 };
 
 var util = {
-	/*cordsX: '[abcdefghijkl]',
-	cordsY: '87654321',*/
-
-	notationToCoordinates: function (notation) {
-		/*var x = this.cordsX.indexOf(notation.toLowerCase()[0]);
-		var y = this.cordsY.indexOf(notation.toLowerCase()[1]);
-
-		if(x < 0) throw new Error('Unknown notation X coordinate: ' + notation[0]);
-		if(y < 0) throw new Error('Unknown notation Y coordinate: ' + notation[1]);
-
-		return {x: x, y: y};*/
-		return window.game.controller.notationToCoordinates(notation);
-	},
-
-	coordinatesToNotation: function (cords, y) {
-		/*if(typeof y == 'number') { cords = {x: cords, y: y}; };
-
-		if(typeof cords.x != 'number') throw new Error('Expected cords.x to be a number and it was ' + cords.x);
-		if(typeof cords.y != 'number') throw new Error('Expected cords.y to be a number and it was ' + cords.y);
-		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
-		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
-
-		return this.cordsX[cords.x] + this.cordsY[cords.y];*/
-		return window.game.controller.coordinatesToNotation(cords, y);
-	},
-
 	// opt.owner = 1/2 = owner of current turn
 	// opt.score1 = score of player 1
 	// opt.score2 = score of player 2
@@ -208,17 +182,17 @@ var util = {
 		if(!opt.done) throw new Error('Forgot to pass `done` callback?');
 		wait.message('Place the puck on your side (' + (opt.owner == 1?'left':'right') + ')', function (err) {
 			if(err) return opt.done(err);
-			if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4)));
-			if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0)));
-			if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2)));
-			if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5)));
-			if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7)));
+			if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(0, 4)));
+			if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 0)));
+			if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 2)));
+			if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 5)));
+			if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 7)));
 
-			if(game.board.tile(13,3).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3)));
-			if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0)));
-			if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2)));
-			if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5)));
-			if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7)));
+			if(game.board.tile(13,3).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(13, 3)));
+			if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 0)));
+			if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 2)));
+			if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 5)));
+			if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 7)));
 
 			if(game.board.settings.owner != 'player' + opt.owner)return opt.done(new Error('Expected owner of turn to be player' + opt.owner + ' but it was ' + game.board.settings.owner));
 			if(!$('.player-name-text.turn-owner').hasClass('player-' + opt.owner + '-name-text')) return opt.done(new Error('Expected player' + opt.owner + ' name to have class turn-owner'));
@@ -237,7 +211,7 @@ var util = {
 
 	tile: function (x, y) {
 		if(typeof x == 'string') {
-			var cords = util.notationToCoordinates(x);
+			var cords = window.game.utils.notationToCoordinates(x);
 			x = cords.x;
 			y = cords.y;
 		}
@@ -255,17 +229,17 @@ var util = {
 	skipRound: function (owner, target, done) {
 		if($('.puck-actor').length !== 0) throw new Error('Puck is already placed');
 
-		if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(0, 4)));
-		if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 0)));
-		if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 2)));
-		if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 5)));
-		if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + util.coordinatesToNotation(6, 7)));
+		if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(0, 4)));
+		if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 0)));
+		if(game.board.tile(6, 2).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 2)));
+		if(game.board.tile(6, 5).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 5)));
+		if(game.board.tile(6, 7).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 7)));
 
-		if(game.board.tile(13,3).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(13, 3)));
-		if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 0)));
-		if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 2)));
-		if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 5)));
-		if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + util.coordinatesToNotation(7, 7)));
+		if(game.board.tile(13,3).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(13, 3)));
+		if(game.board.tile(7, 0).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 0)));
+		if(game.board.tile(7, 2).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 2)));
+		if(game.board.tile(7, 5).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 5)));
+		if(game.board.tile(7, 7).actor.owner != 'player2') return opt.done(new Error('Can\'t find player2 actor at ' + window.game.utils.coordinatesToNotation(7, 7)));
 
 		simulate.placePuck(owner==1 ? 'f5' : 'g4');
 		simulate.clickPuck();
@@ -337,7 +311,7 @@ function Actor(id) {
 
 	return {
 		moveTo: function (notation, done) {
-			var cords = util.notationToCoordinates(notation);
+			var cords = window.game.utils.notationToCoordinates(notation);
 			var actor = game.board.actors[id];
 			var diffX = Math.abs(cords.x - actor.x);
 			var diffY = Math.abs(cords.y - actor.y);
@@ -356,7 +330,7 @@ function Actor(id) {
 			}, function (err) {
 				if(err) return done(err);
 				var currentActor = game.board.actors[id];
-				if( currentActor.x != cords.x || currentActor.y != cords.y ) throw new Error('Expected to see actor in ' + notation + ' but it moved to ' + util.coordinatesToNotation(currentActor));
+				if( currentActor.x != cords.x || currentActor.y != cords.y ) throw new Error('Expected to see actor in ' + notation + ' but it moved to ' + window.game.utils.coordinatesToNotation(currentActor));
 				done();
 			});
 		}

@@ -218,6 +218,30 @@ var utils = {
 		window.document.body.removeChild(textArea);
 
 		return result;
+	},
+
+
+	notationToCoordinates: function (notation) {
+		var settings = require('./settings');
+		var x = settings.coordinates.horizontal.indexOf(notation.toLowerCase()[0]);
+		var y = settings.coordinates.vertical.indexOf(notation.toLowerCase()[1]);
+
+		if(x < 0) throw new Error('Unknown notation X coordinate: ' + notation[0]);
+		if(y < 0) throw new Error('Unknown notation Y coordinate: ' + notation[1]);
+
+		return {x: x, y: y};
+	},
+
+	coordinatesToNotation: function (cords, y) {
+		var settings = require('./settings');
+		if(typeof y == 'number') { cords = {x: cords, y: y}; }
+
+		if(typeof cords.x != 'number') throw new Error('Expected cords.x to be a number and it was ' + cords.x);
+		if(typeof cords.y != 'number') throw new Error('Expected cords.y to be a number and it was ' + cords.y);
+		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
+		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
+
+		return settings.coordinates.horizontal[cords.x] + settings.coordinates.vertical[cords.y];
 	}
 };
 

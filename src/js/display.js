@@ -6,7 +6,6 @@
 /// requires
 var Player = require("./players"),
 	SVG = require("svg.js"),
-	utils = require("./utils"),
 	settings = require("./settings");
 
 /// object
@@ -790,82 +789,6 @@ Display.prototype = {
 		this.tiles[x][y].element
 			.size(this.tileSize, this.tileSize)
 			.move(x * this.tileSize, y * this.tileSize);
-	},
-	
-	// expand or collapse notations
-	notationsExpandCollapse: function ($el) {
-		var type = $el.data('type');
-		var gameID = $el.data('gameid');
-		var $table = $el.closest('table');
-
-		if($table.hasClass('notation-expanded')) {
-			var html = utils.notation["collapsedHTML" + type](this.board.gamesHistory[gameID]["notation_" + type]);
-			// if there is not enough text to collapse
-			if(!html) return;
-
-			$table.removeClass('notation-expanded');
-			$table.addClass('notation-collapsed');
-			$el.addClass('fa-chevron-right');
-			$el.removeClass('fa-chevron-down');
-
-			$('.notation-area-' + type + '-' + gameID).html(html);
-		}else{
-			$table.addClass('notation-expanded');
-			$table.removeClass('notation-collapsed');
-			$el.removeClass('fa-chevron-right');
-			$el.addClass('fa-chevron-down');
-
-			$('.notation-area-' + type + '-' + gameID).html(utils.notation["expandedHTML" + type](this.board.gamesHistory[gameID]["notation_" + type]));
-		}
-	},
-
-	notationRecalculateExpandAllIcon: function () {
-		if($('.notation-collapsed:visible').length === 0) {
-			// all notations expanded
-			$('.move-expand-all')
-				.removeClass('fa-rotate-45')
-				.removeClass('fa-chevron-right')
-				.addClass('fa-chevron-down')
-				.data('tooltip', 'Collapse all')
-				.data('state', '1');
-		}else if($('.notation-expanded:visible').length === 0) {
-			// all notations collapsed
-			$('.move-expand-all')
-				.removeClass('fa-rotate-45')
-				.removeClass('fa-chevron-down')
-				.addClass('fa-chevron-right')
-				.data('tooltip', 'Expand all')
-				.data('state', '3');
-		}else{
-			// part of notations collapsed/expanded
-			$('.move-expand-all')
-				.addClass('fa-rotate-45')
-				.removeClass('fa-chevron-down')
-				.addClass('fa-chevron-right')
-				.data('tooltip', 'Expand all')
-				.data('state', '2');
-		}
-	},
-	
-	notationExpandAll: function () {
-		var $expandAllIcon = $('.move-expand-all');
-		var state = $expandAllIcon.data('state');
-		if(state == '1') {
-			$('.notation-expanded:visible .notation-expand-collapse-icon').click();
-			this.notationRecalculateExpandAllIcon();
-		}else{
-			$('.notation-collapsed:visible .notation-expand-collapse-icon').click();
-			this.notationRecalculateExpandAllIcon();
-		}
-	},
-
-	notationResetExpandAllIcon: function () {
-		var $expandAllIcon = $('.move-expand-all');
-		var state = $expandAllIcon.data('state');
-		if(state != '1') {
-			// set it back to 1 from 2 or 3
-			$expandAllIcon.click();
-		}
 	}
 };
 

@@ -2,6 +2,7 @@
 var Actor = require("./actor"),
 	Player = require("./players"),
 	settings = require("./settings"),
+	utils = require("./utils"),
 	Puck = require("./puck");
 
 /// object
@@ -183,7 +184,7 @@ Turn.prototype = {
 			}
 		}else{
 			if(turn.finish.x == next.start.x && turn.finish.y == next.start.y) {
-				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) + this.controller.coordinatesToNotation(turn.target) );
+				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) + utils.coordinatesToNotation(turn.target) );
 			}else{
 				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) + " " + owner + this.notateSingle(next, scored) );
 			}
@@ -195,7 +196,7 @@ Turn.prototype = {
 	notateSingle: function (turn, scored) {
 		if(turn.target instanceof window.game.puck) {
 			if(!turn.start) {
-				return "p" + (this.controller.coordinatesToNotation(turn.target));
+				return "p" + (utils.coordinatesToNotation(turn.target));
 			}else{
 				if(scored && Math.max(turn.score[Player.One], turn.score[Player.Two]) == settings.game.scoreToWin) {
 					return "p" + (this.notatePuckTrajectory(turn)) + '++';
@@ -204,7 +205,7 @@ Turn.prototype = {
 				}
 			}
 		}else{
-			return (this.controller.coordinatesToNotation(turn.start)) + (this.controller.coordinatesToNotation(turn.finish));
+			return (utils.coordinatesToNotation(turn.start)) + (utils.coordinatesToNotation(turn.finish));
 		}
 	},
 
@@ -239,7 +240,7 @@ Turn.prototype = {
 		}
 
 		for(i=0;i<checkpoints.length;i++) {
-			ret += this.controller.coordinatesToNotation(checkpoints[i]);
+			ret += utils.coordinatesToNotation(checkpoints[i]);
 		}
 
 		return ret;
