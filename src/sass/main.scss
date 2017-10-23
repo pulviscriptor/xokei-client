@@ -145,12 +145,15 @@ body, html {
 			overflow-y: scroll;
 			font-family: "Lucida Console", monospace;
 			line-height: 8px;
+			border-top: 1px solid black;
 		}
 
 		table {
 			tr {
 				vertical-align: top;
 			}
+
+			margin-top: 10px;
 		}
 
 		br {
