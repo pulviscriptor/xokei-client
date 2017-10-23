@@ -301,26 +301,32 @@ var util = {
 		this.testTooltip($el, text, done);
 	},
 
-	validateCollapseAllNotationsIconState: function(state) {
+	validateCollapseAllNotationsIconState: function(state, done) {
 		var $icon = $('.move-expand-all');
 		var currentState = $icon.data('state');
 
-		if(currentState != state.toString()) throw new Error('Expected state to be "' + state + '" but it was "' + currentState + '"');
+		if(currentState != state.toString()) return done( new Error('Expected state to be "' + state + '" but it was "' + currentState + '"') );
 
 		if(state == 1) {
-			if(!$icon.hasClass('fa-chevron-down')) 	throw new Error('Expected state 1 to have "fa-chevron-down" class but did not found it on icon');
-			if($icon.hasClass('fa-rotate-45')) 		throw new Error('Expected state 1 not to have "fa-rotate-45" class but did found it on icon');
-			if($icon.hasClass('fa-chevron-right')) 	throw new Error('Expected state 1 not to have "fa-chevron-down" class but did found it on icon');
+			if(!$icon.hasClass('fa-chevron-down')) 	return done( new Error('Expected state 1 to have "fa-chevron-down" class but did not found it on icon') );
+			if($icon.hasClass('fa-rotate-45')) 		return done( new Error('Expected state 1 not to have "fa-rotate-45" class but did found it on icon') );
+			if($icon.hasClass('fa-chevron-right')) 	return done( new Error('Expected state 1 not to have "fa-chevron-down" class but did found it on icon') );
+
+			this.testTooltip('.move-expand-all', 'Collapse all', done);
 		}else if(state == 2){
-			if($icon.hasClass('fa-chevron-down')) 	throw new Error('Expected state 2 not to have "fa-chevron-down" class but did found it on icon');
-			if(!$icon.hasClass('fa-rotate-45')) 	throw new Error('Expected state 2 to have "fa-rotate-45" class but did not found it on icon');
-			if(!$icon.hasClass('fa-chevron-right')) throw new Error('Expected state 2 to have "fa-chevron-down" class but did found it on icon');
+			if($icon.hasClass('fa-chevron-down')) 	return done( new Error('Expected state 2 not to have "fa-chevron-down" class but did found it on icon') );
+			if(!$icon.hasClass('fa-rotate-45')) 	return done( new Error('Expected state 2 to have "fa-rotate-45" class but did not found it on icon') );
+			if(!$icon.hasClass('fa-chevron-right')) return done( new Error('Expected state 2 to have "fa-chevron-down" class but did found it on icon') );
+
+			this.testTooltip('.move-expand-all', 'Expand all', done);
 		}else if(state == 3){
-			if($icon.hasClass('fa-chevron-down')) 	throw new Error('Expected state 3 not to have "fa-chevron-down" class but did found it on icon');
-			if($icon.hasClass('fa-rotate-45')) 		throw new Error('Expected state 3 not to have "fa-rotate-45" class but did found it on icon');
-			if(!$icon.hasClass('fa-chevron-right')) throw new Error('Expected state 3 to have "fa-chevron-down" class but did not found it on icon');
+			if($icon.hasClass('fa-chevron-down')) 	return done( new Error('Expected state 3 not to have "fa-chevron-down" class but did found it on icon') );
+			if($icon.hasClass('fa-rotate-45')) 		return done( new Error('Expected state 3 not to have "fa-rotate-45" class but did found it on icon') );
+			if(!$icon.hasClass('fa-chevron-right')) return done( new Error('Expected state 3 to have "fa-chevron-down" class but did not found it on icon') );
+
+			this.testTooltip('.move-expand-all', 'Expand all', done);
 		}else{
-			throw new Error('Expected state to be 1/2/3 but you passed "' + state + '"');
+			return done( new Error('Expected state to be 1/2/3 but you passed "' + state + '"') );
 		}
 	}
 };

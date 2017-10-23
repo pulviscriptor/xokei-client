@@ -36,8 +36,8 @@ describe('Testing game', function () {
 			});
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display tooltip on player1 name', function (done) {
@@ -151,8 +151,8 @@ describe('Testing game', function () {
 			util.skipRound(2, 2, done);
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display correct notation', function () {
@@ -168,8 +168,8 @@ describe('Testing game', function () {
 				'2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-2');
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(2);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(2, done);
 		});
 
 		it('should display collapsed icon of notation of game 1', function () {
@@ -233,8 +233,8 @@ describe('Testing game', function () {
 			wait.disappear('#names-2p-message', done);
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display correct notation', function () {
@@ -333,8 +333,8 @@ describe('Testing game', function () {
 			wait.disappear('#game-won-window', done);
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display correct notation', function () {
@@ -383,8 +383,8 @@ describe('Testing game', function () {
 			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down'))throw new Error('Game2 move have wrong additional icon');
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(2);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(2, done);
 		});
 
 		it('should collapse game2 moves', function () {
@@ -399,8 +399,8 @@ describe('Testing game', function () {
 			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down'))   throw new Error('Game2 move have wrong additional icon');
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(3);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(3, done);
 		});
 
 		it('should make goal by player2 to player2', function (done) {
@@ -471,8 +471,8 @@ describe('Testing game', function () {
 			if(!$('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down')) throw new Error('Game2 move have wrong additional icon');
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display correct notation', function () {
@@ -497,8 +497,8 @@ describe('Testing game', function () {
 			$('.move-expand-all').click();
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(3);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(3, done);
 		});
 	});
 
@@ -526,8 +526,8 @@ describe('Testing game', function () {
 			wait.disappear('#names-2p-message', done);
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display correct notation', function () {
@@ -638,8 +638,8 @@ describe('Testing game', function () {
 			$('.move-expand-all').click();
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(3);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(3, done);
 		});
 	});
 
@@ -658,16 +658,16 @@ describe('Testing game', function () {
 			});
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(3);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(3, done);
 		});
 
 		it('should expand all notations', function () {
 			$('.move-expand-all').click();
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 
 		it('should display correct notation', function () {
@@ -866,8 +866,8 @@ describe('Testing game', function () {
 			if($('.notation-move-table2 .notation-expand-collapse-icon').hasClass('fa-chevron-down'))throw new Error('Game2 move have wrong additional icon');
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(2);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(2, done);
 		});
 
 	});
@@ -878,8 +878,8 @@ describe('Testing game', function () {
 			wait.disappear('#game-won-window', done);
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(2);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(2, done);
 		});
 
 		it('should start new round', function (done) {
@@ -919,8 +919,8 @@ describe('Testing game', function () {
 			$('.move-expand-all').click();
 		});
 
-		it('should display correct expand all icon', function () {
-			util.validateCollapseAllNotationsIconState(1);
+		it('should display correct expand all icon', function (done) {
+			util.validateCollapseAllNotationsIconState(1, done);
 		});
 	});
 
