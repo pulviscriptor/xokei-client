@@ -826,6 +826,7 @@ Display.prototype = {
 				.removeClass('fa-rotate-45')
 				.removeClass('fa-chevron-right')
 				.addClass('fa-chevron-down')
+				.data('tooltip', 'Collapse all')
 				.data('state', '1');
 		}else if($('.notation-expanded:visible').length === 0) {
 			// all notations collapsed
@@ -833,6 +834,7 @@ Display.prototype = {
 				.removeClass('fa-rotate-45')
 				.removeClass('fa-chevron-down')
 				.addClass('fa-chevron-right')
+				.data('tooltip', 'Expand all')
 				.data('state', '3');
 		}else{
 			// part of notations collapsed/expanded
@@ -840,6 +842,7 @@ Display.prototype = {
 				.addClass('fa-rotate-45')
 				.removeClass('fa-chevron-down')
 				.addClass('fa-chevron-right')
+				.data('tooltip', 'Expand all')
 				.data('state', '2');
 		}
 	},
