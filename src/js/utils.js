@@ -49,7 +49,11 @@ var utils = {
 		},
 
 		generateHTMLmeta: function (meta) {
-			return '<span class="notation-meta notation-meta-' + meta.id + '">' + utils.escapeHtml(meta.str) + '</span>';
+			if(meta.html) {
+				return '<span class="notation-meta notation-meta-' + meta.id + '">' + meta.str + '</span>';
+			}else{
+				return '<span class="notation-meta notation-meta-' + meta.id + '">' + utils.escapeHtml(meta.str) + '</span>';
+			}
 		},
 
 		wrapMovesInTooltips: function (moves) {
@@ -242,6 +246,20 @@ var utils = {
 		if(cords.x < 0 || cords.x > 13) throw new Error('Expected cords.x to be 0-13 and it was ' + cords.x);
 
 		return settings.coordinates.horizontal[cords.x] + settings.coordinates.vertical[cords.y];
+	},
+
+	getHTMLTextWidth: function (text, fontSize) {
+		var $el = $('<span style="font-family:\'Helvetica Neue\', Helvetica, Arial, sans-serif;font-size: ' + fontSize + 'em;font-weight:bold"></span>').text(text).hide().appendTo('body');
+		var ret = $el.width();
+		$el.remove();
+		return ret;
+	},
+
+	calculateAllowedTextSize: function (str, target_px, min_em, max_em) {
+		for (var candidate = max_em; candidate >= min_em; candidate = parseFloat((candidate - 0.01).toFixed(2))) {
+			var candidateSize = utils.getHTMLTextWidth(str, candidate);
+			if (candidateSize < target_px) return candidate;
+		}
 	}
 };
 

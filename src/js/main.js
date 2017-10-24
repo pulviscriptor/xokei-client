@@ -100,7 +100,8 @@ function init() {
 		view: view,
 		puck: require('./puck.js'),
 		display: require('./display.js'),
-		utils: require('./utils.js')
+		utils: require('./utils.js'),
+		players: require('./players.js')
 	};
 
 	// initialize dialogs (like make it draggable for example)

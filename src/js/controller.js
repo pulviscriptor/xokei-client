@@ -128,7 +128,7 @@ function Controller(board, view) {
 				var side = (this.board.settings.owner == Player.One) ? 'left' : 'right';
 				this.emit("message", {
 					life: "placed puck",
-					message: this.view.escapeHtml(Player.name[this.board.settings.owner]) + ":<br>Place the puck on your side (" + side + ")"
+					message: Player.getStaticSizeName(this.board.settings.owner) + ":<br>Place the puck on your side (" + side + ")"
 				});
 				
 				this.currentTurn = new Turn(this, this.board.settings.owner);

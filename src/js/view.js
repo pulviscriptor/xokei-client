@@ -194,22 +194,22 @@ View.prototype = {
 		var lastGame = this.board.gamesHistory[this.board.settings.gameID-1];
 
 		if(lastGame) {
-			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' ' + (lastGame.winner == Player.One ? 'won' : 'lost') + ' Game ' + (this.board.settings.gameID-1) + '.<br>';
-			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' ' + (lastGame.winner == Player.Two ? 'won' : 'lost') + ' Game ' + (this.board.settings.gameID-1) + '.<br>';
+			tooltipP1 += Player.getStaticSizeName(Player.One) + ' ' + (lastGame.winner == Player.One ? 'won' : 'lost') + ' Game ' + (this.board.settings.gameID-1) + '.<br>';
+			tooltipP2 += Player.getStaticSizeName(Player.Two) + ' ' + (lastGame.winner == Player.Two ? 'won' : 'lost') + ' Game ' + (this.board.settings.gameID-1) + '.<br>';
 		}
 
 		if(score[Player.One] > score[Player.Two]) {
-			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is currently winning.<br>';
-			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is currently losing.<br>';
+			tooltipP1 += Player.getStaticSizeName(Player.One) + ' is currently winning.<br>';
+			tooltipP2 += Player.getStaticSizeName(Player.Two) + ' is currently losing.<br>';
 		}else if(score[Player.One] < score[Player.Two]) {
-			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is currently losing.<br>';
-			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is currently winning.<br>';
+			tooltipP1 += Player.getStaticSizeName(Player.One) + ' is currently losing.<br>';
+			tooltipP2 += Player.getStaticSizeName(Player.Two) + ' is currently winning.<br>';
 		}else{
-			tooltipP1 += this.escapeHtml(Player.name[Player.One]) + ' is neither winning nor losing.<br>';
-			tooltipP2 += this.escapeHtml(Player.name[Player.Two]) + ' is neither winning nor losing.<br>';
+			tooltipP1 += Player.getStaticSizeName(Player.One) + ' is neither winning nor losing.<br>';
+			tooltipP2 += Player.getStaticSizeName(Player.Two) + ' is neither winning nor losing.<br>';
 		}
-		tooltipP1 += 'It is the turn of ' + this.escapeHtml(Player.name[this.board.settings.owner]) + '.';
-		tooltipP2 += 'It is the turn of ' + this.escapeHtml(Player.name[this.board.settings.owner]) + '.';
+		tooltipP1 += 'It is the turn of ' + Player.getStaticSizeName(this.board.settings.owner) + '.';
+		tooltipP2 += 'It is the turn of ' + Player.getStaticSizeName(this.board.settings.owner) + '.';
 
 		$('.player-1-name-text,.player-1-score').data('tooltip', tooltipP1);
 		$('.player-2-name-text,.player-2-score').data('tooltip', tooltipP2);
@@ -275,39 +275,28 @@ View.prototype = {
 	// fit player names on top of board if they are too big
 	// https://stackoverflow.com/questions/1582534/calculating-text-width
 	reCalculatePlayerNamesFontSize: function () {
-		var getTextSize = function (text, fontSize) {
-			var $el = $('<span style="font-family:\'Helvetica Neue\', Helvetica, Arial, sans-serif;font-size: ' + (fontSize || '1.3') + 'em;font-weight:bold"></span>').text(text).hide().appendTo('body');
-			var ret = $el.width();
-			$el.remove();
-			return ret;
-		};
-		var calculateAllowedSize = function ($el, nickname) {
-			var allowedMaxSize = $el.width();
-			for(var candidate = 1.3; candidate >= 0.5; candidate = parseFloat((candidate-0.01).toFixed(2))) {
-				var candidateSize = getTextSize(nickname, candidate);
-				if(candidateSize < allowedMaxSize) return candidate;
-			}
-			return 0.5;
-		};
-
 		var $p1name = $('.score-container .player-1-name');
 		var $p2name = $('.score-container .player-2-name');
-		var p1size = calculateAllowedSize($p1name, $p1name.text());
-		var p2size = calculateAllowedSize($p2name, $p2name.text());
-		Player.basicFontSize[Player.One] = p1size;
-		Player.basicFontSize[Player.Two] = p2size;
+		var p1size = utils.calculateAllowedTextSize(Player.name[Player.One], $p1name.width(), 0.5, 1.3);
+		var p2size = utils.calculateAllowedTextSize(Player.name[Player.Two], $p2name.width(), 0.5, 1.3);
+		Player.textSizeDynamic[Player.One] = p1size;
+		Player.textSizeDynamic[Player.Two] = p2size;
+
 		$p1name.css('font-size', p1size + 'em');
 		$p2name.css('font-size', p2size + 'em');
+
+		$('.notation-meta-string-p1name').css('font-size', p1size + 'em');
+		$('.notation-meta-string-p2name').css('font-size', p2size + 'em');
 	},
 
 	// display window with won message and button to start new game
 	gameWon: function (scores) {
 		if(scores.player1 > scores.player2) {
-			$('#game-won-winner-name').text(Player.name[Player.One]).css('font-size', Player.basicFontSize[Player.One] + 'em');
+			$('#game-won-winner-name').text(Player.name[Player.One]).css('font-size', Player.textSizeStatic[Player.One] + 'em');
 			$('#game-won-winner-score').text(scores.player1);
 			$('#game-won-looser-score').text(scores.player2);
 		}else{
-			$('#game-won-winner-name').text(Player.name[Player.Two]).css('font-size', Player.basicFontSize[Player.Two] + 'em');
+			$('#game-won-winner-name').text(Player.name[Player.Two]).css('font-size', Player.textSizeStatic[Player.Two] + 'em');
 			$('#game-won-winner-score').text(scores.player2);
 			$('#game-won-looser-score').text(scores.player1);
 		}
@@ -343,14 +332,14 @@ View.prototype = {
 	},
 
 	// add turn to notation box
-	notate: function (type, id, str) {
-		var notation = {id: id, str: str};
+	notate: function (type, id, str, html) {
+		var notation = {id: id, str: str, html: !!html};
 		this.board.gamesHistory[this.board.settings.gameID]['notation_' + type].push(notation);
 
 		if($('.notation-' + type + '-table' + this.board.settings.gameID).hasClass('notation-collapsed')) {
-			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['collapsedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]));
+			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['collapsedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]), html);
 		}else{
-			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['expandedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]));
+			$('.notation-area-' + type + '-' + this.board.settings.gameID).html(utils.notation['expandedHTML' + type](this.board.gamesHistory[this.board.settings.gameID]['notation_' + type]), html);
 		}
 
 		if(type == 'move' && id == 1) {
@@ -380,7 +369,14 @@ View.prototype = {
 		$('.player-1-name-text').text(p1name);
 		$('.player-2-name-text').text(p2name);
 
+		// dynamic sizes
 		this.reCalculatePlayerNamesFontSize();
+
+		// static sizes
+		var p1size = utils.calculateAllowedTextSize(p1name, 190, 0.3, 1);
+		var p2size = utils.calculateAllowedTextSize(p2name, 190, 0.3, 1);
+		Player.textSizeStatic[Player.One] = p1size;
+		Player.textSizeStatic[Player.Two] = p2size;
 	},
 
 	// when we start new/another game we call this
@@ -427,8 +423,8 @@ View.prototype = {
 		}*/
 		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]');
 		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]');
-		this.notate( 'meta', 'p1name', '[White "' + Player.name[Player.One] + '"]');
-		this.notate( 'meta', 'p2name', '[Black "' + Player.name[Player.Two] + '"]');
+		this.notate( 'meta', 'p1name', '[White "' + Player.getStaticSizeName(Player.One) + '"]', true);
+		this.notate( 'meta', 'p2name', '[Black "' + Player.getStaticSizeName(Player.Two) + '"]', true);
 	},
 
 	// expand or collapse notations
