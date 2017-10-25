@@ -391,7 +391,7 @@ View.prototype = {
 		$moves.append('<table class="notation-table notation-meta-table notation-meta-table' + this.board.settings.gameID + ' notation-expanded" data-type="meta">' +
 			'<tr>' +
 				'<td class="notation-expand-collapse-td">' +
-					'<i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="meta"></i>' +
+					'<i class="fa fa-chevron-down notation-expand-collapse-icon tlp" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="meta" data-tooltip="Collapse notation"></i>' +
 				'</td>' +
 				'<td>' +
 					'<span class="notation-area-meta notation-area-meta-' + this.board.settings.gameID + '"></span>' +
@@ -407,7 +407,7 @@ View.prototype = {
 		$moves.append('<table class="hidden notation-table notation-move-table notation-move-table' + this.board.settings.gameID + ' notation-expanded" data-type="move">' +
 			'<tr>' +
 				'<td class="notation-expand-collapse-td">' +
-				'	<i class="fa fa-chevron-down notation-expand-collapse-icon" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="move"></i>' +
+				'	<i class="fa fa-chevron-down notation-expand-collapse-icon tlp" aria-hidden="true" data-gameid="' + this.board.settings.gameID + '" data-type="move" data-tooltip="Collapse notation"></i>' +
 				'</td>' +
 				'<td>' +
 					'<span class="notation-area-move notation-area-move-' + this.board.settings.gameID + '"></span>' +
@@ -442,6 +442,7 @@ View.prototype = {
 			$table.addClass('notation-collapsed');
 			$el.addClass('fa-chevron-right');
 			$el.removeClass('fa-chevron-down');
+			$el.data('tooltip', 'Expand notation');
 
 			$('.notation-area-' + type + '-' + gameID).html(html);
 		}else{
@@ -449,6 +450,7 @@ View.prototype = {
 			$table.removeClass('notation-collapsed');
 			$el.removeClass('fa-chevron-right');
 			$el.addClass('fa-chevron-down');
+			$el.data('tooltip', 'Collapse notation');
 
 			$('.notation-area-' + type + '-' + gameID).html(utils.notation["expandedHTML" + type](this.board.gamesHistory[gameID]["notation_" + type]));
 		}
