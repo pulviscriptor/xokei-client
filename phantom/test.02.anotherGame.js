@@ -68,6 +68,14 @@ describe('Testing game', function () {
 				done: done
 			});
 		});
+
+		it('should display correct tooltip for meta collapse icon', function (done) {
+			util.testTooltip('.notation-meta-table1 .notation-expand-collapse-icon', 'Collapse notation', done);
+		});
+
+		it('should display correct tooltip for move collapse icon', function (done) {
+			util.testTooltip('.notation-move-table1 .notation-expand-collapse-icon', 'Collapse notation', done);
+		});
 	});
 
 	describe('Goal by player1 to player2', function () {
@@ -168,6 +176,10 @@ describe('Testing game', function () {
 				'2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-2');
 		});
 
+		it('should display correct tooltip for meta collapse icon', function (done) {
+			util.testTooltip('.notation-meta-table1 .notation-expand-collapse-icon', 'Expand notation', done);
+		});
+
 		it('should display correct expand all icon', function (done) {
 			util.validateCollapseAllNotationsIconState(2, done);
 		});
@@ -235,6 +247,14 @@ describe('Testing game', function () {
 
 		it('should display correct expand all icon', function (done) {
 			util.validateCollapseAllNotationsIconState(1, done);
+		});
+
+		it('should display correct tooltip for meta collapse icon', function (done) {
+			util.testTooltip('.notation-meta-table1 .notation-expand-collapse-icon', 'Collapse notation', done);
+		});
+
+		it('should display correct tooltip for move collapse icon', function (done) {
+			util.testTooltip('.notation-move-table1 .notation-expand-collapse-icon', 'Collapse notation', done);
 		});
 
 		it('should display correct notation', function () {
@@ -369,6 +389,14 @@ describe('Testing game', function () {
 			expect(util.notationToText()).to.be.equal('[Game "1"][White "Player 1"][Black "Player 2"][Result "6-0"]' +
 				'\t1pf5 2pf5j1]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4+ 2pg4 1pg4]4++ 6-0[Game "2"]' +
 				'[White "Player 1"][Black "Player 2"]\t2pg4 1pg4]4+');
+		});
+
+		it('should display correct tooltip for meta collapse icon', function (done) {
+			util.testTooltip('.notation-meta-table1 .notation-expand-collapse-icon', 'Expand notation', done);
+		});
+
+		it('should display correct tooltip for move collapse icon', function (done) {
+			util.testTooltip('.notation-move-table1 .notation-expand-collapse-icon', 'Expand notation', done);
 		});
 
 		it('should display collapsed icon of notation of game 1', function () {
