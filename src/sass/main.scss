@@ -1,6 +1,6 @@
 // variables
 $menu-width: 330px;
-$move-container-padding: 5px;
+$move-container-padding: 3px;
 $scoreboard-size: 3.6em;
 $social-media-padding: 10px;
 $space: 3vw;
@@ -145,7 +145,7 @@ body, html {
 			overflow-y: scroll;
 			font-family: "Lucida Console", monospace;
 			line-height: 8px;
-			border-top: 1px solid black;
+			border-top: 1px solid #808080;
 		}
 
 		table {
