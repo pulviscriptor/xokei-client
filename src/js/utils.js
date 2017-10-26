@@ -263,4 +263,23 @@ var utils = {
 	}
 };
 
+// dirty hack to dynamically change tooltips contents
+(function($) {
+	$.fn.tooltipContent = function(str) {
+		var $openedTooltip = $('.ui-tooltip-content');
+		if($openedTooltip.length) {
+			var openedContent = $openedTooltip.html();
+			this.each(function() {
+				if($(this).attr('data-tooltip') == openedContent) {
+					$openedTooltip.html(str);
+				}
+			});
+		}
+
+		this.attr('data-tooltip', str);
+
+		return this;
+	};
+}(require('jquery')));
+
 module.exports = utils;

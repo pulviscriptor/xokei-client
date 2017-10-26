@@ -51,13 +51,17 @@ View.prototype = {
 		$(window).tooltip({
 			items: '.tlp',
 			content: function () {
-				return $(this).data('tooltip');
+				return $(this).attr('data-tooltip');
 			},
 			/*classes: {
 			 'ui-tooltip': 'score-tooltip-content'
 			 },*/
-			tooltipClass: 'tooltip-content'
+			tooltipClass: 'tooltip-content',
 			//extraClass: 'score-tooltip-content'
+			track: true,
+			// disable animation
+			show: false, 
+			hide: false
 		});
 	},
 
@@ -161,7 +165,7 @@ View.prototype = {
 			}else if(dataScore <= score[Player.One] && $el.hasClass('hidden')) {
 				$el.removeClass('hidden');
 			}
-		}).data('tooltip', 'You scored <b>' + score[Player.One] + '</b> goal' + (score[Player.One]>1?'s':'') +
+		}).tooltipContent('You scored <b>' + score[Player.One] + '</b> goal' + (score[Player.One]>1?'s':'') +
 			'<br>Your opponent scored <b>' + score[Player.Two] + '</b>' +
 			'<br>Game ends at <b>' + settings.game.scoreToWin + '</b> goals');
 
@@ -174,7 +178,7 @@ View.prototype = {
 			}else if(dataScore <= score[Player.Two] && $el.hasClass('hidden')) {
 				$el.removeClass('hidden');
 			}
-		}).data('tooltip', 'You scored <b>' + score[Player.Two] + '</b>' + ' goal' + (score[Player.Two]>1?'s':'') +
+		}).tooltipContent('You scored <b>' + score[Player.Two] + '</b>' + ' goal' + (score[Player.Two]>1?'s':'') +
 			'<br>Your opponent scored <b>' + score[Player.One] + '</b>' +
 			'<br>Game ends at <b>' + settings.game.scoreToWin + '</b> goals');
 	},
@@ -211,8 +215,8 @@ View.prototype = {
 		tooltipP1 += 'It is the turn of ' + Player.getStaticSizeName(this.board.settings.owner) + '.';
 		tooltipP2 += 'It is the turn of ' + Player.getStaticSizeName(this.board.settings.owner) + '.';
 
-		$('.player-1-name-text,.player-1-score').data('tooltip', tooltipP1);
-		$('.player-2-name-text,.player-2-score').data('tooltip', tooltipP2);
+		$('.player-1-name-text,.player-1-score').tooltipContent(tooltipP1);
+		$('.player-2-name-text,.player-2-score').tooltipContent(tooltipP2);
 	},
 
 	// initialize our dialog windows
@@ -442,7 +446,7 @@ View.prototype = {
 			$table.addClass('notation-collapsed');
 			$el.addClass('fa-chevron-right');
 			$el.removeClass('fa-chevron-down');
-			$el.data('tooltip', 'Expand notation');
+			$el.tooltipContent('Expand notation');
 
 			$('.notation-area-' + type + '-' + gameID).html(html);
 		}else{
@@ -450,7 +454,7 @@ View.prototype = {
 			$table.removeClass('notation-collapsed');
 			$el.removeClass('fa-chevron-right');
 			$el.addClass('fa-chevron-down');
-			$el.data('tooltip', 'Collapse notation');
+			$el.tooltipContent('Collapse notation');
 
 			$('.notation-area-' + type + '-' + gameID).html(utils.notation["expandedHTML" + type](this.board.gamesHistory[gameID]["notation_" + type]));
 		}
@@ -463,7 +467,7 @@ View.prototype = {
 				.removeClass('fa-rotate-45')
 				.removeClass('fa-chevron-right')
 				.addClass('fa-chevron-down')
-				.data('tooltip', 'Collapse all')
+				.tooltipContent('Collapse all')
 				.data('state', '1');
 		}else if($('.notation-expanded:visible').length === 0) {
 			// all notations collapsed
@@ -471,7 +475,7 @@ View.prototype = {
 				.removeClass('fa-rotate-45')
 				.removeClass('fa-chevron-down')
 				.addClass('fa-chevron-right')
-				.data('tooltip', 'Expand all')
+				.tooltipContent('Expand all')
 				.data('state', '3');
 		}else{
 			// part of notations collapsed/expanded
@@ -479,7 +483,7 @@ View.prototype = {
 				.addClass('fa-rotate-45')
 				.removeClass('fa-chevron-down')
 				.addClass('fa-chevron-right')
-				.data('tooltip', 'Expand all')
+				.tooltipContent('Expand all')
 				.data('state', '2');
 		}
 	},
