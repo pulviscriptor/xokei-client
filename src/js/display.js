@@ -196,12 +196,26 @@ Display.prototype = {
 					x: x,
 					y: y
 				};
-				
+
 				this.tiles[x][y].element
 					.move(x * this.tileSize, y * this.tileSize)
 					.attr("fill", settings.colors.field
 						[this.board.tiles[x][y].type])
 					.data("position", {x: x, y: y});
+
+				// this is used to display notations when player is placin puck and moves mouse in forbidden tile
+				if(this.board.tiles[x][y].zones.indexOf('goal') >= 0) {
+					this.tiles[x][y].element.data('tooltip', 'You can\'t place the puck in the goal');
+					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + Player.One);
+					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + Player.Two);
+				}else if(this.board.tiles[x][y].zones.indexOf('endZone') >= 0) {
+					this.tiles[x][y].element.data('tooltip', 'You can\'t place the puck in the goaley\'s zone');
+					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + Player.One);
+					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + Player.Two);
+				}else if(this.board.tiles[x][y].zones.indexOf('territory') >= 0) {
+					this.tiles[x][y].element.data('tooltip', 'You can\'t place the puck on your opponent\'s side.');
+					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + (this.board.tiles[x][y].owner == Player.One ? Player.Two : Player.One) );
+				}
 			}
 		}
 		

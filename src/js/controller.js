@@ -119,6 +119,7 @@ function Controller(board, view) {
 			
 			"destroy state": function () {
 				this.view.display.enableActorMouseEvents();
+				$('.tile-place-puck-forbidden-player1,.tile-place-puck-forbidden-player2').removeClass('tlp');
 			},
 			
 			"init state": function () {
@@ -134,6 +135,18 @@ function Controller(board, view) {
 				this.currentTurn = new Turn(this, this.board.settings.owner);
 				this.currentTurn.recordMove("Begin round", null, null);
 				this.view.showTurnState(this.board.settings.owner);
+
+				// managing tooltips that will say players why they can't place puck on forbidden tiles
+				this.board.actors.forEach(function callback(actor) {
+					if(actor.owner == this.board.settings.owner) {
+						this.view.display.tiles[actor.x][actor.y].element.data('tooltip', 'You can\'t place the puck on top of the player');
+					}else{
+						this.view.display.tiles[actor.x][actor.y].element.data('tooltip', 'You can\'t place the puck on your opponent\'s side');
+					}
+					this.view.display.tiles[actor.x][actor.y].element.addClass('tile-place-puck-forbidden-' + this.board.settings.owner);
+				}, this);
+
+				$('.tile-place-puck-forbidden-' + this.board.settings.owner).addClass('tlp');
 			},
 			
 			"mouse enter tile": function (data) {
