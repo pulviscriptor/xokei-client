@@ -213,7 +213,7 @@ Display.prototype = {
 					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + Player.One);
 					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + Player.Two);
 				}else if(this.board.tiles[x][y].zones.indexOf('territory') >= 0) {
-					this.tiles[x][y].element.data('tooltip', 'You can\'t place the puck on your opponent\'s side.');
+					this.tiles[x][y].element.data('tooltip', 'You can\'t place the puck on your opponent\'s side');
 					this.tiles[x][y].element.addClass('tile-place-puck-forbidden-' + (this.board.tiles[x][y].owner == Player.One ? Player.Two : Player.One) );
 				}
 			}
