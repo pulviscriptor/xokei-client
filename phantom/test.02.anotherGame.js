@@ -44,6 +44,10 @@ describe('Testing game', function () {
 			util.testTooltip('.player-1-name-text', 'The score is 0-0.Player 1 is neither winning nor losing.It is the turn of Player 1.', done);
 		});
 
+		it('should display tooltip on player1 name', function (done) {
+			util.testTooltip('.player-1-name-text', 'The score is 0-0.Player 1 is neither winning nor losing.It is the turn of Player 1.', done);
+		});
+
 		it('should display tooltip on player2 name', function (done) {
 			util.testTooltip('.player-2-name-text', 'The score is 0-0.Player 2 is neither winning nor losing.It is the turn of Player 1.', done);
 		});
@@ -56,6 +60,68 @@ describe('Testing game', function () {
 		it('should not be able to place puck and player2 territory', function () {
 			simulate.clickTile('h8');
 			expect($('.puck-actor').length).to.equal(0);
+		});
+	});
+
+	describe('Tile tooltips tests with player1 owner', function () {
+		var opponent = 'You can\'t place the puck on your opponent\'s side';
+		var goaley = 'You can\'t place the puck in the goaley\'s zone';
+		var goal = 'You can\'t place the puck in the goal';
+		var ontop = 'You can\'t place the puck on top of the player';
+
+		it('should display tooltip on tile g8', function (done) {
+			util.testTileTooltip('g8', opponent, done);
+		});
+		it('should display tooltip on tile g7', function (done) {
+			util.testTileTooltip('g7', opponent, done);
+		});
+		it('should display tooltip on tile g6', function (done) {
+			util.testTileTooltip('g6', opponent, done);
+		});
+		it('should display tooltip on tile g3', function (done) {
+			util.testTileTooltip('g3', opponent, done);
+		});
+		it('should display tooltip on tile g1', function (done) {
+			util.testTileTooltip('g1', opponent, done);
+		});
+		it('should display tooltip on tile l8', function (done) {
+			util.testTileTooltip('l8', opponent, done);
+		});
+		it('should display tooltip on tile l1', function (done) {
+			util.testTileTooltip('l1', opponent, done);
+		});
+
+		it('should display tooltip on tile k6', function (done) {
+			util.testTileTooltip('k6', goaley, done);
+		});
+		it('should display tooltip on tile l3', function (done) {
+			util.testTileTooltip('l3', goaley, done);
+		});
+		it('should display tooltip on tile a6', function (done) {
+			util.testTileTooltip('a6', goaley, done);
+		});
+		it('should display tooltip on tile b3', function (done) {
+			util.testTileTooltip('b3', goaley, done);
+		});
+
+		it('should display tooltip on tile [5', function (done) {
+			util.testTileTooltip('[5', goal, done);
+		});
+		it('should display tooltip on tile ]4', function (done) {
+			util.testTileTooltip(']4', goal, done);
+		});
+
+		it('should display tooltip on tile f8', function (done) {
+			util.testTileTooltip('f8', ontop, done);
+		});
+		it('should display tooltip on tile f6', function (done) {
+			util.testTileTooltip('f6', ontop, done);
+		});
+		it('should display tooltip on tile f3', function (done) {
+			util.testTileTooltip('f3', ontop, done);
+		});
+		it('should display tooltip on tile f1', function (done) {
+			util.testTileTooltip('f1', ontop, done);
 		});
 	});
 
@@ -86,6 +152,68 @@ describe('Testing game', function () {
 				score2: 1,
 				done: done
 			});
+		});
+	});
+
+	describe('Tile tooltips tests with player2 owner', function () {
+		var opponent = 'You can\'t place the puck on your opponent\'s side';
+		var goaley = 'You can\'t place the puck in the goaley\'s zone';
+		var goal = 'You can\'t place the puck in the goal';
+		var ontop = 'You can\'t place the puck on top of the player';
+
+		it('should display tooltip on tile f8', function (done) {
+			util.testTileTooltip('f8', opponent, done);
+		});
+		it('should display tooltip on tile f7', function (done) {
+			util.testTileTooltip('f7', opponent, done);
+		});
+		it('should display tooltip on tile f6', function (done) {
+			util.testTileTooltip('f6', opponent, done);
+		});
+		it('should display tooltip on tile f3', function (done) {
+			util.testTileTooltip('f3', opponent, done);
+		});
+		it('should display tooltip on tile f1', function (done) {
+			util.testTileTooltip('f1', opponent, done);
+		});
+		it('should display tooltip on tile a8', function (done) {
+			util.testTileTooltip('a8', opponent, done);
+		});
+		it('should display tooltip on tile a1', function (done) {
+			util.testTileTooltip('a1', opponent, done);
+		});
+
+		it('should display tooltip on tile b6', function (done) {
+			util.testTileTooltip('b6', goaley, done);
+		});
+		it('should display tooltip on tile a3', function (done) {
+			util.testTileTooltip('a3', goaley, done);
+		});
+		it('should display tooltip on tile l6', function (done) {
+			util.testTileTooltip('l6', goaley, done);
+		});
+		it('should display tooltip on tile k3', function (done) {
+			util.testTileTooltip('k3', goaley, done);
+		});
+
+		it('should display tooltip on tile [5', function (done) {
+			util.testTileTooltip('[5', goal, done);
+		});
+		it('should display tooltip on tile ]4', function (done) {
+			util.testTileTooltip(']4', goal, done);
+		});
+
+		it('should display tooltip on tile g8', function (done) {
+			util.testTileTooltip('g8', ontop, done);
+		});
+		it('should display tooltip on tile g6', function (done) {
+			util.testTileTooltip('g6', ontop, done);
+		});
+		it('should display tooltip on tile g3', function (done) {
+			util.testTileTooltip('g3', ontop, done);
+		});
+		it('should display tooltip on tile g1', function (done) {
+			util.testTileTooltip('g1', ontop, done);
 		});
 	});
 

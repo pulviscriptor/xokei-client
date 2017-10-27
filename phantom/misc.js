@@ -129,10 +129,10 @@ var wait = {
 
 var simulate = {
 	// https://stackoverflow.com/questions/3277369/how-to-simulate-a-click-by-using-x-y-coordinates-in-javascript
-	click: function(el)	{
+	_mouseEvent: function (el, event) {
 		var ev = document.createEvent("MouseEvent");
 		ev.initMouseEvent(
-			"click",
+			event,
 			true /* bubble */, true /* cancelable */,
 			window, null,
 			0, 0, 0, 0, /* coordinates */
@@ -140,6 +140,18 @@ var simulate = {
 			0 /*left*/, null
 		);
 		el.dispatchEvent(ev);
+	},
+
+	click: function(el)	{
+		this._mouseEvent(el, 'click');
+	},
+
+	mouseover: function(el)	{
+		this._mouseEvent(el, 'mouseover');
+	},
+
+	mouseout: function(el)	{
+		this._mouseEvent(el, 'mouseout');
 	},
 
 	clickTile: function (x, y) {
@@ -273,6 +285,20 @@ var util = {
 	testNotationTooltip: function (game, turn, move, text, done) {
 		var $el = $('.notation-area-move-' + game + ' .notation-move-' + turn + ' span:' + (move == 1 ? 'first' : 'last'));
 		this.testTooltip($el, text, done);
+	},
+
+	testTileTooltip: function (cords_text, text, done) {
+		var cords = window.game.utils.notationToCoordinates(cords_text);
+		var el = $('rect[data-position="{\\\"x\\\":' + cords.x + ',\\\"y\\\":' + cords.y + '}"]')[0];
+		simulate.mouseover(el);
+		wait.fullyAppear('.ui-tooltip', function () {
+			var tooltipText = $('.ui-tooltip').text();
+			simulate.mouseout(el);
+			wait.disappear('.ui-tooltip', function () {
+				if(tooltipText != text) return done(new Error('Expected tooltip text "' + tooltipText + '" to equal "' + text + '"'));
+				done();
+			});
+		});
 	},
 
 	validateCollapseAllNotationsIconState: function(state, done) {
