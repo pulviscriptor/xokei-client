@@ -4,6 +4,7 @@ var Actor = require("./actor"),
 	settings = require("./settings"),
 	utils = require("./utils"),
 	Puck = require("./puck");
+	//Tile = require("./tile");
 
 /// object
 function Turn(controller, owner) {
@@ -14,7 +15,6 @@ function Turn(controller, owner) {
 	// the index of the current move in this turn
 	this.future = [];
 	this.history = [];
-	this.trajectory = [];
 	
 	// the owner of this turn
 	this.owner = owner;
@@ -29,7 +29,7 @@ Turn.prototype = {
 	
 	// finish this turn
 	finish: function (scored) {
-		if (this.owner === Player.One) {
+		/*if (this.owner === Player.One) {
 			// for now, we'll pretend to send this turn to the server, so as to
 			// turn control of the board over to player two
 			this.controller.emit("finish turn", this, scored);
@@ -37,7 +37,21 @@ Turn.prototype = {
 			// for now, we'll pretend we received this turn from the server, so
 			// as to return control of the board to player one
 			this.controller.emit("receive turn", this.serialize(), scored);
-		}
+		}*/
+
+		this.controller.emit("finish turn", this, scored);
+
+		console.log('SERIALIZE:');
+		console.log(this.serialize());
+
+		//window.turn111 = this;
+
+		// sending turn to server
+		/*if(this.controller.client) {
+			this.controller.client.send('turn', this.serialize());
+		}else{
+			this.controller.emit("finish turn", this, scored);
+		}*/
 	},
 	
 	// visually play a move in this turn
@@ -45,6 +59,21 @@ Turn.prototype = {
 		var actor,
 			board = this.controller.board,
 			target;
+
+		// skip targets that we can't play
+		// we can't play "Begin round"
+		if(move.target == 'Begin round') {
+			if (callback) {
+				callback();
+			}
+			return;
+		// we can't play place puck since client.processor will place it already otherwise we can't write turn history
+		}else if(move.target instanceof Puck && !move.start) {
+			if (callback) {
+				callback();
+			}
+			return;
+		}
 		
 		if (forward) {
 			actor = move.start;
@@ -61,16 +90,57 @@ Turn.prototype = {
 		}
 		
 		if (actor instanceof Puck) {
-			actor.kick(target);
+			/*actor.kick(target);
 			this.controller.view.display.renderPuck();
 			
 			if (callback) {
 				callback();
+			}*/
+
+
+			/*this.puckTrajectory = this.board.puck.calculateTrajectory(
+				this.kickDirection);
+			var trajectory = this.puckTrajectory.slice(0);
+
+			// if we have only one available move on selected trajectory
+			// then don't show single dot, just move there
+			if(this.puckTrajectory.length == 1) {
+				var oldPos = {
+					x: this.board.puck.x,
+					y: this.board.puck.y
+				};
+				var finish = this.puckTrajectory[0];
+				this.kickPuck(this.puckTrajectory[0], function () {
+					this.currentTurn.recordMove(this.board.puck, oldPos, finish, trajectory);
+				}.bind(this));
+				return;
 			}
+
+			this.view.display.showKickTrajectory(this.puckTrajectory);*/
+
+			var trajectory = move.trajectory.slice(0);
+			this.controller.puckTrajectory = trajectory;
+
+			/*var oldPos = {
+				x: move.start.x,
+				y: move.start.y
+			};
+			var finish = trajectory[trajectory.length-1];*/
+			this.controller.kickPuck(trajectory[trajectory.length-1], function () {
+				//this.currentTurn.recordMove(this.board.puck, oldPos, finish, trajectory);
+				if (callback) {
+					callback();
+				}
+			}.bind(this.controller));
+
 		} else if (actor instanceof Actor) {
 			actor.move(target, null);
 			this.controller.view.display
 				.moveActor(board.actors.indexOf(actor), callback);
+		} else {
+			console.log('Actor dump:');
+			console.log(actor);
+			throw new Error('Unknown instance of actor, check console');
 		}
 	},
 	
@@ -81,6 +151,8 @@ Turn.prototype = {
 			scored;
 		
 		if (this.history.length == 2) {
+			console.log('this.history:');
+			console.log(this.history);
 			throw new Error("This turn has already been completed.");
 		}
 		
@@ -98,10 +170,12 @@ Turn.prototype = {
 		
 		if (finishTile && finishTile.inZone("goal") &&
 			target === this.controller.board.puck) {
-			scored = true;			
+			//scored = true;
 			if (finishTile.owner === Player.One) {
+				scored = Player.Two;
 				score[Player.Two]++;
 			} else {
+				scored = Player.One;
 				score[Player.One]++;
 			}
 		}
@@ -253,6 +327,48 @@ Turn.prototype = {
 		
 		this.future.push(this.history.pop());
 		this.playMove(this.future[this.future.length - 1]);
+	},
+
+	packForServer: function (scored) {
+		var obj = {
+			//owner: this.owner,
+			scored: scored || false,
+			history: []
+		};
+
+		for(var i=0;i<this.history.length;i++) {
+			var move = this.history[i];
+
+			obj.history[i] = {};
+			/*if(obj.history[i].start)	  obj.history[i].start  		= move.start;
+			if(obj.history[i].finish) 	  obj.history[i].finish 		= move.finish;
+			if(obj.history[i].score)  	  obj.history[i].score  		= move.score;
+			if(obj.history[i].trajectory) obj.history[i].trajectory 	= move.trajectory;*/
+
+			if(typeof(move.target) == 'string') {
+				obj.history[i].target = {type: move.target};
+			}else if(move.target instanceof Puck) {
+				if(!move.start) {
+					obj.history[i].target = {type: "place puck"};
+					obj.history[i].finish = {x: move.target.x, y: move.target.y};
+				}else{
+					obj.history[i].target = {type: "puck"};
+					obj.history[i].start = {x: move.start.x, y: move.start.y};
+					obj.history[i].finish = {x: move.finish.x, y: move.finish.y};
+					obj.history[i].trajectory = move.trajectory.map(function (tile) {
+						return {x: tile.x, y: tile.y};
+					});
+				}
+			}else if(move.target instanceof Actor) {
+				obj.history[i].target = {type: "actor"};
+				obj.history[i].start = {x: move.start.x, y: move.start.y};
+				obj.history[i].finish = {x: move.finish.x, y: move.finish.y};
+			}else{
+				throw new Error('Unknown move target: ' + move.target);
+			}
+		}
+
+		return obj;
 	}
 };
 

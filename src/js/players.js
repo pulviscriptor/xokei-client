@@ -70,5 +70,15 @@ module.exports = {
 
 	getStaticSizeName: function (player) {
 		return '<span style="font-size: ' + this.textSizeStatic[player] + 'em">' + utils.escapeHtml(this.name[player]) + '</span>';
+	},
+
+	opponent: function (player) {
+		if(player == "player1") {
+			return "player2";
+		}else if(player == "player2") {
+			return "player1";
+		}else{
+			throw new Error('Unknown player: ' + player);
+		}
 	}
 };

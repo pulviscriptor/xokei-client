@@ -17,6 +17,9 @@
   </head>
 
   <body>
+    <span class="resign-game resign-game-player1 tlp" style="display: none" data-tooltip="Give up in game">Resign game</span>
+    <span class="resign-game resign-game-player2 tlp" style="display: none" data-tooltip="Give up in game">Resign game</span>
+
       <div class="container">
         <div class="board-container" id="board-container">
             <div class="board" id="board">
@@ -79,9 +82,15 @@
 			<span id="game-won-winner-name">Player1</span> won the game with score <span id="game-won-scores"><span id="game-won-winner-score">6</span>:<span id="game-won-looser-score">4</span></span>
 		</span>
 		<br>
-        <div id="game-won-another-game-button" class="button tlp" data-tooltip="Play another game with same opponent">Another game</div>
-        <div id="game-won-new-game-button" class="button tlp" data-tooltip="Start new game">New game</div>
-		<div id="game-won-save-game-button" class="button tlp" data-tooltip="Copy game notation to clipboard">Save game</div>
+        <span id="game-won-window-another-waiting-game-span" class="hidden">
+            <div id="game-won-another-game-waiting" class="tlp" data-tooltip="Waiting opponent's decision">Game requested</div>
+        </span>
+        <span id="game-won-another-game-button-span" class="">
+            <div id="game-won-another-game-button" class="button tlp" data-tooltip="Play another game with same opponent">Another game</div>
+        </span>
+            <div id="game-won-new-game-button" class="button tlp" data-tooltip="Start new game">New game</div>
+    		<div id="game-won-save-game-button" class="button tlp" data-tooltip="Copy game notation to clipboard">Save game</div>
+        </div>
 	</div>
 
 	<!-- Game select (welcome) window -->
@@ -93,10 +102,10 @@
         <table id="game-select-table">
             <tr>
                 <td>
-                    <div class="game-select-mode-box game-select-mode-box-unavailable" id="game-select-mode-1p-human">
+                    <div class="game-select-mode-box" id="game-select-mode-1p-human">
                         <span class="game-select-mode-name">1P Human</span><br>
                         <span class="game-select-mode-description">Play online against human opponent</span><br>
-                        <span class="game-select-mode-unavailable">Not available - there is no server</span>
+                        <span class="game-select-mode-unavailable">In development</span>
                     </div>
                 </td>
                 <td>
@@ -160,6 +169,39 @@
         </table>
         <!-- <span id="settings-save-btn" class="button tlp" data-tooltip="Save settings<br>Will be applied in new game">Save</span><br> -->
         <i id="settings-save-btn" class="fa fa-times button tlp" aria-hidden="true"></i><br>
+    </div>
+
+    <!-- new online game -->
+    <div id="network-online-game-select" class="window hidden">
+        <span id="online-game-message">New online game</span>
+        <br>
+        <input type="text" placeholder="Enter your name" id="online-game-name-input" class="name-input">
+        <br>
+        <span id="network-online-game-private-btn" class="button tlp" data-tooltip="Create link to invite your friend">Private game</span>
+        <span id="network-online-game-puplic-btn" class="button tlp" data-tooltip="Find random player">Public game</span>
+    </div>
+
+    <!-- network killed window -->
+    <div id="network-killed-window" class="window hidden">
+        <span id="network-killed-message"></span>
+        <br>
+        <span id="network-killed-ok-btn" class="button tlp" data-tooltip="Return to main menu">OK</span>
+    </div>
+
+    <!-- invite friend window -->
+    <div id="invite-friend-window" class="window hidden">
+        <span id="invite-friend-message">Send this link to friend</span>
+        <br>
+        <input type="text" id="invite-friend-input-url" readonly size="30" />
+    </div>
+
+    <!-- join private game window -->
+    <div id="join-private-game-window" class="window hidden">
+        <span id="join-private-game-message">Join game <span id="join-private-game-id">#ABCDEF</span></span>
+        <br>
+        <input type="text" placeholder="Enter your name" id="private-game-name-input" class="name-input"><br>
+        <span id="join-private-game-cancel-btn" class="button tlp" data-tooltip="Return to main menu">Cancel</span>
+        <span id="join-private-game-btn" class="button tlp" data-tooltip="Join game">Join</span>
     </div>
 
     <!-- Include JavaScript at the bottom for faster loading time !-->

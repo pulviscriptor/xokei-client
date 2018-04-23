@@ -144,7 +144,7 @@ describe("turn", function () {
 			expect(controller.emit.args[0][2]).to.equal(undefined);
 		});
 		
-		it("should emit a 'recieve turn' event if owner is Player " + 
+		it("should emit a 'finish turn' event if owner is Player " +
 		   "Two", function () {
 			// setup
 			var firstMove = playerTwoMoves[0],
@@ -159,8 +159,8 @@ describe("turn", function () {
 				secondMove.finish);
 			
 			// posttest
-			expect(controller.emit.args[0][0]).to.equal("receive turn");
-			expect(controller.emit.args[0][1]).to.eql(turn.serialize());
+			expect(controller.emit.args[0][0]).to.equal("finish turn");
+			expect(controller.emit.args[0][1]).to.eql(turn);
 			expect(controller.emit.args[0][2]).to.equal(undefined);
 		});
 	});

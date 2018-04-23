@@ -124,6 +124,19 @@ function beginGame(state) {
 
 	// we have welcome screen to display and interact with
 	controller.setUIState("game inactive");
+
+	if(window.location.hash) {
+		/*$('#join-private-game-id').text(window.location.hash);
+		$('#join-private-game-window').removeClass('hidden').position({
+			of: $('#board')
+		});*/
+		var Client = require('./network/client');
+		controller.client = new Client(controller, settings.network, {check_room: window.location.hash.substr(1)});
+	}else{
+		$('#game-select-window').removeClass('hidden').position({
+			of: $('#board')
+		});
+	}
 }
 
 /// initialization

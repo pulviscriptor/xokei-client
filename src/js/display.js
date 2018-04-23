@@ -242,6 +242,9 @@ Display.prototype = {
 		// create scores dots on sides of board
 		this.createScorePoints();
 		this.resizeScorePoints();
+
+		// place resign buttons on sides of board to their places
+		this.resizeResignButtons();
 	},
 
 	// create the HTML elements that will contain the coordinates for the board
@@ -339,6 +342,35 @@ Display.prototype = {
 		$('.score-point').css({
 			width:  scorePointSize + 'px',
 			height: scorePointSize + 'px'
+		});
+	},
+
+	// create buttons to allow players to give up in rounds/games
+	createResignButtons: function () {
+		var $body = $('body');
+		var $el;
+
+		$el = $('<span class="resign-game resign-game-player1 tlp" style="display: none" data-tooltip="Give up in game">Resign game</span>');
+		$body.prepend($el);
+
+		$el = $('<span class="resign-game resign-game-player2 tlp" style="display: none" data-tooltip="Give up in game">Resign game</span>');
+		$body.prepend($el);
+	},
+
+	// re-position and change font size of resign buttons
+	resizeResignButtons: function () {
+		$('.resign-game-player1').position({
+			my: 'right bottom',
+			at: 'left+' + (this.tileSize-10) + 'px top-25px',
+			of: '#board',
+			collision: 'none'
+		});
+
+		$('.resign-game-player2').position({
+			my: 'left bottom',
+			at: 'right-' + (this.tileSize-10) + 'px top-25px',
+			of: '#board',
+			collision: 'none'
 		});
 	},
 
@@ -516,6 +548,9 @@ Display.prototype = {
 
 		// move and resize score points
 		this.resizeScorePoints();
+
+		// move and resize resign buttons
+		this.resizeResignButtons();
 	},
 	
 	// size a symbol appropriately

@@ -40,6 +40,15 @@ module.exports = (function (settings) {
 	
 	return Object.freeze(load(settings));
 }({
+	// network settings for online game
+	network: {
+		// websocket server
+		server: 'ws://127.0.0.1:9000',
+
+		// timeout in milliseconds
+		connectTimeout: 5000
+	},
+
 	// the border on actors belonging to the second player
 	actorBorderWidth: 6,
 	

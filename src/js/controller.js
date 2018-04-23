@@ -6,6 +6,7 @@ var Player = require("./players"),
 	settings = require("./settings"),
 	settingsManager = require("./settingsManager"),
 	utils = require("./utils"),
+	Client = require("./network/client"),
 	Turn = require("./turn");
 
 /// object
@@ -13,7 +14,10 @@ function Controller(board, view) {
 	/// public variables
 	this.board = board;
 	this.view = view;
-	
+
+	// network client will be stored
+	this.client = null;
+
 	// the turn that this client is taking right now
 	this.currentTurn = null;
 	
@@ -90,6 +94,10 @@ function Controller(board, view) {
 				settingsManager.saveFromHTML();
 
 				$('#settings-window').addClass('hidden');
+			},
+
+			"click resign game": function () {
+				window.alert('Resign, owner=' + this.board.settings.owner);
 			}
 		},
 		
@@ -97,22 +105,22 @@ function Controller(board, view) {
 		"placing puck": {
 			"click tile": function (data) {
 				var pos = data.element.data("position"),
-					self = this,
 					tile = this.board.tile(pos);
-				
+
 				if (this.validPuckPositions.indexOf(tile) >= 0) {
-					this.board.placePuck(pos);
-					this.view.display.createPuck(settings.animationSpeed);
-					
-					setTimeout(function () {
-						self.view.display.clearPuckGhost();
-					}, settings.animationSpeed);
-					
-					this.view.events.listenToPuckEvents();
-					this.emit("placed puck");
-					this.setUIState("playing round");
-					
-					// record puck placement
+					this.placePuck(pos);
+
+					/*if(this.client) {
+						//this.client.send('place_puck', pos.x, pos.y);
+						this.emit("placed puck");
+
+						//TODO: "recordMove" will cause "turn.finish" to be called but there is no "finish turn" even in "waiting turn" game state
+						this.setUIState("waiting turn");
+					}else{*/
+						this.emit("placed puck");
+						this.setUIState("playing round");
+					/*}*/
+
 					this.currentTurn.recordMove(this.board.puck, null, pos);
 				}
 			},
@@ -241,7 +249,14 @@ function Controller(board, view) {
 						y: this.board.puck.y
 					};
 
-					var trajectory = this.puckTrajectory.slice(0);
+					// puckTrajectory has all tiles where puck could move
+					// if player clicked in middle of trajectory then we need to find where he clicked
+					var trajectory = [];
+					for(var i=0;i<this.puckTrajectory.length;i++) {
+						var currentTile = this.puckTrajectory[i];
+						trajectory.push(currentTile);
+						if(currentTile.x == pos.x && currentTile.y == pos.y) break;
+					}
 
 					this.kickPuck(this.board.tiles[pos.x][pos.y], function () {
 						this.currentTurn.recordMove(this.board.puck, oldPos, pos, trajectory);
@@ -258,6 +273,8 @@ function Controller(board, view) {
 			// is implemented
 			//TODO: check turn.js:finish (this is non-emulated player move)
 			"finish turn": function (turn, scored) {
+				var owner = turn.owner;
+				var opponent = Player.opponent(turn.owner);
 				// get the turn data in serialized form, ready to be passed to
 				// the server
 				// var turnData = turn.serialize();
@@ -265,43 +282,79 @@ function Controller(board, view) {
 				// pass the turn data to the server
 				
 				// and store this turn on the turns list
+
 				this.turns.push(turn);
 				turn.notation(scored);
-				
-				// now that we've saved this turn, it is no longer current, so
-				// create a new one and pass control of the board to the other 
-				// player
-				this.currentTurn = new Turn(this, Player.Two);
 
-				// this is check for looser starts new round
-				if(scored &&
-					turn.history[turn.history.length-1].target.x == settings.zones[Player.One].goal[0].x) {
-					this.board.settings.owner = Player.One;
-					this.view.showTurnState(Player.One);
-				}else{
-					this.board.settings.owner = Player.Two;
-					this.view.showTurnState(Player.Two);
-				}
-				
-				// if this turn ended by a player scoring, we need to reset the
-				// board to allow for a new round to start, and we need to 
-				// update the score on the screen
-				if (scored) {
-					var score = this.turns.slice(-1)[0].score();
+				// we should pass turn to other player only in local game
+				if(!this.client) {
+					// now that we've saved this turn, it is no longer current, so
+					// create a new one and pass control of the board to the other
+					// player
+					this.currentTurn = new Turn(this, opponent);
 
-					// display updated scores
-					this.view.updateScore(score);
-
-					// is game won
-					if(Math.max(score.player1, score.player2) >= settings.game.scoreToWin) {
-						setTimeout(function () {
-							this.setUIState('game inactive');
-							this.emit('game won', score);
-						}.bind(this));
-					}else{
-						// reset the board
-						this.reset();
+					// this is check for looser starts new round
+					if (scored &&
+						turn.history[turn.history.length - 1].target.x == settings.zones[owner].goal[0].x) {
+						this.board.settings.owner = owner;
+						this.view.showTurnState(turn.owner);
+					} else {
+						this.board.settings.owner = opponent;
+						this.view.showTurnState(opponent);
 					}
+
+					// if this turn ended by a player scoring, we need to reset the
+					// board to allow for a new round to start, and we need to
+					// update the score on the screen
+					if (scored) {
+						var score = this.turns.slice(-1)[0].score();
+
+						// display updated scores
+						this.view.updateScore(score);
+
+						// is game won
+						if (Math.max(score[turn.owner], score.player2) >= settings.game.scoreToWin) {
+							setTimeout(function () {
+								this.setUIState('game inactive');
+								this.emit('game won', score);
+							}.bind(this));
+						} else {
+							// reset the board
+							this.reset();
+						}
+					}
+				}else{
+					this.client.send('turn', turn.packForServer(scored));
+
+					if (scored) {
+						if (turn.history[turn.history.length - 1].target.x == settings.zones[owner].goal[0].x) {
+							this.board.settings.owner = owner;
+							this.view.showTurnState(turn.owner);
+						}else{
+							this.board.settings.owner = opponent;
+							this.view.showTurnState(opponent);
+
+							setTimeout(function () {
+								this.setUIState("waiting turn");
+							}.bind(this));
+						}
+
+						// display updated scores
+						var score_ = this.turns.slice(-1)[0].score();
+						this.view.updateScore(score_);
+
+						// is game won
+						if(Math.max(score_.player1, score_[owner]) >= settings.game.scoreToWin) {
+							setTimeout(function () {
+								this.setUIState('game inactive');
+								this.emit('game won', score_);
+							}.bind(this));
+						}else{
+							// reset the board
+							this.reset();
+						}
+					}
+
 				}
 			},
 
@@ -309,8 +362,16 @@ function Controller(board, view) {
 			// received from the server
 			//TODO: check turn.js:finish (this is emulated server move)
 			"receive turn": function (data, scored) {
+				console.log('receive turn (scored=' + scored + '):');
+				console.log(data);
+				var controller = this;
+
 				var turn = new Turn(this, Player.Two);
 				turn.deserialize(data);
+				console.log(turn);
+
+				var owner = turn.owner;
+				var opponent = Player.opponent(turn.owner);
 
 				// ordinarily we would want to call turn.display to render the
 				// turn to this client, now that it's just been received from
@@ -322,41 +383,63 @@ function Controller(board, view) {
 				// turn.display();
 
 				this.turns.push(turn);
-				turn.notation(scored);
+				//turn.notation(scored); // we need to move this out of here bacause .target will be current position of actor and it should be final
 
 				// create a new turn and allow the other player to move
-				this.currentTurn = new Turn(this, Player.One);
+				this.currentTurn = new Turn(this, opponent);
 
-				// this is check for looser starts new round
-				if(scored && 
-					turn.history[turn.history.length-1].target.x == settings.zones[Player.Two].goal[0].x) {
-					this.board.settings.owner = Player.Two;
-					this.view.showTurnState(Player.Two);
-				}else{
-					this.board.settings.owner = Player.One;
-					this.view.showTurnState(Player.One);
-				}
-
-				// if this turn ended by a player scoring, we need to reset the
-				// board to allow for a new round to start, and we need to
-				// update the score on the screen
-				if (scored) {
-					var score = this.turns.slice(-1)[0].score();
-
-					// display updated scores
-					this.view.updateScore(score);
-
-					// is game won
-					if(Math.max(score.player1, score.player2) >= settings.game.scoreToWin) {
-						setTimeout(function () {
-							this.setUIState('game inactive');
-							this.emit('game won', score);
-						}.bind(this));
+				// we need to do our stuff after actors finished to move
+				var postPlayMove = function () {
+					console.log('receive turn->playMove finished, postPlay()');
+					turn.notation(scored); // moved notation here
+					// this is check for looser starts new round
+					/*if(scored &&
+						turn.history[turn.history.length-1].target.x == settings.zones[owner].goal[0].x) {
+						this.board.settings.owner = owner;
+						this.view.showTurnState(owner);
 					}else{
-						// reset the board
-						this.reset();
+						this.board.settings.owner = opponent;
+						this.view.showTurnState(opponent);
+					}*/
+
+					// if this turn ended by a player scoring, we need to reset the
+					// board to allow for a new round to start, and we need to
+					// update the score on the screen
+					if (scored) {
+						this.board.settings.owner = Player.opponent(scored);
+						this.view.showTurnState(this.board.settings.owner);
+
+						var score = this.turns.slice(-1)[0].score();
+
+						// display updated scores
+						this.view.updateScore(score);
+
+						// is game won
+						if(Math.max(score.player1, score[owner]) >= settings.game.scoreToWin) {
+							setTimeout(function () {
+								this.setUIState('game inactive');
+								this.emit('game won', score);
+							}.bind(this));
+						}else{
+							// reset the board
+							this.reset();
+						}
+					}else{
+						this.board.settings.owner = opponent;
+						this.view.showTurnState(opponent);
 					}
-				}
+				};
+
+				// visually moving actors on board
+				turn.playMove(turn.history[0], true, function() {
+					if(turn.history[1]) {
+						turn.playMove(turn.history[1], true, function() {
+							postPlayMove.apply(controller);
+						});
+					}else{
+						postPlayMove.apply(controller);
+					}
+				});
 			},
 
 			"mouse enter tile": function (data) {
@@ -391,6 +474,14 @@ function Controller(board, view) {
 				}
 				
 				this.currentTurn.undoMove();
+			},
+
+			"init state": function () {
+
+			},
+
+			"destroy state": function () {
+				this.view.showResignButton(null);
 			}
 		},
 
@@ -408,12 +499,22 @@ function Controller(board, view) {
 			},
 			
 			"click another game": function () {
-				settingsManager.applyLocalSettings();
-				if(!settings.game.looserStartsAnotherGame) {
-					this.board.settings.owner = Player.One;
+				if(this.client) {
+					this.client.send('another_game');
+					if($('#game-won-another-game-button').hasClass('game-won-another-game-button-requested')) {
+						$('#game-won-window').addClass('hidden');
+					}else{
+						$('#game-won-another-game-button-span').addClass('hidden');
+						$('#game-won-window-another-waiting-game-span').removeClass('hidden');
+					}
+				}else{
+					settingsManager.applyLocalSettings();
+					if(!settings.game.looserStartsAnotherGame) {
+						this.board.settings.owner = Player.One;
+					}
+					$('#game-won-window').addClass('hidden');
+					this.resetGame();
 				}
-				$('#game-won-window').addClass('hidden');
-				this.resetGame();
 			},
 
 			"click new game": function () {
@@ -454,6 +555,51 @@ function Controller(board, view) {
 
 				settingsManager.applyLocalSettings();
 				this.resetGame(true);
+			},
+
+			"click mode 1p human": function () {
+				this.view.hideWelcomeWindow();
+				this.view.showNetworkOnlineGameSelect();
+			},
+
+			"click online public": function () {
+				this.view.hideNetworkOnlineGameSelect();
+				this.client = new Client(this, settings.network, {type: 'public', name: $('#online-game-name-input').val()});
+			},
+
+			"click online private": function () {
+				this.view.hideNetworkOnlineGameSelect();
+				this.client = new Client(this, settings.network, {type: 'private', name: $('#online-game-name-input').val()});
+			},
+
+			"click network killed ok button": function () {
+				$('#network-killed-window').addClass('hidden');
+				this.view.showWelcomeWindow();
+			},
+
+			"click private game join cancel": function () {
+				this.client.kill('Player clicked cancel button in join dialog', true);
+
+				$('#join-private-game-window').addClass('hidden');
+				this.view.showWelcomeWindow();
+			},
+
+			"click private game join": function () {
+				$('#join-private-game-window').addClass('hidden');
+				this.client.send('join_room', {room: window.location.hash.substr(1), name: $('#private-game-name-input').val()});
+			}
+		},
+
+		// waiting turn from server
+		"waiting turn": {
+			"init state": function () {
+				this.emit("message", {
+					message: "Its turn of your opponent"
+				});
+			},
+
+			"destroy state": function () {
+				this.view.closeMessage();
 			}
 		}
 	};
@@ -531,13 +677,13 @@ Controller.prototype = {
 	
 	emit: function (eventName) {
 		var i;
-		
+
 		if (!this.listeners[eventName]) {
 			return;
 		}
 
 		for (i = 0; i < this.listeners[eventName].length; i++) {
-			this.listeners[eventName][i].apply(this, 
+			this.listeners[eventName][i].apply(this,
 				Array.prototype.slice.apply(arguments).slice(1));
 		}
 	},
@@ -596,7 +742,17 @@ Controller.prototype = {
 
 			this.view.reshowGame();
 			this.view.events.listenToActorEvents();
-			this.setUIState("placing puck");
+
+			// if online mode, we check who should place puck
+			if(this.client) {
+				if(this.client.side == this.board.settings.owner) {
+					this.setUIState("placing puck");
+				}else{
+					this.setUIState("waiting turn");
+				}
+			}else{
+				this.setUIState("placing puck");
+			}
 		}.bind(this));
 	},
 
@@ -658,6 +814,22 @@ Controller.prototype = {
 		}else if(kickDirections.blockedByPlayers && !$('.message-container').is(':visible')) {
 			this.view.message('Puck is blocked by players', 2000);
 		}
+	},
+
+	placePuck: function (pos) {
+		var self = this;
+
+		this.board.placePuck(pos);
+		this.view.display.createPuck(settings.animationSpeed);
+
+		setTimeout(function () {
+			self.view.display.clearPuckGhost();
+		}, settings.animationSpeed);
+
+		this.view.events.listenToPuckEvents();
+
+
+		//todo recordMove
 	}
 };
 

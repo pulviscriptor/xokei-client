@@ -150,6 +150,16 @@ View.prototype = {
 		}
 
 		this.updatePlayerNamesTooltips();
+		this.showResignButton(player);
+	},
+
+	// display "resign game" button for player
+	showResignButton: function (player) {
+		$('.resign-game').hide();
+
+		if(player) {
+			$('.resign-game-' + player).show();
+		}
 	},
 	
 	// update the scores of the players on the screen
@@ -223,8 +233,12 @@ View.prototype = {
 	initDialogsWindows: function () {
 		$('#game-won-window').draggable({ containment: "window" });
 		$('#names-2p-window').draggable({ containment: "window" });
-		$('#game-select-window').draggable({ containment: "window" }).removeClass('hidden');
+		$('#game-select-window').draggable({ containment: "window" });
 		$('#settings-window').draggable({ containment: "window" });
+		$('#network-error-window').draggable({ containment: "window" });
+		$('#network-online-game-select').draggable({ containment: "window" });
+		$('#invite-friend-window').draggable({ containment: "window" });
+		$('#join-private-game-window').draggable({ containment: "window" });
 		this.resizeDialogsWindows();
 	},
 
@@ -255,6 +269,34 @@ View.prototype = {
 		var $settingsDialog = $('#settings-window');
 		if(!$settingsDialog.hasClass('hidden')) {
 			$settingsDialog.position({
+				of: $board
+			});
+		}
+
+		var $networkErrorDialog = $('#network-error-window');
+		if(!$networkErrorDialog.hasClass('hidden')) {
+			$networkErrorDialog.position({
+				of: $board
+			});
+		}
+
+		var $networkOnlineGameSelect = $('#network-online-game-select');
+		if(!$networkOnlineGameSelect.hasClass('hidden')) {
+			$networkOnlineGameSelect.position({
+				of: $board
+			});
+		}
+
+		var $inviteFriendDialog = $('#invite-friend-window');
+		if(!$inviteFriendDialog.hasClass('hidden')) {
+			$inviteFriendDialog.position({
+				of: $board
+			});
+		}
+
+		var $joinPrivateGameDialog = $('#join-private-game-window');
+		if(!$joinPrivateGameDialog.hasClass('hidden')) {
+			$joinPrivateGameDialog.position({
 				of: $board
 			});
 		}
@@ -304,6 +346,10 @@ View.prototype = {
 			$('#game-won-winner-score').text(scores.player2);
 			$('#game-won-looser-score').text(scores.player1);
 		}
+		$('#game-won-another-game-button-span').removeClass('hidden');
+		$('#game-won-window-another-waiting-game-span').addClass('hidden');
+		$('.game-won-another-game-button-requested').removeClass('game-won-another-game-button-requested');
+
 		$('#game-won-window').removeClass('hidden').position({
 			of: $('#board')
 		});
@@ -333,6 +379,16 @@ View.prototype = {
 
 	hideNames2pWindow: function () {
 		$('#names-2p-window').addClass('hidden');
+	},
+
+	showNetworkOnlineGameSelect: function () {
+		$('#network-online-game-select').removeClass('hidden').position({
+			of: $('#board')
+		});
+	},
+
+	hideNetworkOnlineGameSelect: function () {
+		$('#network-online-game-select').addClass('hidden');
 	},
 
 	// add turn to notation box
@@ -506,6 +562,20 @@ View.prototype = {
 		if(state != '1') {
 			// set it back to 1 from 2 or 3
 			$expandAllIcon.click();
+		}
+	},
+	
+	network: {
+		killed: function (reason) {
+			var $networkKilledDialog = $('#network-killed-window');
+			var $board = $('#board');
+
+			$networkKilledDialog.removeClass('hidden');
+			$('#network-killed-message').text(reason);
+
+			$networkKilledDialog.position({
+				of: $board
+			});
 		}
 	}
 };
