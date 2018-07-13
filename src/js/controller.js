@@ -194,7 +194,7 @@ function Controller(board, view) {
 				// prevent the player from moving actors that do not belong to 
 				// them
 				if (actor.owner !== this.board.settings.owner) {
-					if(!$('.message-container').is(':visible')) {
+					if(!$('.message-container').is(':visible') && !this.client) {
 						var amountOfMoves = 2-this.currentTurn.history.length;
 						this.view.message('Wait for your turn<br>Your opponent has ' + amountOfMoves + ' move' + (amountOfMoves > 1 ? 's' : '') + ' left', 2000);
 					}
@@ -324,18 +324,24 @@ function Controller(board, view) {
 						}
 					}
 				}else{
-					this.client.send('turn', turn.packForServer(scored));
+					// because of setTimeout in setUIState we need to send data after it switch
+					var controller = this;
+
 
 					if (scored) {
 						if (turn.history[turn.history.length - 1].target.x == settings.zones[owner].goal[0].x) {
 							this.board.settings.owner = owner;
 							this.view.showTurnState(turn.owner);
+
+							controller.client.send('turn', turn.packForServer(scored));
 						}else{
 							this.board.settings.owner = opponent;
 							this.view.showTurnState(opponent);
 
 							setTimeout(function () {
 								this.setUIState("waiting turn");
+
+								controller.client.send('turn', turn.packForServer(scored));
 							}.bind(this));
 						}
 
@@ -353,8 +359,9 @@ function Controller(board, view) {
 							// reset the board
 							this.reset();
 						}
+					}else{
+						controller.client.send('turn', turn.packForServer(scored));
 					}
-
 				}
 			},
 
@@ -389,7 +396,7 @@ function Controller(board, view) {
 				this.currentTurn = new Turn(this, opponent);
 
 				// we need to do our stuff after actors finished to move
-				var postPlayMove = function () {
+				var postPlayMove = function (cb) {
 					console.log('receive turn->playMove finished, postPlay()');
 					turn.notation(scored); // moved notation here
 					// this is check for looser starts new round
@@ -419,14 +426,16 @@ function Controller(board, view) {
 							setTimeout(function () {
 								this.setUIState('game inactive');
 								this.emit('game won', score);
+								cb();
 							}.bind(this));
 						}else{
 							// reset the board
-							this.reset();
+							this.reset(cb);
 						}
 					}else{
 						this.board.settings.owner = opponent;
 						this.view.showTurnState(opponent);
+						cb();
 					}
 				};
 
@@ -434,10 +443,14 @@ function Controller(board, view) {
 				turn.playMove(turn.history[0], true, function() {
 					if(turn.history[1]) {
 						turn.playMove(turn.history[1], true, function() {
-							postPlayMove.apply(controller);
+							postPlayMove.call(controller, data.done);
+							// tell client that packet is processed
+							//if(data.done) data.done();
 						});
 					}else{
-						postPlayMove.apply(controller);
+						postPlayMove.call(controller, data.done);
+						// tell client that packet is processed
+						//if(data.done) data.done();
 					}
 				});
 			},
@@ -518,6 +531,9 @@ function Controller(board, view) {
 			},
 
 			"click new game": function () {
+				if(window.game.controller.client) {
+					window.game.controller.client.kill('NEW_GAME', true);
+				}
 				// reset first move owner
 				this.board.settings.owner = Player.One;
 				this.view.newGameClicked();
@@ -600,6 +616,14 @@ function Controller(board, view) {
 
 			"destroy state": function () {
 				this.view.closeMessage();
+			},
+
+			"click actor": function () {
+				this.view.message('Wait for your turn', 2000);
+			},
+
+			"click puck": function () {
+				this.view.message('Wait for your turn', 2000);
 			}
 		}
 	};
@@ -640,6 +664,7 @@ Controller.prototype = {
 	
 	setUIState: function (stateName) {
 		var eventName;
+		console.log('setUIState(' + stateName + ')');
 		
 		// destroy the old state so we can build the new one
 		this.emit("destroy state");
@@ -732,7 +757,7 @@ Controller.prototype = {
 	},
 
 	// reset the board after finishing a round
-	reset: function () {
+	reset: function (cb) {
 		setTimeout(function () {
 			this.board.clear();
 			this.view.display.clear();
@@ -753,6 +778,7 @@ Controller.prototype = {
 			}else{
 				this.setUIState("placing puck");
 			}
+			if(cb) cb();
 		}.bind(this));
 	},
 
@@ -816,7 +842,7 @@ Controller.prototype = {
 		}
 	},
 
-	placePuck: function (pos) {
+	placePuck: function (pos, done) {
 		var self = this;
 
 		this.board.placePuck(pos);
@@ -824,6 +850,7 @@ Controller.prototype = {
 
 		setTimeout(function () {
 			self.view.display.clearPuckGhost();
+			if(done) done();
 		}, settings.animationSpeed);
 
 		this.view.events.listenToPuckEvents();

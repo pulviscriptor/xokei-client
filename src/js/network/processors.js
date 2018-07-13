@@ -4,7 +4,7 @@ var settings = require("../settings");
 
 // "this" will be "Client"
 module.exports = {
-	'welcome': function (version) {
+	'welcome': function (done, version) {
 		clearTimeout(this.timers.connect);
 
 		if(version != this.VERSION) {
@@ -12,10 +12,11 @@ module.exports = {
 		}
 
 		this.connectionEstablished();
+		done();
 	},
 
-	'joined_room': function (opt) {
-		window.location.hash = opt.room_id;
+	'joined_room': function (done, opt) {
+		utils.hash.set(opt.room_id);
 		this.side = opt.side;
 
 		var name;
@@ -23,16 +24,26 @@ module.exports = {
 			Player.name[this.side] = name;
 			this.controller.view.updateNames(Player.name[Player.One], Player.name[Player.Two]);
 		}
+		done();
 	},
 
-	'invite_friend': function () {
+	'invite_friend': function (done) {
 		$('#invite-friend-window').removeClass('hidden').position({
 			of: $('#board')
 		});
-		$('#invite-friend-input-url').val(window.location.href);
+		$('#invite-friend-input-url').val(window.location.href).select();
+		done();
 	},
 
-	'check_room_result': function (result) {
+
+	'wait_opponent': function (done) {
+		$('#wait-opponent-window').removeClass('hidden').position({
+			of: $('#board')
+		});
+		done();
+	},
+
+	'check_room_result': function (done, result) {
 		if(result == 'NOT_FOUND') return this.kill('Game ' + utils.escapeHtml(window.location.hash) + ' not found');
 		if(result == 'GAME_RUNNING') return this.kill('Game ' + utils.escapeHtml(window.location.hash) + ' already running');
 		if(result == 'AVAILABLE') {
@@ -41,44 +52,55 @@ module.exports = {
 				of: $('#board')
 			});
 		}
+		done();
 	},
 
-	'opponent_joined': function (opt) {
+	'opponent_joined': function (done, opt) {
 		var name;
 		if(opt.name && (name = opt.name.trim())) {
 			Player.name[opt.side] = name;
 			this.controller.view.updateNames(Player.name[Player.One], Player.name[Player.Two]);
 		}
 
-		var $window = $('#invite-friend-window');
-		if(!$window.hasClass('hidden')) {
-			$window.addClass('hidden');
+		var $invite_window = $('#invite-friend-window');
+		if(!$invite_window.hasClass('hidden')) {
+			$invite_window.addClass('hidden');
 		}
+
+		var $wait_window = $('#wait-opponent-window');
+		if(!$wait_window.hasClass('hidden')) {
+			$wait_window.addClass('hidden');
+		}
+		done();
 	},
 	
-	'board': function (board) {
+	'board': function (done, board) {
 		window.globalVariables.mockServerResponse = board;
+		done();
 	},
 
-	'place_puck': function (owner) {
+	'place_puck': function (done, owner) {
 		this.controller.board.settings.owner = owner;
 		this.controller.resetGame(true);
 		if(owner != this.side) {
 			this.controller.view.showTurnState(owner);
 		}
+		done();
 	},
 	
-	'puck_placed': function (x, y) {
+	'puck_placed': function (done, x, y) {
 		if(this.board.puck) {
 			console.log(this.board.puck);
+			done();
 		}else{
-			this.controller.placePuck({x: x, y: y});
+			this.controller.placePuck({x: x, y: y}, done);
 		}
 	},
 
-	'turn': function (owner) {
+	'turn': function (done, owner) {
 		if(owner == this.side) {
 			this.controller.setUIState("playing round");
+			done();
 		}else{
 			//this.controller.view.showTurnState(owner);
 
@@ -87,15 +109,17 @@ module.exports = {
 
 			setTimeout(function () {
 				this.setUIState("waiting turn");
+				done();
 			}.bind(this.controller));
 		}
 	},
 
-	'receive_turn': function (turn) {
+	'receive_turn': function (done, turn) {
 		// convert JSON turn to controller understandable turn
 		var obj = {
 			owner: turn.owner,
-			history: []
+			history: [],
+			done: done
 		};
 
 		for(var i=0;i<turn.history.length;i++) {
@@ -141,6 +165,7 @@ module.exports = {
 					score: move.score
 				});
 			}else{
+				done();
 				throw new Error('Unknown move.target.type: ' + move.target.type);
 			}
 		}
@@ -152,15 +177,20 @@ module.exports = {
 		}.bind(this));
 	},
 	
-	'another_game_request': function () {
+	'another_game_request': function (done) {
 		$('#game-won-another-game-button').addClass('game-won-another-game-button-requested');
+		done();
 	},
 	
-	'another_game_started': function () {
+	'another_game_started': function (done) {
 		if(!settings.game.looserStartsAnotherGame) {
 			this.controller.board.settings.owner = Player.One;
 		}
 		$('#game-won-window').addClass('hidden');
 		this.controller.resetGame();
+		done();
 	}
 };
+
+//todo move_rejected, kill
+

@@ -1,5 +1,6 @@
 var Logger = require('./logger');
 var processors = require('./processors');
+var utils = require('./../utils');
 Client.prototype.VERSION = '1.0.0';
 
 //todo timeout if we did not received Welcome
@@ -19,6 +20,9 @@ function Client(controller, settings, opt) {
 	this.timers = {
 		connect: null
 	};
+	this.queue = []; // packet queue
+	this.busy = false; // processing packet
+	this.onPacketProcess = null; // even for tests
 
 	this.side = null;
 
@@ -93,23 +97,9 @@ Client.prototype.onMessage = function (event) {
 		return;
 	}
 
-	try {
-		var obj = JSON.parse(event.data);
-	}catch (e){
-		return this.log.error(e);
-	}
+	this.queue.push(event.data);
 
-	var cmd = obj[0];
-	var processor = processors[cmd];
-	if(!processor) {
-		this.log.error('Processor not found for packet: ' + event.data);
-	}else{
-		try {
-			processor.apply(this, obj.slice(1));
-		}catch (e){
-			this.log.error(e);
-		}
-	}
+	if(!this.busy) this.processNextPacket();
 };
 
 Client.prototype.onError = function (e) {
@@ -118,7 +108,6 @@ Client.prototype.onError = function (e) {
 };
 
 Client.prototype.kill = function (reason, silent) {
-	//todo clear URL hash on kill
 	if(this.dead) {
 		if(this.debug >= 1)
 			this.log.error('Attempted to kill Client with reason "' + reason + '" but it is already dead with reason "' + this.dead + '"');
@@ -138,8 +127,7 @@ Client.prototype.kill = function (reason, silent) {
 		this.ws.close();
 	}
 
-	// https://stackoverflow.com/questions/4508574/remove-hash-from-url
-	window.history.pushState("", window.document.title, window.location.pathname);
+	utils.hash.set('');
 };
 
 Client.prototype.clearTimers = function () {
@@ -161,6 +149,64 @@ Client.prototype.send = function () {
 			this.log.info('SEND: ' + json);
 
 		this.ws.send(json);
+	}
+};
+
+Client.prototype.processNextPacket = function () {
+	if(this.busy) return;
+	var data = this.queue.shift();
+	if(!data) return;
+
+	var client = this;
+
+	if(this.debug >= 3)
+		this.log.info('processNextPacket: ' + data);
+
+
+	try {
+		var obj = JSON.parse(data);
+	}catch (e){
+		this.log.error(e);
+		if(this.onPacketProcess) this.onPacketProcess(data);
+		this.processNextPacket();
+		return;
+	}
+
+	var cmd = obj[0];
+	var processor = processors[cmd];
+	if(!processor) {
+		this.log.error('Processor not found for packet: ' + event.data);
+		if(this.onPacketProcess) this.onPacketProcess(data);
+		this.processNextPacket();
+	}else{
+		try {
+			var timeout = setTimeout(function () {
+				client.busy = false;
+				if(client.onPacketProcess) client.onPacketProcess(data);
+				client.processNextPacket();
+				throw new Error('Processor did not called done() in time while processing: ' + data);
+			}, 10000);
+			var processed = false;
+			this.busy = true;
+
+			var params = obj.slice(1);
+			params.unshift(function () {
+				if(processed) return;
+				processed = true;
+				client.busy = false;
+				clearTimeout(timeout);
+				if(client.onPacketProcess) client.onPacketProcess(data);
+				client.processNextPacket();
+			});
+
+			processor.apply(this, params);
+		}catch (e){
+			this.log.error(e);
+			this.busy = false;
+			clearTimeout(timeout);
+			if(this.onPacketProcess) this.onPacketProcess(data);
+			this.processNextPacket();
+		}
 	}
 };
 

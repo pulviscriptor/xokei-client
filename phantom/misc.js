@@ -124,6 +124,57 @@ var wait = {
 			$('i.fa.fa-times-circle.fa-lg.close-message').click();
 			wait.disappear('.message-container', done);
 		});
+	},
+
+	/*packet: function (text, done) {
+		if(!window.game.controller.client) return done(new Error('game.controller.client is missing'));
+		if(!window.game.controller.client.ws) return done(new Error('game.controller.client.ws is missing'));
+
+		var onmessage = function (event) {
+			if(event.data && event.data.indexOf(text) >= 0) {
+				window.game.controller.client.ws.removeEventListener('message', onmessage);
+				clearTimeout(timeout);
+				done();
+			}
+		};
+
+		var timeout = setTimeout(function () {
+			window.game.controller.client.ws.removeEventListener('message', onmessage);
+			done(new Error('Failed to find packet in time: ' + text));
+		}, 4000);
+
+		window.game.controller.client.ws.addEventListener('message', onmessage);
+	}*/
+
+	packet: function (text, done) {
+		if(!window.game.controller.client) return done(new Error('game.controller.client is missing'));
+
+		var onmessage = function (data) {
+			if(data && data.indexOf(text) >= 0) {
+				window.game.controller.client.onPacketProcess = null;
+				clearTimeout(timeout);
+				done();
+			}
+		};
+
+		var timeout = setTimeout(function () {
+			window.game.controller.client.onPacketProcess = null;
+			done(new Error('Failed to find packet in time: ' + text));
+			throw new Error('Failed to find packet in time: ' + text);
+		}, 4000);
+
+		window.game.controller.client.onPacketProcess = onmessage;
+	},
+	
+	actorAt: function (notation, done) {
+		var cords = window.game.utils.notationToCoordinates(notation);
+		var x = cords.x;
+		var y = cords.y;
+
+		wait.repeat(done, true, function () {
+			var actor = window.game.board.tile(x,y).actor;
+			return !!actor;
+		});
 	}
 };
 
@@ -171,7 +222,7 @@ var simulate = {
 			y = cords.y;
 		}
 
-		if(game.board.tile(x, y).actor) throw new Error('Tile ' + notation + ' is already occupied');
+		if(game.board.tile(x, y).actor) throw new Error('Tile ' + window.game.utils.coordinatesToNotation(x, y) + ' is already occupied');
 		this.clickTile(x, y);
 		if(!game.board.tile(x, y).actor) throw new Error('Attempted to place puck at ' + window.game.utils.coordinatesToNotation(x, y) + ' but did not found it there');
 		if($('.puck-actor').length != 1) throw new Error('Expected to find 1 puck on board but found ' + $('.puck-actor').length);
@@ -192,7 +243,8 @@ var util = {
 	// opt.score2 = score of player 2
 	validateNewRound: function (opt) {
 		if(!opt.done) throw new Error('Forgot to pass `done` callback?');
-		wait.message('Place the puck on your side (' + (opt.owner == 1?'left':'right') + ')', function (err) {
+		var message = opt.message || ( 'Place the puck on your side (' + (opt.owner == 1?'left':'right') + ')' );
+		wait.message(message, function (err) {
 			if(err) return opt.done(err);
 			if(game.board.tile(0, 4).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(0, 4)));
 			if(game.board.tile(6, 0).actor.owner != 'player1') return opt.done(new Error('Can\'t find player1 actor at ' + window.game.utils.coordinatesToNotation(6, 0)));
@@ -266,6 +318,48 @@ var util = {
 			util.validateNewRound(validate);
 		});
 	},
+
+	skipOnlineRound: function (owner, target, done) {
+		var client_turn = window.game.controller.client.side == ('player' + owner);
+
+		if(client_turn) {
+			simulate.placePuck(owner==1 ? 'f5' : 'g4');
+			wait.packet('["turn","' + window.game.controller.client.side + '"]', done);
+		}else{
+			wait.actorAt(owner==1 ? 'f5' : 'g4', function () {
+				simulate.clickPuck();
+				simulate.clickTile(target==1 ? ( owner==1 ? 'e5' : 'f5' ) : ( owner==1 ? 'g4' : 'h4' ) );
+				simulate.clickTile(target==1 ? '[5' : ']4');
+				wait.finishPuckMove(done);
+			});
+		}
+	},
+
+	skipOnlineRoundAndValidate: function (owner, target, validate) {
+		util.skipOnlineRound(owner, target, function () {
+			util.validateNewRound(validate);
+		});
+	},
+
+	/*skipOnlineRoundAndValidate: function (owner, target, validate) {
+		var client_turn = window.game.controller.client.side == ('player' + owner);
+
+		if(client_turn) {
+			simulate.placePuck(owner==1 ? 'f5' : 'g4');
+			wait.packet('["turn","' + window.game.controller.client.side + '"]', function () {
+				util.validateNewRound(validate);
+			});
+		}else{
+			wait.actorAt(owner==1 ? 'f5' : 'g4', function () {
+				simulate.clickPuck();
+				simulate.clickTile(target==1 ? ( owner==1 ? 'e5' : 'f5' ) : ( owner==1 ? 'g4' : 'h4' ) );
+				simulate.clickTile(target==1 ? '[5' : ']4');
+				wait.finishPuckMove(function () {
+					util.validateNewRound(validate);
+				});
+			});
+		}
+	},*/
 	
 	testTooltip: function (el, text, done) {
 		if(!done) throw new Error('Forgot to pass callback to testTooltip?');

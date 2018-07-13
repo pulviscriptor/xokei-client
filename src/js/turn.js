@@ -126,7 +126,9 @@ Turn.prototype = {
 				y: move.start.y
 			};
 			var finish = trajectory[trajectory.length-1];*/
+			console.log('this.controller.kickPuck starting');
 			this.controller.kickPuck(trajectory[trajectory.length-1], function () {
+				console.log('this.controller.kickPuck done');
 				//this.currentTurn.recordMove(this.board.puck, oldPos, finish, trajectory);
 				if (callback) {
 					callback();

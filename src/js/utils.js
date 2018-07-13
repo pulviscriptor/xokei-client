@@ -260,6 +260,26 @@ var utils = {
 			var candidateSize = utils.getHTMLTextWidth(str, candidate);
 			if (candidateSize < target_px) return candidate;
 		}
+	},
+	
+	hash: {
+		// if we wait for changes
+		queue: 0,
+		
+		set: function (hash) {
+			// https://stackoverflow.com/questions/4508574/remove-hash-from-url
+			if(!hash) return window.history.pushState("", window.document.title, window.location.pathname);
+
+			this.queue++;
+			window.location.hash = hash;
+		},
+		
+		changed: function () {
+			this.queue--;
+			if(this.queue < 0) {
+				window.location.reload(true);
+			}
+		}
 	}
 };
 
@@ -281,5 +301,8 @@ var utils = {
 		return this;
 	};
 }(require('jquery')));
+
+// working with URL hash to reload page if user entered new one and ignore change if we changed it
+window.addEventListener("hashchange", utils.hash.changed.bind(utils.hash), false);
 
 module.exports = utils;

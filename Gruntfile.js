@@ -238,6 +238,15 @@ module.exports = function(grunt) {
 						testfile: '<script src="../test.03.validateP2names.js" type="text/javascript" charset="utf-8"></script>'
 					}
 				}
+			},
+			phantom50: {
+				src: 'src/index.html',
+				dest: 'phantom/build/test.50.multiplayer.html',
+				options: {
+					data: {
+						testfile: '<script src="../test.50.multiplayer.js" type="text/javascript" charset="utf-8"></script>'
+					}
+				}
 			}
 		},
 		concurrent: {
@@ -315,6 +324,7 @@ module.exports = function(grunt) {
 			"htmlbuild:phantom01",
 			"htmlbuild:phantom02",
 			"htmlbuild:phantom03",
+			"htmlbuild:phantom50",
 			"mocha_phantomjs",
 		]);
 	

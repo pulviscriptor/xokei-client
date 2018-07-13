@@ -83,6 +83,14 @@ function listen(_controller, _display) {
 	});
 
 	$('.move-expand-all').on('click', controller.view.notationExpandAll.bind(controller.view));
+
+	// select room URL on click
+	$('#invite-friend-input-url').click(function() {
+		var el = $(this);
+		setTimeout(function(){
+			el.select();
+		}, 1);
+	});
 }
 
 function listenToActorEvents() {

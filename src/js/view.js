@@ -239,6 +239,7 @@ View.prototype = {
 		$('#network-online-game-select').draggable({ containment: "window" });
 		$('#invite-friend-window').draggable({ containment: "window" });
 		$('#join-private-game-window').draggable({ containment: "window" });
+		$('#wait-opponent-window').draggable({ containment: "window" });
 		this.resizeDialogsWindows();
 	},
 
@@ -297,6 +298,13 @@ View.prototype = {
 		var $joinPrivateGameDialog = $('#join-private-game-window');
 		if(!$joinPrivateGameDialog.hasClass('hidden')) {
 			$joinPrivateGameDialog.position({
+				of: $board
+			});
+		}
+
+		var $waitOpponentDialog = $('#wait-opponent-window');
+		if(!$waitOpponentDialog.hasClass('hidden')) {
+			$waitOpponentDialog.position({
 				of: $board
 			});
 		}
