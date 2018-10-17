@@ -41,8 +41,8 @@ Turn.prototype = {
 
 		this.controller.emit("finish turn", this, scored);
 
-		console.log('SERIALIZE:');
-		console.log(this.serialize());
+		//console.log('SERIALIZE:');
+		//console.log(this.serialize());
 
 		//window.turn111 = this;
 
@@ -126,9 +126,9 @@ Turn.prototype = {
 				y: move.start.y
 			};
 			var finish = trajectory[trajectory.length-1];*/
-			console.log('this.controller.kickPuck starting');
+			//console.log('this.controller.kickPuck starting');
 			this.controller.kickPuck(trajectory[trajectory.length-1], function () {
-				console.log('this.controller.kickPuck done');
+				//console.log('this.controller.kickPuck done');
 				//this.currentTurn.recordMove(this.board.puck, oldPos, finish, trajectory);
 				if (callback) {
 					callback();
@@ -140,8 +140,8 @@ Turn.prototype = {
 			this.controller.view.display
 				.moveActor(board.actors.indexOf(actor), callback);
 		} else {
-			console.log('Actor dump:');
-			console.log(actor);
+			//console.log('Actor dump:');
+			//console.log(actor);
 			throw new Error('Unknown instance of actor, check console');
 		}
 	},
@@ -153,8 +153,8 @@ Turn.prototype = {
 			scored;
 		
 		if (this.history.length == 2) {
-			console.log('this.history:');
-			console.log(this.history);
+			//console.log('this.history:');
+			//console.log(this.history);
 			throw new Error("This turn has already been completed.");
 		}
 		
@@ -244,7 +244,6 @@ Turn.prototype = {
 		var turn = this.history[0];
 		var next = this.history[1];
 		var owner = (this.owner=="player1" ? '1' : '2');
-		//console.log(this);
 		//var owner = '';
 
 		if(turn.target == 'Begin round') {
@@ -265,8 +264,6 @@ Turn.prototype = {
 				this.controller.view.notate( 'move', this.controller.turns.length, owner + this.notateSingle(turn, scored) + " " + owner + this.notateSingle(next, scored) );
 			}
 		}
-
-		//console.log(ret);
 	},
 
 	notateSingle: function (turn, scored) {

@@ -3,14 +3,10 @@ var processors = require('./processors');
 var utils = require('./../utils');
 Client.prototype.VERSION = '1.0.0';
 
-//todo timeout if we did not received Welcome
-//todo create windows with "Create private game" and "Join any game"
-//todo remove hash from URL when disconnected
-
 function Client(controller, settings, opt) {
 	this.log = new Logger('Client');
 
-	this.debug = 3; // debug level 0-3
+	this.debug = (window.env_DEBUG_TEST?3:0) || (localStorage&&localStorage.debug ? localStorage.debug : 0); // debug level 0-3
 	this.controller = controller;
 	this.board = controller.board;
 	this.settings = settings;

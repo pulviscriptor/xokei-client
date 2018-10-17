@@ -8,6 +8,7 @@ module.exports = {
 		clearTimeout(this.timers.connect);
 
 		if(version != this.VERSION) {
+			done();
 			return this.kill('Version mismatch! Client uses ' + this.VERSION + ' but server is ' + version);
 		}
 
@@ -44,8 +45,14 @@ module.exports = {
 	},
 
 	'check_room_result': function (done, result) {
-		if(result == 'NOT_FOUND') return this.kill('Game ' + utils.escapeHtml(window.location.hash) + ' not found');
-		if(result == 'GAME_RUNNING') return this.kill('Game ' + utils.escapeHtml(window.location.hash) + ' already running');
+		if(result == 'NOT_FOUND') {
+			this.kill('Game ' + utils.escapeHtml(window.location.hash) + ' not found');
+			return done();
+		}
+		if(result == 'GAME_RUNNING') {
+			this.kill('Game ' + utils.escapeHtml(window.location.hash) + ' already running');
+			return done();
+		}
 		if(result == 'AVAILABLE') {
 			$('#join-private-game-id').text(window.location.hash);
 			$('#join-private-game-window').removeClass('hidden').position({
@@ -90,7 +97,6 @@ module.exports = {
 	
 	'puck_placed': function (done, x, y) {
 		if(this.board.puck) {
-			console.log(this.board.puck);
 			done();
 		}else{
 			this.controller.placePuck({x: x, y: y}, done);
@@ -99,7 +105,8 @@ module.exports = {
 
 	'turn': function (done, owner) {
 		if(owner == this.side) {
-			this.controller.setUIState("playing round");
+			//receive_turn will call setUIState("playing round");
+			//this.controller.setUIState("playing round");
 			done();
 		}else{
 			//this.controller.view.showTurnState(owner);
@@ -189,8 +196,38 @@ module.exports = {
 		$('#game-won-window').addClass('hidden');
 		this.controller.resetGame();
 		done();
+	},
+	
+	'kill': function (done, code) {
+		if(code == 'CLIENT_DISCONNECTED') {
+			if(window.game.board.gamesHistory[window.game.board.settings.gameID].winner) {
+				this.controller.view.network.newGameRefused(code);
+				this.controller.client.kill('Opponent disconnected after game won', true);
+			}else{
+				this.controller.client.kill('Opponent disconnected');
+			}
+		}else if(code == 'SERVER_SHUTDOWN') {
+			this.controller.client.kill('Server shutting down');
+		}else if(code == 'NEW_GAME') {
+			if(window.game.board.gamesHistory[window.game.board.settings.gameID].winner) {
+				this.controller.view.network.newGameRefused(code);
+				this.controller.client.kill('Opponent started new game after game won', true);
+			}else{
+				this.controller.client.kill('Opponent started new game while this game is not finished. Bug?');
+			}
+		}else{
+			this.controller.client.kill('Server forced disconnect with unknown code: ' + code);
+		}
+		done();
+	},
+	
+	'opponent_resigned': function (done, code) {
+		setTimeout(function () {
+			this.setUIState('game inactive');
+			this.emit('game resigned', Player.opponent(this.client.side), code);
+		}.bind(this.controller));
 	}
 };
 
-//todo move_rejected, kill
+//todo move_rejected
 

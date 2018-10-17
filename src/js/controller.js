@@ -97,10 +97,16 @@ function Controller(board, view) {
 			},
 
 			"click resign game": function () {
-				window.alert('Resign, owner=' + this.board.settings.owner);
+				if(this.client) {
+					this.client.send('resign');
+				}
+				setTimeout(function () {
+					this.setUIState('game inactive');
+					this.emit('game resigned', this.board.settings.owner, 'LOCAL_RESIGN');
+				}.bind(this));
 			}
 		},
-		
+
 		// when the player is placing the puck...
 		"placing puck": {
 			"click tile": function (data) {
@@ -369,13 +375,13 @@ function Controller(board, view) {
 			// received from the server
 			//TODO: check turn.js:finish (this is emulated server move)
 			"receive turn": function (data, scored) {
-				console.log('receive turn (scored=' + scored + '):');
-				console.log(data);
+				//console.log('receive turn (scored=' + scored + '):');
+				//console.log(data);
 				var controller = this;
 
 				var turn = new Turn(this, Player.Two);
 				turn.deserialize(data);
-				console.log(turn);
+				//console.log(turn);
 
 				var owner = turn.owner;
 				var opponent = Player.opponent(turn.owner);
@@ -397,7 +403,7 @@ function Controller(board, view) {
 
 				// we need to do our stuff after actors finished to move
 				var postPlayMove = function (cb) {
-					console.log('receive turn->playMove finished, postPlay()');
+					//console.log('receive turn->playMove finished, postPlay()');
 					turn.notation(scored); // moved notation here
 					// this is check for looser starts new round
 					/*if(scored &&
@@ -501,16 +507,31 @@ function Controller(board, view) {
 		// state when game is not active
 		// for example game finished or not started
 		"game inactive": {
-			"game won": function (scores) {
+			"game won": function (scores, resigned, resign_code) {
 				this.board.gamesHistory[this.board.settings.gameID].gameID = this.board.settings.gameID;
 				this.board.gamesHistory[this.board.settings.gameID].scores = scores;
-				this.board.gamesHistory[this.board.settings.gameID].winner = (scores[Player.One] > scores[Player.Two] ? Player.One : Player.Two);
+				this.board.gamesHistory[this.board.settings.gameID].winner = resigned ? Player.opponent(resigned) : (scores[Player.One] > scores[Player.Two] ? Player.One : Player.Two);
 
+				if(resigned) {
+					this.view.notate( 'move', 'gameresigned', (resigned == Player.One ? "1" : "2") + "r");
+				}
 				this.view.notate( 'move', 'gamewon', scores.player1 + '-' + scores.player2);
 				this.view.notate( 'meta', 'gameresult', '[Result "' + scores.player1 + '-' + scores.player2 + '"]');
-				this.view.gameWon(scores);
+				if(resigned) {
+					this.view.gameResigned(scores, resigned, resign_code);
+				}else{
+					this.view.gameWon(scores);
+				}
 			},
-			
+
+			"game resigned": function (player, code) {
+				this.view.showResignButton(null); // hide resign button
+
+				var score = this.turns.slice(-1)[0].score();
+				score[Player.opponent(player)] = settings.game.scoreToWin;
+				this.emit("game won", score, player, code);
+			},
+
 			"click another game": function () {
 				if(this.client) {
 					this.client.send('another_game');
@@ -532,6 +553,7 @@ function Controller(board, view) {
 
 			"click new game": function () {
 				if(window.game.controller.client) {
+					window.game.controller.client.send('new_game');
 					window.game.controller.client.kill('NEW_GAME', true);
 				}
 				// reset first move owner

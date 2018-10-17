@@ -71,7 +71,10 @@ var utils = {
 				return this.generateTooltipHTML(move, 'Game finished with score ' + move);
 			}
 			ret += (move[0] == '1') ? 'Player 1 ' : 'Player 2 ';
-			if(move[1] == 'p' && move.length == 4) {
+			if(move[1] == 'r' ) {
+				ret += ' disconnected, resigned, timed out or died';
+				return this.generateTooltipHTML(move, ret);
+			}else if(move[1] == 'p' && move.length == 4) {
 				ret += 'placed puck at ' + move.substr(2);
 				return this.generateTooltipHTML(move, ret);
 			}else{

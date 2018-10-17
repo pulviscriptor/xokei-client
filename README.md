@@ -1,7 +1,7 @@
-# Xokei Client
+# Xokei Client #
 Xokei is a multiplayer turn-based game similar to hockey. This repository holds the code for the client, which can be hosted anywhere and is designed to connect to a server. It is written in JavaScript and uses [io.js](https://iojs.org/en/) and [Grunt](http://gruntjs.com/) for compilation. CSS is written in SASS, and compiled with [`grunt-sass`](https://github.com/sindresorhus/grunt-sass). Tests are written in Mocha and use Chai for assertions.
 
-# Running
+# Running #
 The client needs to be hosted from a server to run properly. The simplest way to get started and try it out without having to compile the source code yourself is to download the repository and fire up a local server with Python.
 
 - If you don’t have Python installed, [install it](https://www.python.org/).
@@ -11,7 +11,7 @@ The client needs to be hosted from a server to run properly. The simplest way to
 - Run `python -m SimpleHTTPServer 8000`.
 - Navigate to [http://localhost:8000](http://localhost:8000) in your browser.
 
-# Building
+# Building #
 Building the source code yourself is more involved. Follow the steps below in order to get set up locally. Apologies in advance if you've already done some or most of the stuff below. If you have, you're Cool (tm). If you haven't, that's okay too -- you'll still be able to get this working.
 
 Note: If you're on a Windows system, run Command Prompt as an administrator instead of running commands with `sudo`.
@@ -38,3 +38,34 @@ After you've got all this installed and running smoothly, this is all you need t
 - Navigate to the repository root
 - `nvm use iojs` (or `nvmw use iojs`)
 - `grunt`
+
+# Debug #
+You can set client debug level from 0 to 3 by setting `localStorage.debug=X`
+
+# Testing #
+You can run tests to check that everything works correctly.
+Navigate to `xokei-client` folder and run `grunt` and it should show all available client tests.
+- Run `grunt test` to test client logic/functions/events
+- Run `grunt test_phantom` to play 2P offline game and check that everything works
+- Run `grunt test_server`** to play 1P online game with emulated client trying to cheat and send malicious packets
+- Run `grunt test_phantom_multiplayer`** to play 1P online game and check that everything works
+- **folder `xokei-server` must be located in same folder where `xokei-client` is
+- **you can see debug output by setting env variable `DEBUG_TEST` to `true` like: 
+linux: 
+`DEBUG_TEST=true grunt test_server` 
+windows: 
+`set DEBUG_TEST=true 
+grunt test_server` 
+Same for `grunt test_phantom_multiplayer`
+
+## Running tests manually ##
+If something fails or you want to debug it or just to see how it works, you can run tests in your web-browser.
+Run `grunt serve_phantom` and navigate to http://127.0.0.1:8800/phantom/build/ there you will see list of test html files. You can click them to see tests.
+Do not minimize web browser while tests are running because web-browser will disable animations and tests will fail.
+
+To run multiplayer tests in web-browser you need to run `grunt serve_phantom` and navigate to http://127.0.0.1:8800/phantom_multiplayer/build/ 
+Then inside `xokei-server` folder run `npm run test-phantom` after that you will have about [b]4 seconds[/b] to click first test in web-browser.
+If first test `should wait for PhantomJS player join` fails then you were too slow. Re-start `npm run test-phantom` and refresh web-browser window.
+You can set env `DEBUG_TEST=true` for `npm run test-phantom` to see debug output.
+
+Check `xokei-server` README.md file for more info about server.

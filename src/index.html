@@ -78,14 +78,20 @@
 
 	<!-- Game Won window -->
 	<div id="game-won-window" class="window hidden">
-		<span id="game-won-win-message">
-			<span id="game-won-winner-name">Player1</span> won the game with score <span id="game-won-scores"><span id="game-won-winner-score">6</span>:<span id="game-won-looser-score">4</span></span>
-		</span>
+		<span id="game-won-win-message" class="hidden"> 
+            <span id="game-won-winner-name">Player1</span> won the game with score <span id="game-won-scores"><span id="game-won-winner-score">6</span>:<span id="game-won-looser-score">4</span></span>
+        </span>
+        <span id="game-won-resign-message" class="hidden"> 
+            <span id="game-won-resigned-name">Player1</span> resigned, <span id="game-won-resigned-winner-name">Player1</span> won!</span>
+        </span>
 		<br>
+        <span id="game-won-window-another-game-opponent-left-span" class="hidden">
+            <div id="game-won-another-game-opponent-left" class="tlp" data-tooltip="Opponent refused to play another game">Opponent left</div>
+        </span>
         <span id="game-won-window-another-waiting-game-span" class="hidden">
             <div id="game-won-another-game-waiting" class="tlp" data-tooltip="Waiting opponent's decision">Game requested</div>
         </span>
-        <span id="game-won-another-game-button-span" class="">
+        <span id="game-won-another-game-button-span">
             <div id="game-won-another-game-button" class="button tlp" data-tooltip="Play another game with same opponent">Another game</div>
         </span>
             <div id="game-won-new-game-button" class="button tlp" data-tooltip="Start new game">New game</div>

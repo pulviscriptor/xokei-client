@@ -3,6 +3,7 @@ describe('Testing multiplayer game', function () {
 
 	// set game config for this test
 	window.game.settings.game.looserStartsAnotherGame = false;
+	window.game.settings.network.server = 'ws://127.0.0.1:9900';
 
 	describe('Go to P1 online mode', function () {
 		it('should show welcome window', function () {
@@ -696,39 +697,25 @@ describe('Testing multiplayer game', function () {
 			expect($('.puck-actor').length).to.equal(0);
 		});
 
-		it('should place puck at player1 territory and wait for player2 to skip move', function (done) {
+		it('should place puck at player1 territory', function (done) {
 			simulate.placePuck('d5');
-			wait.packet('["turn","player1"]', done);
+			wait.packet('["turn","player2"]', done);
 		});
 
 		it('should find puck at d5', function () {
 			expect(util.tile('d5').actor).to.be.instanceOf(game.puck);
 		});
 
-		it('should pass turn to player1', function () {
-			expect(game.board.settings.owner).to.be.equal('player1');
+		it('should pass turn to player2', function () {
+			expect(game.board.settings.owner).to.be.equal('player2');
 		});
 
-		it('should remove highlight from player2 name', function () {
-			expect($('.player-2-name-text').hasClass('turn-owner')).to.be.false;
+		it('should remove highlight from player1 name', function () {
+			expect($('.player-1-name-text').hasClass('turn-owner')).to.be.false;
 		});
 
-		it('should highlight player1 name', function () {
-			expect($('.player-1-name-text').hasClass('turn-owner')).to.be.true;
-		});
-
-		it('should hide message when we close it', function (done) {
-			$('i.fa.fa-times-circle.fa-lg.close-message').click();
-			wait.disappear('.message-container', done);
-		});
-
-		it('should show message when player1 tries to click puck', function (done) {
-			simulate.clickPuck();
-			wait.appear('.message-container', done);
-		});
-
-		it('should show message with "must be near puck" text', function () {
-			expect($('.message-container .message').text()).to.contain('must be near puck');
+		it('should highlight player2 name', function () {
+			expect($('.player-2-name-text').hasClass('turn-owner')).to.be.true;
 		});
 
 		it('should hide message when we close it', function (done) {
@@ -741,56 +728,13 @@ describe('Testing multiplayer game', function () {
 			wait.message('Wait for your turn', done);
 		});
 
-		/*it('should not create any valid moves', function () {
+		it('should not create any valid moves', function () {
 			expect($('.valid-move-circle').length).to.be.equal(0);
 		});
 
-		/*it('should select actor(8) and display valid moves', function () {
-			simulate.clickActor(8);
-			expect($('.valid-move-circle').length).to.be.equal(7);
-		});
-
-		it('should hide moves if we click actor(8) again', function () {
-			simulate.clickActor(8);
-			expect($('.valid-move-circle').length).to.be.equal(0);
-		});
-
-		it('should select actor(8) and display valid moves', function () {
-			simulate.clickActor(8);
-			expect($('.valid-move-circle').length).to.be.equal(7);
-		});
-
-		it('should hide moves if we click puck', function () {
-			simulate.clickPuck();
-			expect($('.valid-move-circle').length).to.be.equal(0);
-		});
-
-		it('should show message with "must be near puck" text', function (done) {
-			wait.message('must be near puck', done);
-		});
-
-		it('should select actor(8) and display valid moves', function () {
-			simulate.clickActor(8);
-			expect($('.valid-move-circle').length).to.be.equal(7);
-		});
-
-		it('should hide moves if we click empty tile a7', function () {
-			simulate.clickTile('a7');
-			expect($('.valid-move-circle').length).to.be.equal(0);
-		});
-
-		it('should move selected actor(9) to h2', function (done) {
-			Actor(9).moveTo('h2', done);
-		});
-
-		it('should select actor and display valid moves', function () {
-			simulate.clickActor(9);
-			expect($('.valid-move-circle').length).to.be.equal(7);
-			simulate.clickActor(9);
-		});
-
-		it('should move actor(9) to i3', function (done) {
-			Actor(9).moveTo('i3', done);
+		it('should tell server that we finished tests', function (done) {
+			game.controller.client.send('clientTestFinished');
+			wait.packet('["turn","player1"]', done);
 		});
 
 		it('should pass turn to player1', function () {
@@ -822,42 +766,13 @@ describe('Testing multiplayer game', function () {
 		});
 
 		it('should display correct notation', function () {
-			expect(util.notationToText()).to.be.equal('[Game "1"][White "ᖫ✧ΔWΞSƟΜΞ✧ᖭ"][Black "<pro>ⓅⓁⒶⓎⒺⓇ⊕🔫"]\t1pd5 2g1h2i3');
-		});*/
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "PhantomPlayer"][Black "ServerPlayer"]\t1pd5 2g1h2i3');
+		});
+
+		it('should wait 1 sec to send data to server', function (done) {
+			setTimeout(done, 1000);
+		});
 	});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	describe('Done!', function () {
 		it('No more test to run!', function () {

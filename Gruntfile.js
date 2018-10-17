@@ -27,6 +27,9 @@ module.exports = function(grunt) {
 			},
 			phantom: {
 				src: ["phantom/build/**"]
+			},
+			phantom_multiplayer: {
+				src: ["phantom_multiplayer/build/**"]
 			}
 		},
 		connect: {
@@ -53,6 +56,14 @@ module.exports = function(grunt) {
 					hostname: "127.0.0.1",
 					keepalive: false
 				}
+			},
+			serve_phantom: {
+				options: {
+					port: 8800,
+					base: ".",
+					hostname: "127.0.0.1",
+					keepalive: true
+				}
 			}
 		},
 		copy: {
@@ -74,6 +85,20 @@ module.exports = function(grunt) {
 				src: ["**",
 					"!index.html"],
 				dest: "phantom/build",
+				expand: true
+			},
+			phantom_multiplayer_dep: {
+				cwd: "phantom",
+				src: ["jquery.simulate.js",
+					"misc.js"],
+				dest: "phantom_multiplayer",
+				expand: true
+			},
+			phantom_multiplayer: {
+				cwd: "build",
+				src: ["**",
+					"!index.html"],
+				dest: "phantom_multiplayer/build",
 				expand: true
 			}
 		},
@@ -110,19 +135,41 @@ module.exports = function(grunt) {
 					"output": "test/results.html",
 					"quiet": false,
 					"reporter": "html-cov",
-					"require": ["test/common"]
+					"require": ["test/common"],
+					"files": "test/*.js"
 				}
 			},
-			options: {
+			/*options: {
 				"files": "test/*.js"
-			},
+			},*/
 			passing: {
 				options: {
 					"check-leaks": true,
 					"clearRequireCache": false,
 					"quiet": false,
 					"reporter": "spec",
-					"require": ["test/common"]
+					"require": ["test/common"],
+					"files": "test/*.js"
+				}
+			},
+			server: {
+				options: {
+					"timeout": 5000,
+					"check-leaks": true,
+					"clearRequireCache": false,
+					"quiet": false,
+					"reporter": "spec",
+					"files": "../xokei-server/test/tests/*.js"
+				}
+			},
+			server_phantom: {
+				options: {
+					"timeout": 5000,
+					"check-leaks": true,
+					"clearRequireCache": false,
+					"quiet": false,
+					"reporter": "spec",
+					"files": "../xokei-server/test/tests_phantom/*.js"
 				}
 			}
 		},
@@ -181,6 +228,10 @@ module.exports = function(grunt) {
 			phantom: {
 				files: ["phantom/test.*.js", "build/application.js", "build/index.html"],
 				tasks: ["test_phantom"]
+			},
+			phantom_multiplayer: {
+				files: ["phantom_multiplayer/test.*.js", "build/application.js", "build/index.html"],
+				tasks: ["test_phantom_multiplayer"]
 			}
 		},
 		webpack: {
@@ -204,8 +255,21 @@ module.exports = function(grunt) {
 				}
 			}
 		},
-		mocha_phantomjs: {
+		/*mocha_phantomjs: {
 			all: ['phantom/build/*.html']
+		},*/
+
+		mocha_phantomjs: {
+			phantom: {
+				files: {
+					src: ['phantom/build/*.html']
+				}
+			},
+			phantom_multiplayer: {
+				files: {
+					src: ['phantom_multiplayer/build/*.html']
+				}
+			}
 		},
 		htmlbuild: {
 			build: {
@@ -232,19 +296,19 @@ module.exports = function(grunt) {
 			},
 			phantom03: {
 				src: 'src/index.html',
-				dest: 'phantom/build/test.03.validateP2names.html',
+				dest: 'phantom/build/test.03.localResign.html',
 				options: {
 					data: {
-						testfile: '<script src="../test.03.validateP2names.js" type="text/javascript" charset="utf-8"></script>'
+						testfile: '<script src="../test.03.localResign.js" type="text/javascript" charset="utf-8"></script>'
 					}
 				}
 			},
-			phantom50: {
+			phantom_multiplayer01: {
 				src: 'src/index.html',
-				dest: 'phantom/build/test.50.multiplayer.html',
+				dest: 'phantom_multiplayer/build/test.01.multiplayer.html',
 				options: {
 					data: {
-						testfile: '<script src="../test.50.multiplayer.js" type="text/javascript" charset="utf-8"></script>'
+						testfile: (process.env.DEBUG_TEST==true ? '<script>window.env_DEBUG_TEST=true;</script>' :'') + '<script src="../test.01.multiplayer.js" type="text/javascript" charset="utf-8"></script>'
 					}
 				}
 			}
@@ -260,6 +324,12 @@ module.exports = function(grunt) {
 					"watch:scripts",
 					"watch:html",
 					"watch:test"
+				]
+			},
+			phantom_multiplayer: {
+				tasks: [
+					"mochacov:server_phantom",
+					"mocha_phantomjs:phantom_multiplayer"
 				]
 			}
 		},
@@ -299,8 +369,15 @@ module.exports = function(grunt) {
 			grunt.log.writeln('');
 			grunt.log.writeln('Commands for developers:'['yellow']);
 			grunt.log.writeln('Run ' + '`grunt dev`'['green'] + ' to build source codes, start web server and watch for file changes');
-			grunt.log.writeln('Run ' + '`grunt phantom`'['green'] + '* in separate window to watch for changes and run phantom (headless web browser) tests');
+			grunt.log.writeln('Run ' + '`grunt phantom`'['green'] + '* in separate window to watch for changes and run phantom offline game tests');
 			grunt.log.writeln('*only if you want to run tests to make sure your changes will not break anything');
+			grunt.log.writeln('Tests:');
+			grunt.log.writeln('Run ' + '`grunt test`'['green'] + ' to test client logic/functions/events');
+			grunt.log.writeln('Run ' + '`grunt test_phantom`'['green'] + ' to play 2P offline game and check that everything works');
+			grunt.log.writeln('Run ' + '`grunt test_server`'['green'] + '** to play 1P online game with emulated client trying to cheat and send malicious packets');
+			grunt.log.writeln('Run ' + '`grunt test_phantom_multiplayer`'['green'] + '** to play 1P online game and check that everything works');
+			grunt.log.writeln('**folder "xokei-server" must be located in same folder where "xokei-client" is');
+			grunt.log.writeln('Check readme.md for more development-related test stuff');
 			grunt.log.writeln('######################################################'.bold);
 		});
 	grunt.registerTask(
@@ -317,15 +394,30 @@ module.exports = function(grunt) {
 		]);
 
 	grunt.registerTask(
-		"test_phantom",
+		"build_test_phantom",
 		[
 			"clean:phantom",
 			"copy:phantom",
 			"htmlbuild:phantom01",
 			"htmlbuild:phantom02",
-			"htmlbuild:phantom03",
-			"htmlbuild:phantom50",
-			"mocha_phantomjs",
+			"htmlbuild:phantom03"
+		]);
+
+	grunt.registerTask(
+		"test_phantom",
+		[
+			"build_test_phantom",
+			"mocha_phantomjs:phantom",
+		]);
+
+	grunt.registerTask(
+		"test_phantom_multiplayer",
+		[
+			"clean:phantom_multiplayer",
+			"copy:phantom_multiplayer_dep",
+			"copy:phantom_multiplayer",
+			"htmlbuild:phantom_multiplayer01",
+			"concurrent:phantom_multiplayer"
 		]);
 	
 	grunt.registerTask(
@@ -396,5 +488,18 @@ module.exports = function(grunt) {
 			"connect:phantom",
 			"phantom_message",
 			"watch:phantom"
+		]);
+
+	grunt.registerTask(
+		"serve_phantom",
+		[
+			"build_test_phantom",
+			"connect:serve_phantom"
+		]);
+
+	grunt.registerTask(
+		"test_server",
+		[
+			"mochacov:server"
 		]);
 };

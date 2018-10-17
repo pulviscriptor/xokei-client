@@ -150,7 +150,9 @@ View.prototype = {
 		}
 
 		this.updatePlayerNamesTooltips();
-		this.showResignButton(player);
+		if(this.controller.turns.length) { // don't allow players to resign instantly after starting game
+			this.showResignButton(player);
+		}
 	},
 
 	// display "resign game" button for player
@@ -356,8 +358,42 @@ View.prototype = {
 		}
 		$('#game-won-another-game-button-span').removeClass('hidden');
 		$('#game-won-window-another-waiting-game-span').addClass('hidden');
+		$('#game-won-window-another-game-opponent-left-span').addClass('hidden');
 		$('.game-won-another-game-button-requested').removeClass('game-won-another-game-button-requested');
 
+		$('#game-won-win-message').removeClass('hidden');
+		$('#game-won-resign-message').addClass('hidden');
+		$('#game-won-window').removeClass('hidden').position({
+			of: $('#board')
+		});
+	},
+
+	// display window with resigned message and button to start new game
+	gameResigned: function (scores, resigned_player, code) {
+		// codes:
+		// CLIENT_DISCONNECTED - online disconnect
+		// ONLINE_RESIGN - online opponent resigned
+		// LOCAL_RESIGN - local opponent resigned
+		$('#game-won-resigned-name').text(Player.name[resigned_player]).css('font-size', Player.textSizeStatic[resigned_player] + 'em');
+		$('#game-won-resigned-winner-name').text(Player.name[Player.opponent(resigned_player)]).css('font-size', Player.textSizeStatic[Player.opponent(resigned_player)] + 'em');
+
+		$('#game-won-another-game-button-span').removeClass('hidden'); //todo depends on code
+		$('#game-won-window-another-waiting-game-span').addClass('hidden'); //todo depends on code
+		$('#game-won-window-another-game-opponent-left-span').addClass('hidden');
+
+		$('.game-won-another-game-button-requested').removeClass('game-won-another-game-button-requested');
+
+		if(code == 'CLIENT_DISCONNECTED') {
+			$('#game-won-window-another-game-opponent-left-span').removeClass('hidden').attr('data-tooltip', 'Opponent disconnected');
+		}else if(code == 'ONLINE_RESIGN') {
+			$('#game-won-another-game-button-span').removeClass('hidden');
+		}else{
+			//local 2p game
+			$('#game-won-another-game-button-span').removeClass('hidden');
+		}
+
+		$('#game-won-win-message').addClass('hidden');
+		$('#game-won-resign-message').removeClass('hidden');
 		$('#game-won-window').removeClass('hidden').position({
 			of: $('#board')
 		});
@@ -576,7 +612,12 @@ View.prototype = {
 	network: {
 		killed: function (reason) {
 			var $networkKilledDialog = $('#network-killed-window');
+			var $game_won_window = $('#game-won-window');
 			var $board = $('#board');
+
+			if(!$game_won_window.hasClass('hidden')) {
+				$game_won_window.addClass('hidden');
+			}
 
 			$networkKilledDialog.removeClass('hidden');
 			$('#network-killed-message').text(reason);
@@ -584,6 +625,21 @@ View.prototype = {
 			$networkKilledDialog.position({
 				of: $board
 			});
+		},
+
+		newGameRefused: function (code) {
+			// code: CLIENT_DISCONNECTED / NEW_GAME
+			$('#game-won-window-another-waiting-game-span').addClass('hidden');
+			$('#game-won-another-game-button-span').addClass('hidden');
+			$('#game-won-window-another-game-opponent-left-span').removeClass('hidden');
+
+			if(code == 'CLIENT_DISCONNECTED') {
+				$('#game-won-another-game-opponent-left').attr('data-tooltip', 'Opponent disconnected');
+			}else if(code == 'NEW_GAME') {
+				$('#game-won-another-game-opponent-left').attr('data-tooltip', 'Opponent refused to play another game');
+			}else{
+				$('#game-won-another-game-opponent-left').attr('data-tooltip', 'Unknown code: ' + code);
+			}
 		}
 	}
 };
