@@ -7,7 +7,8 @@ var Display = require("./display"),
 	events = require("./events"),
 	Player = require("./players"),
 	utils = require("./utils"),
-	settings = require("./settings");
+	settings = require("./settings"),
+	NotationReplay = require('./notation_replay');
 	
 /// object
 function View(board) {
@@ -25,6 +26,8 @@ function View(board) {
 	this.controller = null;
 	this.display = new Display(board);
 	this.events = events;
+
+	this.notationReplay = null;
 
 	this.init();
 }
@@ -377,19 +380,20 @@ View.prototype = {
 		$('#game-won-resigned-name').text(Player.name[resigned_player]).css('font-size', Player.textSizeStatic[resigned_player] + 'em');
 		$('#game-won-resigned-winner-name').text(Player.name[Player.opponent(resigned_player)]).css('font-size', Player.textSizeStatic[Player.opponent(resigned_player)] + 'em');
 
-		$('#game-won-another-game-button-span').removeClass('hidden'); //todo depends on code
-		$('#game-won-window-another-waiting-game-span').addClass('hidden'); //todo depends on code
-		$('#game-won-window-another-game-opponent-left-span').addClass('hidden');
-
+		$('#game-won-window-another-waiting-game-span').addClass('hidden');
 		$('.game-won-another-game-button-requested').removeClass('game-won-another-game-button-requested');
 
 		if(code == 'CLIENT_DISCONNECTED') {
-			$('#game-won-window-another-game-opponent-left-span').removeClass('hidden').attr('data-tooltip', 'Opponent disconnected');
+			$('#game-won-window-another-game-opponent-left-span').removeClass('hidden');
+			$('#game-won-another-game-opponent-left').attr('data-tooltip', 'Opponent disconnected');
+			$('#game-won-another-game-button-span').addClass('hidden');
 		}else if(code == 'ONLINE_RESIGN') {
 			$('#game-won-another-game-button-span').removeClass('hidden');
+			$('#game-won-window-another-game-opponent-left-span').addClass('hidden');
 		}else{
 			//local 2p game
 			$('#game-won-another-game-button-span').removeClass('hidden');
+			$('#game-won-window-another-game-opponent-left-span').addClass('hidden');
 		}
 
 		$('#game-won-win-message').addClass('hidden');
@@ -607,6 +611,13 @@ View.prototype = {
 			// set it back to 1 from 2 or 3
 			$expandAllIcon.click();
 		}
+	},
+
+	mouseOverNotation: function (e, controller) {
+		if(this.notationReplay) {
+			this.notationReplay.destroy();
+		}
+		this.notationReplay = new NotationReplay($(e.element), controller);
 	},
 	
 	network: {

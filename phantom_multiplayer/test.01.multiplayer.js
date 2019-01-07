@@ -95,8 +95,9 @@ describe('Testing multiplayer game', function () {
 			wait.message('Wait for your turn', done);
 		});
 
-		it('should not create any valid moves', function () {
+		it('should not create any valid moves', function (done) {
 			expect($('.valid-move-circle').length).to.be.equal(0);
+			wait.packet('["turn","player1"]', done);
 		});
 
 		it('should select actor(2) and display valid moves', function () {
@@ -682,6 +683,74 @@ describe('Testing multiplayer game', function () {
 		});
 	});
 
+	describe('Resign by server-emulated player', function () {
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 1,
+				score1: 0,
+				score2: 0,
+				done: done
+			});
+		});
+
+		it('should place puck at player1 territory', function (done) {
+			simulate.placePuck('d5');
+			wait.packet('["turn","player2"]', done);
+		});
+
+		it('should receive server-emulated player resigned message', function (done) {
+			wait.appear('#game-won-window', done);
+		});
+
+		it('should display correct won window', function () {
+			expect($('#game-won-resign-message').text().trim()).to.be.equal('ServerPlayer resigned, PhantomPlayer won!');
+		});
+
+		it('should request another game', function (done) {
+			$('#game-won-another-game-button').click();
+			wait.packet('["another_game_started"]', done);
+		});
+	});
+
+
+	describe('Resign by client-side player', function () {
+		it('should start new round', function (done) {
+			util.validateNewRound({
+				owner: 1,
+				score1: 0,
+				score2: 0,
+				done: done
+			});
+		});
+
+		it('should place puck at player1 territory', function (done) {
+			simulate.placePuck('d5');
+			wait.packet('["turn","player2"]', done);
+		});
+
+		it('should see actor at h3', function (done) {
+			wait.actorAt('h3', done);
+		});
+
+		it('should see resign button', function (done) {
+			wait.appear('.resign-game-player1', done);
+		});
+
+		it('should resign', function (done) {
+			$('.resign-game-player1').click();
+			wait.appear('#game-won-window', done);
+		});
+
+		it('should display correct won window', function () {
+			expect($('#game-won-resign-message').text().trim()).to.be.equal('PhantomPlayer resigned, ServerPlayer won!');
+		});
+
+		it('should request another game', function (done) {
+			$('#game-won-another-game-button').click();
+			wait.packet('["another_game_started"]', done);
+		});
+	});
+
 	describe('Basics', function () {
 		it('should start new round', function (done) {
 			util.validateNewRound({
@@ -766,15 +835,17 @@ describe('Testing multiplayer game', function () {
 		});
 
 		it('should display correct notation', function () {
-			expect(util.notationToText()).to.be.equal('[Game "1"][White "PhantomPlayer"][Black "ServerPlayer"]\t1pd5 2g1h2i3');
-		});
-
-		it('should wait 1 sec to send data to server', function (done) {
-			setTimeout(done, 1000);
+			expect(util.notationToText()).to.be.equal('[Game "1"][White "PhantomPlayer"][Black "ServerPlayer"]' +
+				'[Result "6-0"]\t1pd5 2r 6-0[Game "2"][White "PhantomPlayer"][Black "ServerPlayer"][Result "0-6"]\t' +
+				'1pd5 2g1g2h3 1r 0-6[Game "3"][White "PhantomPlayer"][Black "ServerPlayer"]\t1pd5 2g1h2i3');
 		});
 	});
 
 	describe('Done!', function () {
+		it('should wait 1 sec to send data to server', function (done) {
+			setTimeout(done, 1000);
+		});/**/
+
 		it('No more test to run!', function () {
 			expect(true).to.be.true;
 		});

@@ -204,7 +204,11 @@ module.exports = {
 				this.controller.view.network.newGameRefused(code);
 				this.controller.client.kill('Opponent disconnected after game won', true);
 			}else{
-				this.controller.client.kill('Opponent disconnected');
+				setTimeout(function () {
+					this.setUIState('game inactive');
+					this.emit('game resigned', Player.opponent(this.client.side), 'CLIENT_DISCONNECTED');
+					this.client.kill('Opponent disconnected while game running (resigned)', true);
+				}.bind(this.controller));
 			}
 		}else if(code == 'SERVER_SHUTDOWN') {
 			this.controller.client.kill('Server shutting down');
@@ -225,6 +229,7 @@ module.exports = {
 		setTimeout(function () {
 			this.setUIState('game inactive');
 			this.emit('game resigned', Player.opponent(this.client.side), code);
+			done();
 		}.bind(this.controller));
 	}
 };

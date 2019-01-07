@@ -36,6 +36,9 @@ function Controller(board, view) {
 	
 	// the actor that is currently highlighted by the UI
 	this.selectedActor = null;
+
+	// current state
+	this.state = null;
 	
 	// an object containing all of the possible events in the game, held under
 	// the UI state that they should be 
@@ -104,6 +107,10 @@ function Controller(board, view) {
 					this.setUIState('game inactive');
 					this.emit('game resigned', this.board.settings.owner, 'LOCAL_RESIGN');
 				}.bind(this));
+			},
+
+			"mouse over notation": function (e) {
+				this.view.mouseOverNotation(e, this);
 			}
 		},
 
@@ -120,7 +127,7 @@ function Controller(board, view) {
 						//this.client.send('place_puck', pos.x, pos.y);
 						this.emit("placed puck");
 
-						//TODO: "recordMove" will cause "turn.finish" to be called but there is no "finish turn" even in "waiting turn" game state
+						//"recordMove" will cause "turn.finish" to be called but there is no "finish turn" event in "waiting turn" game state
 						this.setUIState("waiting turn");
 					}else{*/
 						this.emit("placed puck");
@@ -150,7 +157,7 @@ function Controller(board, view) {
 				this.currentTurn.recordMove("Begin round", null, null);
 				this.view.showTurnState(this.board.settings.owner);
 
-				// managing tooltips that will say players why they can't place puck on forbidden tiles
+				// managing tooltips that will tell players why they can't place puck on forbidden tiles
 				this.board.actors.forEach(function callback(actor) {
 					if(actor.owner == this.board.settings.owner) {
 						this.view.display.tiles[actor.x][actor.y].element.data('tooltip', 'You can\'t place the puck on top of the player');
@@ -366,7 +373,11 @@ function Controller(board, view) {
 							this.reset();
 						}
 					}else{
-						controller.client.send('turn', turn.packForServer(scored));
+						setTimeout(function () {
+							this.setUIState("waiting turn");
+
+							controller.client.send('turn', turn.packForServer(scored));
+						}.bind(this));
 					}
 				}
 			},
@@ -448,11 +459,13 @@ function Controller(board, view) {
 				// visually moving actors on board
 				turn.playMove(turn.history[0], true, function() {
 					if(turn.history[1]) {
-						turn.playMove(turn.history[1], true, function() {
-							postPlayMove.call(controller, data.done);
-							// tell client that packet is processed
-							//if(data.done) data.done();
-						});
+						setTimeout(function () {
+							turn.playMove(turn.history[1], true, function() {
+								postPlayMove.call(controller, data.done);
+								// tell client that packet is processed
+								//if(data.done) data.done();
+							});
+						}, settings.network.playMoveDelay);
 					}else{
 						postPlayMove.call(controller, data.done);
 						// tell client that packet is processed
@@ -526,8 +539,14 @@ function Controller(board, view) {
 
 			"game resigned": function (player, code) {
 				this.view.showResignButton(null); // hide resign button
+				var score;
 
-				var score = this.turns.slice(-1)[0].score();
+				if(this.turns.length) {
+					score = this.turns.slice(-1)[0].score();
+				}else{
+					score = {};
+					score[player] = 0;
+				}
 				score[Player.opponent(player)] = settings.game.scoreToWin;
 				this.emit("game won", score, player, code);
 			},
@@ -687,7 +706,13 @@ Controller.prototype = {
 	setUIState: function (stateName) {
 		var eventName;
 		console.log('setUIState(' + stateName + ')');
-		
+
+		if(this.state == stateName) {
+			console.log('setUIState ignored since we already in this state');
+			return;
+		}
+		this.state = stateName;
+
 		// destroy the old state so we can build the new one
 		this.emit("destroy state");
 		this.clearListeners();

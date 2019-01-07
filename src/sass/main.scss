@@ -216,6 +216,12 @@ body, html {
 		/*.notation-meta {
 			 display: block;
 		}*/
+
+		.notation-move-tooltip:hover {
+			background-color: #CCC;
+			border-radius: 5px;
+			cursor: default;
+		}
 	}
 	
 	.social-media-container {

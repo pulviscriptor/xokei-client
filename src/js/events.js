@@ -91,6 +91,11 @@ function listen(_controller, _display) {
 			el.select();
 		}, 1);
 	});
+
+	// display notation on boards
+	$('#moves').on('mouseover', '.notation-move-tooltip', function() {
+		emit.call(this, "mouse over notation");
+	});
 }
 
 function listenToActorEvents() {

@@ -44,9 +44,13 @@ module.exports = (function (settings) {
 	network: {
 		// websocket server
 		server: 'ws://127.0.0.1:9000',
+		//server: 'ws://' + window.location.hostname + ':9000',
 
 		// timeout in milliseconds
-		connectTimeout: 5000
+		connectTimeout: 5000,
+
+		// delay between visually playing animations of received moves
+		playMoveDelay: 500
 	},
 
 	// the border on actors belonging to the second player
