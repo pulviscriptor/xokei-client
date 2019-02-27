@@ -1,6 +1,6 @@
 var doc,
 	fs = require("fs"),
-	jsdom = require("jsdom").jsdom,
+	jsdom = require("jsdom").JSDOM,
 	sinonChai = require("sinon-chai");
 
 global.chai = require("chai");
@@ -9,6 +9,7 @@ global.sinon = require("sinon");
 
 chai.use(sinonChai);
 
-doc = jsdom(fs.readFileSync("src/index.html", "utf8"));
-global.window = doc.defaultView,
+doc = new jsdom(fs.readFileSync("src/index.html", "utf8"));
+//global.window = doc.defaultView,
+global.window = doc.window,
 global.document = window.document;

@@ -197,7 +197,7 @@ describe("board", function () {
 			board.clear();
 			
 			// posttest
-			expect(board.actors.length).to.be.empty;
+			expect(board.actors.length).to.equal(0);
 			
 			for (x = 0; x < board.width; x++) {
 				for (y = 0; y < board.height; y++) {

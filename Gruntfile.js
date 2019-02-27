@@ -1,5 +1,6 @@
 var path = require("path"),
-	webpack = require("webpack");
+	webpack = require("webpack"),
+        sass = require('node-sass');
 	
 module.exports = function(grunt) {
 	grunt.initConfig({
@@ -131,7 +132,7 @@ module.exports = function(grunt) {
 				options: {
 					"check-leaks": true,
 					"clearRequireCache": false,
-					"debug": true,
+					//"debug": true,
 					"output": "test/results.html",
 					"quiet": false,
 					"reporter": "html-cov",
@@ -174,6 +175,10 @@ module.exports = function(grunt) {
 			}
 		},
 		sass: {
+			options: {
+			    implementation: sass,
+			    sourceMap: false
+			},
 			dist: {
 				files: {
 					"build/application.css" : "src/sass/application.scss"
@@ -236,22 +241,28 @@ module.exports = function(grunt) {
 		},
 		webpack: {
 			build: {
+				mode: "development",
 				devtool: "sourcemap",
 				entry: "./src/js/main.js",
 				output: {
-					path: "build/",
+					//path: "build/",
+					path: path.join(__dirname, "build"),
 					filename: "application.js"
 				},
-				plugins: [
+				/*plugins: [ // TODO: Enable this. Disabple during npm upgrade
 					new webpack.ResolverPlugin(
 						new webpack.ResolverPlugin
 							.DirectoryDescriptionFilePlugin("bower.json", 
 								["main"]
 							)	
 					)
-				],
+				],*/
+
 				resolve: {
-					root: [path.join(__dirname, "src", "components")]
+					// root: [path.join(__dirname, "src", "components")] // removed during webpack upgrade
+					modules: [path.join(__dirname, "src", "components"), 'node_modules'], // added during webpack upgrade ( https://stackoverflow.com/questions/43107233/configuration-resolve-has-an-unknown-property-root )
+					// modules: ['node_modules'],
+//descriptionFiles: ["package.json", "bower.json"]
 				}
 			}
 		},
@@ -274,7 +285,12 @@ module.exports = function(grunt) {
 		htmlbuild: {
 			build: {
 				src: 'src/index.html',
-				dest: 'build/'
+				dest: 'build/',
+				options: {
+					data: {
+						testfile: ''
+					}
+				}
 			},
 			phantom01: {
 				src: 'src/index.html',
