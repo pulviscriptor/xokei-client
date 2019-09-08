@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {},
+	"launch": {
+        "configurations": [
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch notation test",
+                "program": "${workspaceFolder}\\src\\js\\notation\\test.js"
+                //"program": "${workspaceFolder}\\${file}"
+            }
+        ]
+    }
+}

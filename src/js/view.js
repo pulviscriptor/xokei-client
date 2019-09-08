@@ -440,8 +440,9 @@ View.prototype = {
 	},
 
 	// add turn to notation box
-	notate: function (type, id, str, html) {
+	notate: function (type, id, str, html, text) {
 		var notation = {id: id, str: str, html: !!html};
+		if(html && text) notation.text = text;
 		this.board.gamesHistory[this.board.settings.gameID]['notation_' + type].push(notation);
 
 		if($('.notation-' + type + '-table' + this.board.settings.gameID).hasClass('notation-collapsed')) {
@@ -531,8 +532,8 @@ View.prototype = {
 		}*/
 		this.notate( 'meta', 'gamenumber', '[Game "' + this.board.settings.gameID + '"]');
 		this.notate( 'meta', 'date', '[Date "' + ISO8601Date + '"]');
-		this.notate( 'meta', 'p1name', '[White "' + Player.getStaticSizeName(Player.One) + '"]', true);
-		this.notate( 'meta', 'p2name', '[Black "' + Player.getStaticSizeName(Player.Two) + '"]', true);
+		this.notate( 'meta', 'p1name', '[White "' + Player.getStaticSizeName(Player.One) + '"]', true, '[White "' + Player.name[Player.One] + '"]');
+		this.notate( 'meta', 'p2name', '[Black "' + Player.getStaticSizeName(Player.Two) + '"]', true, '[Black "' + Player.name[Player.Two] + '"]');
 	},
 
 	// expand or collapse notations

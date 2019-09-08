@@ -296,21 +296,28 @@ Turn.prototype = {
 			var deltaX =  lastTile.x - turn.trajectory[i].x;
 			var deltaY = lastTile.y - turn.trajectory[i].y;
 
-			// we need to find place where puck finished on trajectory
-			if(tile.x == turn.finish.x && tile.y == turn.finish.y) {
-				checkpoints.push(tile);
-				// puck is ended here so this is our last checkpoint
-				break;
-			}
-
 			if(deltaX != lastDeltaX || deltaY != lastDeltaY) {
 				checkpoints.push(lastTile);
 				lastDeltaX = deltaX;
 				lastDeltaY = deltaY;
 			}
 
+			/*
+			// we will push tile after for() cycle
+			// we need to find place where puck finished on trajectory
+			if(tile.x == turn.finish.x && tile.y == turn.finish.y) {
+				checkpoints.push(tile);
+				// puck is ended here so this is our last checkpoint
+				break;
+			}*/
+
 			lastTile = tile;
 		}
+
+		// push last tile in array
+		checkpoints.push(lastTile);
+
+
 
 		for(i=0;i<checkpoints.length;i++) {
 			ret += utils.coordinatesToNotation(checkpoints[i]);

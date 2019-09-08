@@ -68,6 +68,8 @@ function Controller(board, view) {
 			
 			// copy notation to clipboard
 			"save game": function () {
+				console.log(this.board.gamesHistory);
+				console.log(utils.notation.export(this.board.gamesHistory));
 				var success = utils.copyTextToClipboard(utils.notation.export(this.board.gamesHistory));
 				try {
 					success = window.document.execCommand('copy');

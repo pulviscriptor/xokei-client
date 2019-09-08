@@ -163,7 +163,7 @@ var utils = {
 			for(var gameID in gamesHistory) {
 				var meta = [];
 				for(var metaID in gamesHistory[gameID].notation_meta) {
-					meta.push(gamesHistory[gameID].notation_meta[metaID].str);
+					meta.push(gamesHistory[gameID].notation_meta[metaID].text || gamesHistory[gameID].notation_meta[metaID].str);
 				}
 				ret.push(meta.join("\r\n"));
 
@@ -286,26 +286,29 @@ var utils = {
 	}
 };
 
-// dirty hack to dynamically change tooltips contents
-(function($) {
-	$.fn.tooltipContent = function(str) {
-		var $openedTooltip = $('.ui-tooltip-content');
-		if($openedTooltip.length) {
-			var openedContent = $openedTooltip.html();
-			this.each(function() {
-				if($(this).attr('data-tooltip') == openedContent) {
-					$openedTooltip.html(str);
-				}
-			});
-		}
+if (typeof window !== 'undefined') {
+	// dirty hack to dynamically change tooltips contents
+	(function($) {
+		$.fn.tooltipContent = function(str) {
+			var $openedTooltip = $('.ui-tooltip-content');
+			if($openedTooltip.length) {
+				var openedContent = $openedTooltip.html();
+				this.each(function() {
+					if($(this).attr('data-tooltip') == openedContent) {
+						$openedTooltip.html(str);
+					}
+				});
+			}
 
-		this.attr('data-tooltip', str);
+			this.attr('data-tooltip', str);
 
-		return this;
-	};
-}(require('jquery')));
+			return this;
+		};
+	}(require('jquery')));
 
-// working with URL hash to reload page if user entered new one and ignore change if we changed it
-window.addEventListener("hashchange", utils.hash.changed.bind(utils.hash), false);
+	// working with URL hash to reload page if user entered new one and ignore change if we changed it
+	window.addEventListener("hashchange", utils.hash.changed.bind(utils.hash), false);
+}
+
 
 module.exports = utils;
