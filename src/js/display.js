@@ -184,7 +184,8 @@ Display.prototype = {
 		
 		// render symbols passed in in the settings file for later use
 		this.renderSymbols();
-		
+
+		//window.alert('-----pre draw tiles');
 		// draw tiles
 		for (x = 0; x < this.board.width; x++) {
 			this.tiles[x] = [];
@@ -218,7 +219,8 @@ Display.prototype = {
 				}
 			}
 		}
-		
+		//window.alert('-----post draw tiles');
+
 		// draw borders
 		for (i = 0; i < settings.borders.length; i++) {
 			border = settings.borders[i];

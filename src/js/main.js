@@ -8,7 +8,17 @@ var Board = require("./board"),
 	Controller = require("./controller"),
 	View = require("./view"),
 	Player = require("./players"),
-	settings = require("./settings");
+	settings = require("./settings"),
+	//TODO remove from here
+	notationTest = require("./notation/testDisplay");
+
+	setTimeout(function () {
+		var $test_btn = $('<button>notationDisplayTest</button>');
+		$('body').prepend($test_btn);
+		$test_btn.click(function () {
+			notationTest();
+		});
+	},1000);
 
 /// global variables
 window.globalVariables = {

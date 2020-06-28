@@ -249,7 +249,7 @@ module.exports = function(grunt) {
 					path: path.join(__dirname, "build"),
 					filename: "application.js"
 				},
-				/*plugins: [ // TODO: Enable this. Disabple during npm upgrade
+				/*plugins: [ 
 					new webpack.ResolverPlugin(
 						new webpack.ResolverPlugin
 							.DirectoryDescriptionFilePlugin("bower.json", 

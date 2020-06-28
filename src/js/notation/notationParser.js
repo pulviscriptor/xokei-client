@@ -11,10 +11,18 @@ function NotationParser(text) {
 
 NotationParser.prototype = {
 	parseGame:function () {
+		console.log('----parting game');
 		var game = new NotationGame(this);
+
 		if(game.parse()) {
+			console.log('-----GAME PARSED!');
 			this.games.push(game);
-			this.parseGame();
+			if(this.lines.length) {
+				this.parseGame();
+			}
+		}else{
+			console.log('-------done');
+			console.log(this.lines);
 		}
 	}
 };

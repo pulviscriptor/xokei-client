@@ -6,7 +6,7 @@ function NotationGame(notationParser) {
 	this.lines = this.notationParser.lines;
 
 	this.game_id = null;
-	this.meta = null;
+	this.meta = {};
 
 	// We will not access moves/board/score to replay
 	// replay should read that info from `move`.
@@ -29,12 +29,15 @@ NotationGame.prototype = {
 
 
 	parse: function () {
-		this.parseMeta();
-		this.parseMove();
+		var meta = this.parseMeta();
+		var moves = this.parseMoves();
 
-		this.buildBoard();
+		if(!moves) {
+			if(meta.present) throw new Error('Meta is present but there is no moves');
+			return false;
+		}
 
-		//todo return true/false
+		return true;
 	},
 
 	parseMeta:function () {
@@ -42,12 +45,13 @@ NotationGame.prototype = {
 		if(!meta.player1) meta.player1 = 'Player 1';
 		if(!meta.player2) meta.player2 = 'Player 2';
 		if(!meta.game) meta.game = '1';
-		if(!meta.game) meta.game = '1';
+
+		return meta;
 	},
 
 	parseMetaLine: function (meta) {
-		if(!meta) meta = {};
-		if(!this.lines.length) throw new Error('Failed to parse meta. Moves data missing in notation?');
+		if(!meta) meta = this.meta;
+		if(!this.lines.length) return meta; // throw new Error('Failed to parse meta. Moves data missing in notation?');
 		var line = this.lines[0];
 		if(line.trim().length) {
 			if(line[0] != '[') return meta; // No more meta to parse
@@ -57,6 +61,7 @@ NotationGame.prototype = {
 
 			if(meta_name == 'Game') {
 				meta.game = meta_value;
+				this.game_id = meta_value;
 			}else if(meta_name == 'Date') {
 				meta.date = meta_value;
 			}else if(meta_name == 'White') {
@@ -66,8 +71,11 @@ NotationGame.prototype = {
 			}else if(meta_name == 'Result') {
 				meta.result = meta_value;
 			}else{
-				throw new Error('Unknow meta name in line: ' + line);
+				throw new Error('Unknown meta name in line: ' + line);
 			}
+
+			// Meta is present in notation
+			meta.present = true;
 		}
 
 		this.lines.shift();
@@ -78,14 +86,20 @@ NotationGame.prototype = {
 		this.board = new NotationBoard(this);
 	},
 
-	parseMove: function () {
-		if(!this.lines.length) return;
-		var moves_str_arr = this.lines[0].split(' ');
+	parseMoves: function () {
+		if(!this.lines.length) return false;
+		var moves_str_arr = this.lines.shift().split(' ');
 
 		for(var i=0;i<moves_str_arr.length;i++) {
 			console.log('Creating NotationMove: ' + moves_str_arr[i].trim());
 			var move = new NotationMove(this, i+1, moves_str_arr[i].trim(), this.board, this.score);
-			if(!move.parse()) return;
+			
+			// move.parse() return false when its done parsing
+			if(!move.parse()) {
+				// Did we parse anything?
+				return this.moves.length > 0;
+			}
+
 			this.moves.push(move);
 
 			//execute create new board and execute move on it
@@ -96,6 +110,8 @@ NotationGame.prototype = {
 				this.scored(result.player);
 			}
 		}
+
+		return true;
 	},
 
 	setState: function (state) {
